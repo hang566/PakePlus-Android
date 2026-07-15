@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云枢</title>
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/base.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/display.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/feedback.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/forms.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/layout.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/navigation.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/tabs-browser.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/variables.css">
+    <link rel="stylesheet" href="UI/primoUI 0.1/css/modules/calendar.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <ul class="navbar-header">
+            <li class="navbar-brand">
+                <button onclick="toggleSidebarState()" title="切换侧边栏">
+                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-arrow-expand-right" viewBox="0 0 24 24">
+                        <path
+                            d="M4,2H2V22H4V13H18.17L12.67,18.5L14.08,19.92L22,12L14.08,4.08L12.67,5.5L18.17,11H4V2Z" />
+                    </svg>
+                </button>
+            </li>
+            <li class="navbar-brand">
+                <a href="#" class="navbar-brand">云枢</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav">
+
+            <li id="nav-user-item" style="display: none;"><a href="service/user/user.html"
+                    style="display: flex; align-items: center; gap: 6px; padding: 4px 10px;"><span id="nav-user-avatar"
+                        style="width: 26px; height: 26px; border-radius: 50%; background: var(--main); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; line-height: 1; flex-shrink: 0;">U</span><span
+                        id="nav-user-name" style="font-size: 13px; line-height: 1;">用户</span></a></li>
+            <li id="nav-user-login"><a href="service/user/user.html">用户</a></li>
+        </ul>
+    </nav>
+
+    <div style="margin-top: 50px; display: flex; min-height: calc(100vh - 80px);">
+
+        <!--侧面导航栏-->
+        <nav class="sidebar sidebar-fixed">
+            <ul class="sidebar-menu">
+                <li class="active" data-tab="home" onclick="switchSidebarTab('home')" title="首页">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z" />
+                    </svg>
+                    <span>首页</span>
+                </li>
+                <!-- <li data-tab="email" onclick="switchSidebarTab('email')" title="邮件">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </li> -->
+                <li data-tab="PluginCenter" onclick="switchSidebarTab('PluginCenter')" title="插件">
+                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-puzzle" viewBox="0 0 24 24">
+                        <path
+                            d="M20.5,11H19V7C19,5.89 18.1,5 17,5H13V3.5A2.5,2.5 0 0,0 10.5,1A2.5,2.5 0 0,0 8,3.5V5H4A2,2 0 0,0 2,7V10.8H3.5C5,10.8 6.2,12 6.2,13.5C6.2,15 5,16.2 3.5,16.2H2V20A2,2 0 0,0 4,22H7.8V20.5C7.8,19 9,17.8 10.5,17.8C12,17.8 13.2,19 13.2,20.5V22H17A2,2 0 0,0 19,20V16H20.5A2.5,2.5 0 0,0 23,13.5A2.5,2.5 0 0,0 20.5,11Z" />
+                    </svg>
+                    <span>插件</span>
+                </li>
+                <li data-tab="settings" onclick="switchSidebarTab('settings')" title="设置">
+                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-cog" viewBox="0 0 24 24">
+                        <path
+                            d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+                    </svg>
+                    <span>设置</span>
+
+                </li>
+            </ul>
+        </nav>
+
+        <div class="tab-panels-wrapper">
+            <!-- home -->
+            <div class="tab-content active" id="home">
+                <div class="row" style="margin: 20px;">
+
+                    <div class="col left-panel" style="flex: 3;">
+                        <h1>云枢</h1>
+                        <!-- 工具按钮 -->
+                        <div class="card">
+
+
+                            <button onclick="toggleRightPanel()" title="切换右侧栏">
+                                <svg xmlns="http://www.w3.org/2000/svg" id="mdi-view-agenda" viewBox="0 0 24 24">
+                                    <path
+                                        d="M21 3H3C2.4 3 2 3.4 2 4V10C2 10.6 2.4 11 3 11H21C21.6 11 22 10.6 22 10V4C22 3.4 21.6 3 21 3M21 13H3C2.4 13 2 13.4 2 14V20C2 20.6 2.4 21 3 21H21C21.6 21 22 20.6 22 20V14C22 13.4 21.6 13 21 13Z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <hr>
+                        <div class="group">工具</div>
+                        <div class="tool-grid">
+                            <a href="service/bookkeeping/bookkeeping.html" class="tool-card">
+                                <div class="tool-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-account-cash-outline"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M16 11.5C16 10.12 17.12 9 18.5 9S21 10.12 21 11.5 19.88 14 18.5 14 16 12.88 16 11.5M13 3V20H24V3H13M22 16C20.9 16 20 16.9 20 18H17C17 16.9 16.11 16 15 16V7C16.11 7 17 6.11 17 5H20C20 6.11 20.9 7 22 7V16M7 6C8.1 6 9 6.9 9 8S8.1 10 7 10 5 9.1 5 8 5.9 6 7 6M7 4C4.79 4 3 5.79 3 8S4.79 12 7 12 11 10.21 11 8 9.21 4 7 4M7 14C3.13 14 0 15.79 0 18V20H11V18H2C2 17.42 3.75 16 7 16C8.83 16 10.17 16.45 11 16.95V14.72C9.87 14.27 8.5 14 7 14Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">记账</div>
+                                <div class="tool-desc">记录事件和数据</div>
+                            </a>
+
+                            <a href="service/PurchaseList/PurchaseList.html" class="tool-card">
+                                <div class="tool-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-clipboard-text-multiple-outline"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M4 7V21H18V23H4C2.9 23 2 22.1 2 21V7H4M20 3C21.1 3 22 3.9 22 5V17C22 18.1 21.1 19 20 19H8C6.9 19 6 18.1 6 17V5C6 3.9 6.9 3 8 3H11.18C11.6 1.84 12.7 1 14 1C15.3 1 16.4 1.84 16.82 3H20M14 3C13.45 3 13 3.45 13 4C13 4.55 13.45 5 14 5C14.55 5 15 4.55 15 4C15 3.45 14.55 3 14 3M10 7V5H8V17H20V5H18V7M15 15H10V13H15M18 11H10V9H18V11Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">采购列表</div>
+                                <div class="tool-desc">管理采购记录</div>
+                            </a>
+
+                            <a href="service/transfer/transfer.html" class="tool-card">
+                                <div class="tool-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-basket-outline" viewBox="0 0 24 24">
+                                        <path
+                                            d="M22 9H17.21L12.83 2.44C12.64 2.16 12.32 2 12 2S11.36 2.16 11.17 2.45L6.79 9H2C1.45 9 1 9.45 1 10C1 10.09 1 10.18 1.04 10.27L3.58 19.54C3.81 20.38 4.58 21 5.5 21H18.5C19.42 21 20.19 20.38 20.43 19.54L22.97 10.27L23 10C23 9.45 22.55 9 22 9M12 4.8L14.8 9H9.2L12 4.8M18.5 19L5.5 19L3.31 11H20.7L18.5 19M12 13C10.9 13 10 13.9 10 15S10.9 17 12 17 14 16.1 14 15 13.1 13 12 13Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">文件传输</div>
+                                <div class="tool-desc">文件传输工具</div>
+                            </a>
+
+                            <a href="service/Order/OrderBackend.html" class="tool-card">
+                                <div class="tool-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-clipboard-text-outline"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M19,3H14.82C14.25,1.44 12.53,0.64 11,1.2C10.14,1.5 9.5,2.16 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M17,11H7V9H17V11M15,15H7V13H15V15Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">订单管理</div>
+                                <div class="tool-desc">管理订单列表</div>
+                            </a>
+
+                            <a href="service/InventoryManagement/InventoryManagement.html" class="tool-card">
+                                <div class="tool-icon">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-warehouse" viewBox="0 0 24 24">
+                                        <path
+                                            d="M6 19H8V21H6V19M12 3L2 8V21H4V13H20V21H22V8L12 3M8 11H4V9H8V11M14 11H10V9H14V11M20 11H16V9H20V11M6 15H8V17H6V15M10 15H12V17H10V15M10 19H12V21H10V19M14 19H16V21H14V19Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">库存管理</div>
+                                <div class="tool-desc">管理库存信息</div>
+                            </a>
+
+                            <a href="service/Order/OrderService3.html" class="tool-card">
+                                <div class="tool-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-receipt-text-outline"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2L4.5 3.5L3 2V22L4.5 20.5L6 22L7.5 20.5L9 22L10.5 20.5L12 22L13.5 20.5L15 22L16.5 20.5L18 22L19.5 20.5L21 22V2L19.5 3.5M19 19H5V5H19V19M6 15H18V17H6M6 11H18V13H6M6 7H18V9H6V7Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">订单服务</div>
+                                <div class="tool-desc">管理订单列表</div>
+                            </a>
+
+                            <a href="service/CustomerAdmin/home.html" class="tool-card">
+                                <div class="tool-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-account-cash-outline"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M16 11.5C16 10.12 17.12 9 18.5 9S21 10.12 21 11.5 19.88 14 18.5 14 16 12.88 16 11.5M13 3V20H24V3H13M22 16C20.9 16 20 16.9 20 18H17C17 16.9 16.11 16 15 16V7C16.11 7 17 6.11 17 5H20C20 6.11 20.9 7 22 7V16M7 6C8.1 6 9 6.9 9 8S8.1 10 7 10 5 9.1 5 8 5.9 6 7 6M7 4C4.79 4 3 5.79 3 8S4.79 12 7 12 11 10.21 11 8 9.21 4 7 4M7 14C3.13 14 0 15.79 0 18V20H11V18H2C2 17.42 3.75 16 7 16C8.83 16 10.17 16.45 11 16.95V14.72C9.87 14.27 8.5 14 7 14Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">客户管理</div>
+                                <div class="tool-desc">管理客户列表</div>
+                            </a>
+
+                            <a href="service/counter/home.html" class="tool-card">
+                                <div class="tool-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="mdi-countertop-outline"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            d="M22 10H18V7C18 5.34 16.66 4 15 4S12 5.34 12 7H14C14 6.45 14.45 6 15 6S16 6.45 16 7V10H8C9.1 10 10 9.1 10 8V4H4V8C4 9.1 4.9 10 6 10H2V12H4V20H20V12H22V10M6 6H8V8H6V6M6 18V12H11V18H6M18 18H13V12H18V18Z" />
+                                    </svg>
+                                </div>
+                                <div class="tool-name">桌台管理</div>
+                                <div class="tool-desc">桌台列表</div>
+                            </a>
+
+                            <!-- 
+                           <a href="service/zhen xie/ZhenXie.html" class="tool-card">
+                                <div class="tool-icon">
+
+                                </div>
+                                <div class="tool-name">帧写</div>
+                                <div class="tool-desc"></div>
+                            </a> -->
+
+                        </div>
+                        <hr>
+                        <div class="group">插件</div>
+                        <div id="plugins-section" class="tool-grid">
+
+                        </div>
+                    </div>
+
+                    <div class="col right-panel" style="flex: 1;margin: 16px;">
+                        <div>
+                            <!-- 时间 -->
+                            <div class="card">
+                                <div style="border-left: 4px solid var(--main); padding-left: 10px;">
+                                    <span style="font-size: 40px;" id="time-hhmm">00:00</span>
+                                    <span style="font-size: 26px;" id="time-ss">:00</span>
+                                    <br>
+                                    <span style="font-size: 17px;" id="date">00-00-00</span>
+                                </div>
+                            </div>
+                            <!-- 日历 -->
+                            <div class="card">
+                                <h3>日历</h3>
+                                <div>
+                                    <div id="calendar"></div>
+                                </div>
+
+                            </div>
+                            <div class="card">
+                                <div>
+                                    <h3>日程</h3>
+                                    <div>
+                                        <button onclick="openTodoModal()">添加</button>
+                                    </div>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 50px;">完成</th>
+                                                <th style="width: 90px;">日期</th>
+                                                <th>事件</th>
+                                                <th style="width: 80px;">编辑</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="todo-table-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- 邮件 -->
+            <!-- <div class="tab-content" id="email">
+            <div style="margin: 20px;">
+                <h1>邮件</h1>
+                <hr>
+                <div class="card" style="padding: 40px; text-align: center;">
+                    <p style="font-size: 18px; opacity: 0.7;">邮件功能开发中...</p>
+                </div>
+            </div>
+        </div> -->
+
+            <!-- 插件中心 -->
+            <div class="tab-content" id="PluginCenter">
+                <div style="margin: 20px;">
+                    <h1>插件中心</h1>
+                    <hr>
+                    <div id="plugin-center-content">
+                        <div style="padding: 40px; text-align: center; color: var(--text); opacity: 0.6;">
+                            正在加载插件...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置 -->
+            <div class="tab-content" id="settings">
+                <div style="margin: 20px;">
+                    <h1>设置</h1>
+                    <hr>
+                    <div class="settings-layout">
+                        <ul class="settings-sidebar">
+                            <li class="active" data-setting-tab="theme" onclick="switchSettingsTab('theme')">设置主题</li>
+                            <li data-setting-tab="local-data" onclick="switchSettingsTab('local-data')">数据</li>
+                        </ul>
+
+                        <div class="settings-content">
+                            <div class="settings-panel active" id="setting-theme">
+                                <h3>主题</h3>
+                                <hr>
+                                <div>
+                                    <button onclick="setTheme('light')">浅色主题</button>
+                                    <button onclick="setTheme('dark')">深色主题</button>
+                                    <button onclick="setTheme('darker')">极暗主题</button>
+                                    <button onclick="setTheme('system')">跟随系统</button>
+                                    <button onclick="setTheme('time')">时间自动切换</button>
+                                </div>
+                                <b>无障碍</b>
+                                <hr>
+                                <button onclick="setTheme('high-contrast')">设置高对比度</button>
+                                <button onclick="setTheme('eye-care')">护眼</button>
+                                <b>颜色主题</b>
+                                <hr>
+                                <table>
+                                    <tr>
+                                        <td>主题颜色</td>
+                                        <td>浅色主题</td>
+                                        <td>深色主题</td>
+                                        <td>极暗色主题</td>
+                                    </tr>
+                                    <tr>
+                                        <td>红色</td>
+                                        <td><button onclick="setTheme('red')">浅红</button></td>
+                                        <td><button onclick="setTheme('red-dark')">深红</button></td>
+                                        <td><button onclick="setTheme('red-darker')">极暗红</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>橙色</td>
+                                        <td><button onclick="setTheme('orange')">浅橙</button></td>
+                                        <td><button onclick="setTheme('orange-dark')">深橙</button></td>
+                                        <td><button onclick="setTheme('orange-darker')">极暗橙</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>黄色</td>
+                                        <td><button onclick="setTheme('yellow')">浅黄</button></td>
+                                        <td><button onclick="setTheme('yellow-dark')">深黄</button></td>
+                                        <td><button onclick="setTheme('yellow-darker')">极暗黄</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>绿色</td>
+                                        <td><button onclick="setTheme('green')">浅绿</button></td>
+                                        <td><button onclick="setTheme('green-dark')">深绿</button></td>
+                                        <td><button onclick="setTheme('green-darker')">极暗绿</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>青色</td>
+                                        <td><button onclick="setTheme('cyan')">浅青</button></td>
+                                        <td><button onclick="setTheme('cyan-dark')">深青</button></td>
+                                        <td><button onclick="setTheme('cyan-darker')">极暗青</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>蓝色</td>
+                                        <td><button onclick="setTheme('blue')">浅蓝</button></td>
+                                        <td><button onclick="setTheme('blue-dark')">深蓝</button></td>
+                                        <td><button onclick="setTheme('blue-darker')">极暗蓝</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>紫色</td>
+                                        <td><button onclick="setTheme('purple')">浅紫</button></td>
+                                        <td><button onclick="setTheme('purple-dark')">深紫</button></td>
+                                        <td><button onclick="setTheme('purple-darker')">极暗紫</button></td>
+                                    </tr>
+                                </table>
+                                <b>特色主题</b>
+                                <hr>
+                                <div>
+                                    <button onclick="setTheme('teal')">青绿</button>
+                                    <button onclick="setTheme('indigo')">靛蓝</button>
+                                    <button onclick="setTheme('rose')">玫瑰红</button>
+                                    <button onclick="setTheme('violet')">紫罗兰</button>
+                                    <button onclick="setTheme('gray')">灰色</button>
+                                    <button onclick="setTheme('sunset')">日落</button>
+                                    <button onclick="setTheme('ocean')">海洋</button>
+                                    <button onclick="setTheme('forest')">森林</button>
+                                    <button onclick="setTheme('rainbow')">彩虹</button>
+                                </div>
+                            </div>
+
+
+                            <div class="settings-panel" id="setting-local-data">
+                                <h4>本地数据</h4>
+                                <hr>
+                                <p>账户信息</p>
+                                <div class="card">
+                                    <div id="userInfo">
+                                        <p>加载中...</p>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <h4>导出数据</h4>
+                                    <span>导出站点所有数据到 JSON 文件作为备份</span>
+                                    <div style="margin-top: 8px;">
+                                        <button onclick="exportSiteData()">导出</button>
+                                    </div>
+                                    <hr>
+                                    <h4>导入数据</h4>
+                                    <span>从 JSON 备份文件恢复数据（将覆盖当前对应数据）</span>
+                                    <div style="margin-top: 8px;">
+                                        <input type="file" id="dataImportFile" accept=".json"
+                                            style="margin-bottom: 8px;">
+                                        <br>
+                                        <button onclick="importSiteData()">导入</button>
+                                    </div>
+                                </div>
+
+                                <!-- 清除数据 -->
+                                <div class="card">
+                                    <!-- 清除数据按钮 -->
+                                    <div>
+                                        <b>清除所有</b>
+                                        <span>清除本站点的所有数据（将无法恢复）：</span>
+                                        <button onclick="openSiteDeleteConfirm('all')">删除</button>
+                                        <hr>
+                                        <b>清除用户</b>
+                                        <span>清除当前用户的所有数据（将无法恢复）：</span>
+                                        <button onclick="openSiteDeleteConfirm('user')">删除</button>
+                                        <hr>
+                                        <b>清除站点</b>
+                                        <span>清除本站点的所有数据但是保留用户数据：</span>
+                                        <button onclick="openSiteDeleteConfirm('site')">删除</button>
+                                    </div>
+
+                                    <a href="help/home.html">帮助中心</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal" id="todo">
+        <div class="modal-content">
+            <h3 id="todo-modal-title">添加日程</h3>
+            <hr>
+            <label for="event-input">日程</label>
+            <input type="text" id="event-input" placeholder="请输入日程内容">
+            <label for="date-input">日期</label>
+            <input type="date" id="date-input">
+            <label for="time-input">时间</label>
+            <input type="time" id="time-input">
+            <hr>
+            <input type="checkbox" id="reminder-input">
+            <label for="reminder-input">提醒我</label>
+            <hr>
+            <button onclick="saveTodo()" id="todo-save-btn">添加</button>
+            <button onclick="closeModal('todo')">关闭</button>
+        </div>
+    </div>
+
+    <div class="modal" id="DeleteOK">
+        <div class="modal-content">
+            <h3 id="DeleteOK-modal-title">确认删除？</h3>
+            <hr>
+            <span>如果你没有备份数据我们将无法还原，是否继续？</span>
+            <span>如果你知道你在做什么请输入确认密码。</span>
+            <div
+                style="margin: 15px 0; padding: 10px; background: var(--background); border-radius: 6px; text-align: center;">
+                <span style="color: var(--main); font-weight: bold; font-size: 16px;"
+                    id="DeleteOK-password-display"></span>
+            </div>
+            <input type="password" id="DeleteOK-password-input" placeholder="请输入确认密码">
+            <button onclick="confirmDelete()" id="DeleteOK-confirm-btn">确认</button>
+            <button onclick="closeModal('DeleteOK')">取消</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== 侧边栏三态切换 ==========
+        const SIDEBAR_STATES = ['', 'sidebar-expanded', 'sidebar-collapsed'];
+        const SIDEBAR_STORAGE_KEY = 'yunshu_sidebar_state';
+
+        function getSidebarState() {
+            return parseInt(localStorage.getItem(SIDEBAR_STORAGE_KEY) || '0');
+        }
+
+        function setSidebarState(state) {
+            localStorage.setItem(SIDEBAR_STORAGE_KEY, state);
+        }
+
+        function applySidebarState(state) {
+            const sidebar = document.querySelector('.sidebar.sidebar-fixed');
+            if (!sidebar) return;
+            sidebar.classList.remove('sidebar-expanded', 'sidebar-collapsed');
+            if (SIDEBAR_STATES[state]) {
+                sidebar.classList.add(SIDEBAR_STATES[state]);
+            }
+        }
+
+        function toggleSidebarState() {
+            console.log('toggleSidebarState called');
+            const sidebar = document.querySelector('.sidebar.sidebar-fixed');
+            console.log('sidebar element:', sidebar);
+            if (!sidebar) return;
+            let current = getSidebarState();
+            console.log('current state:', current);
+            let next = (current + 1) % SIDEBAR_STATES.length;
+            console.log('next state:', next);
+            setSidebarState(next);
+            applySidebarState(next);
+        }
+
+        // ========== 右侧栏切换 ==========
+        const RIGHT_PANEL_STORAGE_KEY = 'yunshu_right_panel_hidden';
+
+        function toggleRightPanel() {
+            const panel = document.querySelector('.right-panel');
+            const leftPanel = document.querySelector('.left-panel');
+            if (!panel) return;
+            const isHidden = panel.classList.contains('hidden');
+            if (isHidden) {
+                panel.classList.remove('hidden');
+                if (leftPanel) leftPanel.classList.remove('expanded');
+                localStorage.setItem(RIGHT_PANEL_STORAGE_KEY, 'false');
+            } else {
+                panel.classList.add('hidden');
+                if (leftPanel) leftPanel.classList.add('expanded');
+                localStorage.setItem(RIGHT_PANEL_STORAGE_KEY, 'true');
+            }
+        }
+
+        // 页面加载时恢复右侧栏状态
+        (function initRightPanel() {
+            const panel = document.querySelector('.right-panel');
+            const leftPanel = document.querySelector('.left-panel');
+            if (panel && localStorage.getItem(RIGHT_PANEL_STORAGE_KEY) === 'true') {
+                panel.classList.add('hidden');
+                if (leftPanel) leftPanel.classList.add('expanded');
+            }
+        })();
+
+        // 立即恢复侧边栏状态（脚本在 DOM 元素之后执行）
+        (function initSidebarState() {
+            const sidebar = document.querySelector('.sidebar.sidebar-fixed');
+            if (sidebar) {
+                applySidebarState(getSidebarState());
+            }
+        })();
+
+        function switchSidebarTab(tab) {
+            const sideMenu = document.querySelector('.sidebar.sidebar-fixed .sidebar-menu');
+            if (!sideMenu) return;
+
+            sideMenu.querySelectorAll('li').forEach(item => item.classList.remove('active'));
+            const selectedItem = sideMenu.querySelector('li[data-tab="' + tab + '"]');
+            if (selectedItem) selectedItem.classList.add('active');
+
+            const panelsWrapper = document.querySelector('.tab-panels-wrapper');
+            if (panelsWrapper) {
+                panelsWrapper.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            }
+
+            const target = document.getElementById(tab);
+            if (target) target.classList.add('active');
+        }
+
+        function switchSettingsTab(tab) {
+            const sideMenu = document.querySelector('.settings-sidebar');
+            if (!sideMenu) return;
+
+            sideMenu.querySelectorAll('li').forEach(item => item.classList.remove('active'));
+            const selectedItem = sideMenu.querySelector('li[data-setting-tab="' + tab + '"]');
+            if (selectedItem) selectedItem.classList.add('active');
+
+            const content = document.querySelector('.settings-content');
+            if (content) {
+                content.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+            }
+
+            const target = document.getElementById('setting-' + tab);
+            if (target) target.classList.add('active');
+        }
+
+        function onThemeChange(theme) {
+            if (typeof setTheme === 'function') {
+                setTheme(theme);
+            } else {
+                if (theme === 'light') {
+                    document.body.className = '';
+                } else {
+                    document.body.className = 'theme-' + theme;
+                }
+                localStorage.setItem('primoUI_theme', theme);
+            }
+        }
+
+        function initThemeSelect() {
+            const select = document.getElementById('theme-input');
+            if (!select) return;
+            const savedTheme = localStorage.getItem('primoUI_theme') || 'light';
+            if (select.querySelector('option[value="' + savedTheme + '"]')) {
+                select.value = savedTheme;
+            }
+        }
+        initThemeSelect();
+
+        function loadNavUser() {
+            const userData = localStorage.getItem('user');
+            const userItem = document.getElementById('nav-user-item');
+            const loginItem = document.getElementById('nav-user-login');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    document.getElementById('nav-user-avatar').textContent = user.username.charAt(0).toUpperCase();
+                    document.getElementById('nav-user-name').textContent = user.username;
+                    userItem.style.display = 'inline-block';
+                    loginItem.style.display = 'none';
+                } catch (e) {
+                    userItem.style.display = 'none';
+                    loginItem.style.display = 'inline-block';
+                }
+            } else {
+                userItem.style.display = 'none';
+                loginItem.style.display = 'inline-block';
+            }
+        }
+        loadNavUser();
+
+        function loadUserData() {
+            const userData = localStorage.getItem('user');
+            const userInfo = document.getElementById('userInfo');
+            if (!userInfo) return;
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    userInfo.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+                            <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--main); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; flex-shrink: 0;">${user.username.charAt(0).toUpperCase()}</div>
+                            <div style="flex: 1;">
+                                <p style="margin: 2px 0;"><strong>用户名：</strong>${user.username}</p>
+                                <p style="margin: 2px 0;"><strong>邮箱/电话：</strong>${user.emailOrPhone}</p>
+                                <p style="margin: 2px 0;"><strong>专属编码：</strong><span style="color: var(--main); font-weight: bold;">${user.code || '未生成'}</span></p>
+                                <p style="margin: 2px 0; font-size: 12px; opacity: 0.6;">注册时间：${user.createdAt}</p>
+                            </div>
+                        </div>
+                    `;
+                } catch (e) {
+                    userInfo.innerHTML = '<p style="text-align: center; color: #666;">暂无用户信息</p>';
+                }
+            } else {
+                userInfo.innerHTML = '<p style="text-align: center; color: #666;">暂无用户信息</p>';
+            }
+        }
+        loadUserData();
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+
+            document.getElementById('time-hhmm').textContent = hours + ':' + minutes;
+            document.getElementById('time-ss').textContent = ':' + seconds;
+            document.getElementById('date').textContent = year + '-' + month + '-' + day;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // ========== 日程管理 ==========
+        const STORAGE_KEY = 'yunshu_todos';
+        let todos = [];
+        let editingTodoId = null;
+
+        function loadTodos() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                try {
+                    todos = JSON.parse(data);
+                } catch (e) {
+                    todos = [];
+                }
+            }
+        }
+
+        function saveTodos() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+            if (window.calendar && window.calendar.render) {
+                window.calendar.render();
+                markCalendarDays();
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            const y = String(d.getFullYear()).slice(-2);
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function renderTodoTable() {
+            const tbody = document.getElementById('todo-table-body');
+            if (todos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--border);">暂无日程</td></tr>';
+                return;
+            }
+
+            const sorted = [...todos].sort((a, b) => {
+                const da = a.date || '';
+                const db = b.date || '';
+                if (da !== db) return da.localeCompare(db);
+                return (a.time || '').localeCompare(b.time || '');
+            });
+
+            tbody.innerHTML = sorted.map(todo => `
+                <tr data-id="${todo.id}" style="${todo.completed ? 'opacity: 0.6;' : ''}">
+                    <td data-label="完成" style="text-align: center;">
+                        <input type="checkbox" ${todo.completed ? 'checked' : ''} onclick="toggleTodoComplete('${todo.id}')">
+                    </td>
+                    <td data-label="日期" style="${todo.completed ? 'text-decoration: line-through;' : ''}">
+                        ${formatDate(todo.date)}${todo.time ? ' ' + todo.time : ''}
+                    </td>
+                    <td data-label="事件" style="${todo.completed ? 'text-decoration: line-through;' : ''}">
+                        ${escapeHtml(todo.title)}
+                        ${todo.reminder ? '<span class="badge" style="background: var(--main); color: #fff; padding: 2px 6px; border-radius: 10px; font-size: 11px; margin-left: 6px;">提醒</span>' : ''}
+                    </td>
+                    <td data-label="编辑" style="text-align: center;">
+                        <button onclick="editTodo('${todo.id}')" style="padding: 4px 8px; font-size: 12px;">编辑</button>
+                        <button onclick="deleteTodo('${todo.id}')" style="padding: 4px 8px; font-size: 12px; background: #ff6b6b; border-color: #ff6b6b; color: #fff;">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function openTodoModal() {
+            editingTodoId = null;
+            document.getElementById('todo-modal-title').textContent = '添加日程';
+            document.getElementById('todo-save-btn').textContent = '添加';
+            document.getElementById('event-input').value = '';
+            const today = new Date();
+            document.getElementById('date-input').value = today.toISOString().split('T')[0];
+            document.getElementById('time-input').value = '';
+            document.getElementById('reminder-input').checked = false;
+            openModal('todo');
+            document.getElementById('event-input').focus();
+        }
+
+        function editTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            editingTodoId = id;
+            document.getElementById('todo-modal-title').textContent = '编辑日程';
+            document.getElementById('todo-save-btn').textContent = '保存';
+            document.getElementById('event-input').value = todo.title;
+            document.getElementById('date-input').value = todo.date || '';
+            document.getElementById('time-input').value = todo.time || '';
+            document.getElementById('reminder-input').checked = todo.reminder || false;
+            openModal('todo');
+        }
+
+        function saveTodo() {
+            const title = document.getElementById('event-input').value.trim();
+            const date = document.getElementById('date-input').value;
+            const time = document.getElementById('time-input').value;
+            const reminder = document.getElementById('reminder-input').checked;
+
+            if (!title) {
+                alert('请输入日程内容');
+                document.getElementById('event-input').focus();
+                return;
+            }
+
+            if (editingTodoId) {
+                const todo = todos.find(t => t.id === editingTodoId);
+                if (todo) {
+                    todo.title = title;
+                    todo.date = date;
+                    todo.time = time;
+                    todo.reminder = reminder;
+                }
+            } else {
+                todos.push({
+                    id: 'todo_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+                    title: title,
+                    date: date,
+                    time: time,
+                    reminder: reminder,
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            saveTodos();
+            renderTodoTable();
+            closeModal('todo');
+        }
+
+        function deleteTodo(id) {
+            openDeleteConfirmModal(id);
+        }
+
+        // ========== 删除确认密码 ==========
+        let currentDeletePassword = '';
+        let currentDeleteId = '';
+        let currentDeleteType = ''; // 'todo', 'all', 'user', 'site'
+
+        function generateDeletePassword() {
+            const timestamp = Date.now().toString();
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let password = '';
+            // 从时间戳中取4位
+            for (let i = 0; i < 4; i++) {
+                password += timestamp[i];
+            }
+            // 添加4位随机字母/数字
+            for (let i = 0; i < 4; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            // 随机排列
+            password = password.split('').sort(() => Math.random() - 0.5).join('');
+            return password;
+        }
+
+        function openDeleteConfirmModal(id) {
+            currentDeleteId = id;
+            currentDeleteType = 'todo';
+            currentDeletePassword = generateDeletePassword();
+            document.getElementById('DeleteOK-modal-title').textContent = '确认删除？';
+            document.getElementById('DeleteOK-password-display').textContent = currentDeletePassword;
+            document.getElementById('DeleteOK-password-input').value = '';
+            openModal('DeleteOK');
+        }
+
+        function openSiteDeleteConfirm(type) {
+            currentDeleteId = '';
+            currentDeleteType = type;
+            currentDeletePassword = generateDeletePassword();
+            const titles = {
+                'all': '确认清除所有数据？',
+                'user': '确认清除用户数据？',
+                'site': '确认清除站点数据？'
+            };
+            document.getElementById('DeleteOK-modal-title').textContent = titles[type] || '确认删除？';
+            document.getElementById('DeleteOK-password-display').textContent = currentDeletePassword;
+            document.getElementById('DeleteOK-password-input').value = '';
+            openModal('DeleteOK');
+        }
+
+        function confirmDelete() {
+            const inputPassword = document.getElementById('DeleteOK-password-input').value;
+            if (inputPassword !== currentDeletePassword) {
+                alert('密码错误');
+                return;
+            }
+
+            if (currentDeleteType === 'todo') {
+                todos = todos.filter(t => t.id !== currentDeleteId);
+                saveTodos();
+                renderTodoTable();
+            } else if (currentDeleteType === 'all') {
+                localStorage.clear();
+                location.reload();
+            } else if (currentDeleteType === 'user') {
+                localStorage.removeItem('user');
+                location.reload();
+            } else if (currentDeleteType === 'site') {
+                const userData = localStorage.getItem('user');
+                localStorage.clear();
+                if (userData) localStorage.setItem('user', userData);
+                location.reload();
+            }
+            closeModal('DeleteOK');
+        }
+
+        function toggleTodoComplete(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodos();
+                renderTodoTable();
+            }
+        }
+
+        function markCalendarDays() {
+            const calendarDays = document.querySelectorAll('.calendar-day');
+            if (!calendarDays || calendarDays.length === 0) return;
+
+            const todoDateMap = {};
+            todos.forEach(todo => {
+                if (todo.date) {
+                    const key = todo.date;
+                    if (!todoDateMap[key]) todoDateMap[key] = [];
+                    todoDateMap[key].push(todo);
+                }
+            });
+
+            calendarDays.forEach(day => {
+                const dateData = day.dataset.date;
+                if (!dateData) return;
+                const dateObj = new Date(dateData);
+                const y = dateObj.getFullYear();
+                const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const d = String(dateObj.getDate()).padStart(2, '0');
+                const dateKey = `${y}-${m}-${d}`;
+                const existingDots = day.querySelector('.calendar-dots');
+                if (existingDots) existingDots.remove();
+
+                const dayTodos = todoDateMap[dateKey];
+                if (dayTodos && dayTodos.length > 0) {
+                    day.style.position = 'relative';
+                    const dotsHtml = document.createElement('div');
+                    dotsHtml.className = 'calendar-dots';
+                    dotsHtml.style.cssText = 'position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px;';
+                    const dotCount = Math.min(dayTodos.length, 3);
+                    for (let i = 0; i < dotCount; i++) {
+                        const dot = document.createElement('span');
+                        dot.style.cssText = 'width: 4px; height: 4px; border-radius: 50%; background: var(--main, #007aff); display: inline-block;';
+                        dotsHtml.appendChild(dot);
+                    }
+                    day.appendChild(dotsHtml);
+                }
+            });
+        }
+
+        // ========== 初始化 ==========
+        loadTodos();
+        renderTodoTable();
+
+        function initCalendarIntegration() {
+            if (window.calendar && typeof window.calendar.render === 'function') {
+                const origRender = window.calendar.render.bind(window.calendar);
+                window.calendar.render = function () {
+                    origRender();
+                    setTimeout(markCalendarDays, 0);
+                };
+                setTimeout(markCalendarDays, 100);
+            } else {
+                setTimeout(initCalendarIntegration, 50);
+            }
+        }
+        initCalendarIntegration();
+
+        // ========== 插件中心 ==========
+        const INSTALLED_PLUGINS_KEY = 'yunshu_installed_plugins';
+
+        function loadPluginCenter() {
+            const container = document.getElementById('plugin-center-content');
+            if (!container) return;
+
+            fetch('db/PluginCenter/PluginCenter.json', { cache: 'no-store' })
+                .then(function (response) {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (!Array.isArray(data) || data.length === 0) {
+                        container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text); opacity: 0.6;">暂无插件</div>';
+                        return;
+                    }
+
+                    const plugins = data.filter(function (item) {
+                        return item && item.id && item.status !== 'hide';
+                    });
+
+                    if (plugins.length === 0) {
+                        container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text); opacity: 0.6;">暂无可用插件</div>';
+                        return;
+                    }
+
+                    const groups = {};
+                    plugins.forEach(function (p) {
+                        const key = p.column || '其他';
+                        if (!groups[key]) groups[key] = [];
+                        groups[key].push(p);
+                    });
+
+                    let html = '';
+                    const installedPlugins = getInstalledPlugins();
+                    Object.keys(groups).forEach(function (groupName) {
+                        html += '<div class="group">' + escapeHtml(groupName) + '</div>';
+                        html += '<div class="plugin-grid">';
+                        groups[groupName].forEach(function (p) {
+                            const tags = Array.isArray(p.tags) ? p.tags : [];
+                            const cardUrl = p.URL || '';
+                            const pluginId = p.id || ('plugin_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7));
+                            const isInstalled = installedPlugins.some(function (ip) { return ip.id === pluginId; });
+                            html += '<div class="plugin-card" data-url="' + escapeHtml(cardUrl) + '" data-plugin-id="' + pluginId + '">';
+                            html += '<div class="plugin-icon">';
+                            html += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/></svg>';
+                            html += '</div>';
+                            html += '<div class="plugin-name">' + escapeHtml(p.title || '未命名插件') + '</div>';
+                            html += '<div class="plugin-desc">' + escapeHtml(p.content || '') + '</div>';
+                            if (p.Developer) {
+                                if (p['Developer-URL']) {
+                                    html += '<div class="plugin-developer">开发者：<a href="' + p['Developer-URL'] + '" target="_blank" rel="noopener" data-inner-link="1">' + escapeHtml(p.Developer) + '</a></div>';
+                                } else {
+                                    html += '<div class="plugin-developer">开发者：' + escapeHtml(p.Developer) + '</div>';
+                                }
+                            }
+                            if (tags.length > 0) {
+                                html += '<div class="plugin-tags">';
+                                tags.forEach(function (t) {
+                                    html += '<span class="plugin-tag">' + escapeHtml(t) + '</span>';
+                                });
+                                html += '</div>';
+                            }
+                            if (isInstalled) {
+                                html += '<button class="plugin-add-btn" disabled style="opacity:0.5;cursor:default;">已安装</button>';
+                            } else {
+                                html += '<button class="plugin-add-btn" onclick="addPluginToSection(this)">添加</button>';
+                            }
+                            html += '</div>';
+                        });
+                        html += '</div>';
+                    });
+
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('.plugin-card').forEach(function (card) {
+                        card.addEventListener('click', function (e) {
+                            if (e.target.closest('[data-inner-link]')) return;
+                            if (e.target.closest('.plugin-add-btn')) return;
+                            const url = card.getAttribute('data-url');
+                            if (url && url !== '') {
+                                window.open(url, '_blank', 'noopener');
+                            }
+                        });
+                    });
+                })
+                .catch(function (error) {
+                    console.error('[插件中心] 加载失败：', error);
+                    container.innerHTML = '<div style="padding: 40px; text-align: center; color: #ff6b6b;">加载插件数据失败：' + escapeHtml(error.message) + '<br><small style="opacity: 0.6;">请确认通过 HTTP 服务器访问此页面（非 file://）。</small></div>';
+                });
+        }
+        loadPluginCenter();
+        loadInstalledPlugins();
+
+        // ========== 添加插件到固定区域 ==========
+        function addPluginToSection(btn) {
+            const card = btn.closest('.plugin-card');
+            if (!card) return;
+
+            const pluginsSection = document.getElementById('plugins-section');
+            if (!pluginsSection) return;
+
+            const url = card.getAttribute('data-url') || '';
+            const name = card.querySelector('.plugin-name');
+            const nameText = name ? name.textContent : '未命名插件';
+            const desc = card.querySelector('.plugin-desc');
+            const descText = desc ? desc.textContent : '';
+            const pluginId = card.getAttribute('data-plugin-id') || ('plugin_' + Date.now());
+
+            // 检查是否已添加
+            const existingLinks = pluginsSection.querySelectorAll('a');
+            for (let i = 0; i < existingLinks.length; i++) {
+                if (existingLinks[i].getAttribute('href') === url) {
+                    return;
+                }
+            }
+
+            // 清除占位符
+            const placeholder = pluginsSection.querySelector('.plugins-empty-placeholder');
+            if (placeholder) {
+                pluginsSection.innerHTML = '';
+            }
+
+            // 创建插件卡片
+            const newCard = document.createElement('a');
+            newCard.href = url || '#';
+            newCard.className = 'tool-card installed-plugin';
+            newCard.setAttribute('data-plugin-id', pluginId);
+            if (!url) {
+                newCard.style.pointerEvents = 'none';
+            }
+            newCard.innerHTML = '<div class="plugin-icon">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/></svg>' +
+                '</div>' +
+                '<div class="tool-name">' + nameText + '</div>' +
+                '<div class="tool-desc">' + descText + '</div>' +
+                '<button class="plugin-remove-btn" onclick="removeInstalledPlugin(\'' + pluginId + '\', event)" title="删除插件">删除</button>';
+
+            pluginsSection.appendChild(newCard);
+
+            // 保存到 localStorage
+            saveInstalledPlugin({
+                id: pluginId,
+                url: url,
+                name: nameText,
+                desc: descText
+            });
+
+            // 更新按钮状态
+            btn.textContent = '已安装';
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'default';
+        }
+
+        // ========== 保存已安装插件到 localStorage ==========
+        function saveInstalledPlugin(plugin) {
+            let installed = [];
+            const data = localStorage.getItem(INSTALLED_PLUGINS_KEY);
+            if (data) {
+                try {
+                    installed = JSON.parse(data);
+                    if (!Array.isArray(installed)) installed = [];
+                } catch (e) {
+                    installed = [];
+                }
+            }
+            const exists = installed.some(function (p) { return p.id === plugin.id; });
+            if (!exists) {
+                installed.push(plugin);
+                localStorage.setItem(INSTALLED_PLUGINS_KEY, JSON.stringify(installed));
+            }
+        }
+
+        // ========== 从 localStorage 获取已安装插件 ==========
+        function getInstalledPlugins() {
+            const data = localStorage.getItem(INSTALLED_PLUGINS_KEY);
+            if (data) {
+                try {
+                    const installed = JSON.parse(data);
+                    return Array.isArray(installed) ? installed : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+            return [];
+        }
+
+        // ========== 删除已安装插件 ==========
+        function removeInstalledPlugin(pluginId, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            let installed = getInstalledPlugins();
+            installed = installed.filter(function (p) { return p.id !== pluginId; });
+            localStorage.setItem(INSTALLED_PLUGINS_KEY, JSON.stringify(installed));
+
+            const pluginsSection = document.getElementById('plugins-section');
+            if (pluginsSection) {
+                const card = pluginsSection.querySelector('a[data-plugin-id="' + pluginId + '"]');
+                if (card) card.remove();
+
+                // 如果删除后没有插件了，显示占位符
+                if (pluginsSection.querySelector('a') === null) {
+                    pluginsSection.innerHTML = '<div class="plugins-empty-placeholder">' +
+                        '<div class="plugins-empty-icon">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+                        '<path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h16c0 1.1.9 2 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/>' +
+                        '</svg></div>' +
+                        '<p class="plugins-empty-text">暂无已安装插件</p>' +
+                        '<p class="plugins-empty-hint">点击左侧「插件」前往安装</p>' +
+                        '</div>';
+                }
+            }
+
+            const pluginCenterBtn = document.querySelector('.plugin-card[data-plugin-id="' + pluginId + '"] .plugin-add-btn');
+            if (pluginCenterBtn) {
+                pluginCenterBtn.textContent = '添加';
+                pluginCenterBtn.disabled = false;
+                pluginCenterBtn.style.opacity = '1';
+                pluginCenterBtn.style.cursor = 'pointer';
+            }
+        }
+
+        // ========== 加载已安装插件到首页 ==========
+        function loadInstalledPlugins() {
+            const pluginsSection = document.getElementById('plugins-section');
+            if (!pluginsSection) return;
+
+            const installed = getInstalledPlugins();
+
+            // 如果没有已安装插件，显示占位提示
+            if (installed.length === 0) {
+                pluginsSection.innerHTML = '<div class="plugins-empty-placeholder">' +
+                    '<div class="plugins-empty-icon">' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+                    '<path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h16c0 1.1.9 2 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/>' +
+                    '</svg></div>' +
+                    '<p class="plugins-empty-text">暂无已安装插件</p>' +
+                    '<p class="plugins-empty-hint">点击左侧「插件」前往安装</p>' +
+                    '</div>';
+                return;
+            }
+
+            // 清除占位符
+            pluginsSection.innerHTML = '';
+
+            installed.forEach(function (plugin) {
+                const existing = pluginsSection.querySelector('a[data-plugin-id="' + plugin.id + '"]');
+                if (existing) return;
+
+                const newCard = document.createElement('a');
+                newCard.href = plugin.url || '#';
+                newCard.className = 'tool-card installed-plugin';
+                newCard.setAttribute('data-plugin-id', plugin.id);
+                if (!plugin.url) {
+                    newCard.style.pointerEvents = 'none';
+                }
+                newCard.innerHTML = '<div class="plugin-icon">' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h16c0 1.1.9 2 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/></svg>' +
+                    '</div>' +
+                    '<div class="tool-name">' + escapeHtml(plugin.name || '未命名插件') + '</div>' +
+                    '<div class="tool-desc">' + escapeHtml(plugin.desc || '') + '</div>' +
+                    '<button class="plugin-remove-btn" onclick="removeInstalledPlugin(\'' + plugin.id + '\', event)" title="删除插件">删除</button>';
+
+                pluginsSection.appendChild(newCard);
+            });
+        }
+
+        const EXPORT_KEYS = [
+            'user',
+            'primoUI_theme',
+            'yunshu_todos',
+            'bookkeeping_records',
+            'purchase_records',
+            'userId',
+            'transfer_user',
+            'transfer_last_session',
+            INSTALLED_PLUGINS_KEY
+        ];
+
+        const HASH_SALT = 'yunshu-backup-v1-salt';
+        const CANONICAL_ORDER = ['version', 'exportedAt', 'app', 'data'];
+
+        function exportBackupTodayStr() {
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return y + m + day;
+        }
+
+        function canonicalStringify(obj) {
+            const parts = [];
+            for (let i = 0; i < CANONICAL_ORDER.length; i++) {
+                const key = CANONICAL_ORDER[i];
+                parts.push(JSON.stringify(key) + ':' + JSON.stringify(obj[key]));
+            }
+            return '{' + parts.join(',') + '}';
+        }
+
+        function bufToHex(buf) {
+            const bytes = new Uint8Array(buf);
+            let out = '';
+            for (let i = 0; i < bytes.length; i++) {
+                out += bytes[i].toString(16).padStart(2, '0');
+            }
+            return out;
+        }
+
+        function sha256Fallback(text) {
+            const utf8 = unescape(encodeURIComponent(text));
+            function rotr(n, x) { return (x >>> n) | (x << (32 - n)); }
+            function ch(x, y, z) { return (x & y) ^ ((~x) & z); }
+            function maj(x, y, z) { return (x & y) ^ (x & z) ^ (y & z); }
+            function sig0(x) { return rotr(2, x) ^ rotr(13, x) ^ rotr(22, x); }
+            function sig1(x) { return rotr(6, x) ^ rotr(11, x) ^ rotr(25, x); }
+            function gam0(x) { return rotr(7, x) ^ rotr(18, x) ^ (x >>> 3); }
+            function gam1(x) { return rotr(17, x) ^ rotr(19, x) ^ (x >>> 10); }
+            const K = [
+                0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+                0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+                0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+                0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+                0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+                0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+                0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+                0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+            ];
+            let H0 = 0x6a09e667, H1 = 0xbb67ae85, H2 = 0x3c6ef372, H3 = 0xa54ff53a;
+            let H4 = 0x510e527f, H5 = 0x9b05688c, H6 = 0x1f83d9ab, H7 = 0x5be0cd19;
+            const n = utf8.length;
+            const bitLenHi = Math.floor(n * 8 / 0x100000000);
+            const bitLenLo = (n * 8) | 0;
+            const numBlocks = Math.ceil((n + 9) / 64);
+            const buffer = new Array(numBlocks * 16);
+            for (let i = 0; i < buffer.length; i++) buffer[i] = 0;
+            for (let i = 0; i < n; i++) {
+                buffer[i >> 2] |= (utf8.charCodeAt(i) & 0xff) << (24 - (i % 4) * 8);
+            }
+            buffer[n >> 2] |= 0x80 << (24 - (n % 4) * 8);
+            buffer[numBlocks * 16 - 2] = bitLenHi;
+            buffer[numBlocks * 16 - 1] = bitLenLo;
+            for (let block = 0; block < numBlocks; block++) {
+                const w = new Array(64);
+                for (let i = 0; i < 16; i++) w[i] = buffer[block * 16 + i];
+                for (let i = 16; i < 64; i++) {
+                    const s0 = gam0(w[i - 15]);
+                    const s1 = gam1(w[i - 2]);
+                    w[i] = (((w[i - 16] + s0) | 0) + ((w[i - 7] + s1) | 0)) | 0;
+                }
+                let a = H0, b = H1, c = H2, d = H3, e = H4, f = H5, g = H6, h = H7;
+                for (let i = 0; i < 64; i++) {
+                    const S1 = sig1(e);
+                    const chv = ch(e, f, g);
+                    const temp1 = (((((h + S1) | 0) + chv) | 0) + K[i]) | 0;
+                    const tt1 = (temp1 + w[i]) | 0;
+                    const S0 = sig0(a);
+                    const majv = maj(a, b, c);
+                    const temp2 = (S0 + majv) | 0;
+                    h = g; g = f; f = e; e = (d + tt1) | 0; d = c; c = b; b = a; a = (tt1 + temp2) | 0;
+                }
+                H0 = (H0 + a) | 0; H1 = (H1 + b) | 0; H2 = (H2 + c) | 0; H3 = (H3 + d) | 0;
+                H4 = (H4 + e) | 0; H5 = (H5 + f) | 0; H6 = (H6 + g) | 0; H7 = (H7 + h) | 0;
+            }
+            function toHex(n) {
+                let s = '';
+                for (let i = 3; i >= 0; i--) {
+                    s += ((n >>> (i * 8)) & 0xff).toString(16).padStart(2, '0');
+                }
+                return s;
+            }
+            return toHex(H0) + toHex(H1) + toHex(H2) + toHex(H3) + toHex(H4) + toHex(H5) + toHex(H6) + toHex(H7);
+        }
+
+        async function computeSha256(text) {
+            const payload = HASH_SALT + '|' + text;
+            if (window.crypto && typeof crypto.subtle !== 'undefined' && typeof crypto.subtle.digest === 'function') {
+                try {
+                    const enc = new TextEncoder();
+                    const buf = await crypto.subtle.digest('SHA-256', enc.encode(payload));
+                    return bufToHex(buf);
+                } catch (e) { }
+            }
+            return sha256Fallback(payload);
+        }
+
+        function buildExportData() {
+            const data = {};
+            EXPORT_KEYS.forEach(function (key) {
+                const value = localStorage.getItem(key);
+                if (value !== null && value !== undefined) {
+                    try {
+                        data[key] = JSON.parse(value);
+                    } catch (e) {
+                        data[key] = value;
+                    }
+                }
+            });
+            return {
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                app: 'yunshu',
+                data: data
+            };
+        }
+
+        function triggerDownload(filename, text) {
+            let dataUri;
+            try {
+                const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+                dataUri = URL.createObjectURL(blob);
+            } catch (e) {
+                dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(text);
+            }
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            if (dataUri.indexOf('blob:') === 0) {
+                setTimeout(function () { try { URL.revokeObjectURL(dataUri); } catch (e) { } }, 5000);
+            }
+        }
+
+        async function exportSiteData() {
+            const exportObj = buildExportData();
+            const count = exportObj.data ? Object.keys(exportObj.data).length : 0;
+            const canonical = canonicalStringify(exportObj);
+            const hash = await computeSha256(canonical);
+            const finalObj = {
+                version: exportObj.version,
+                exportedAt: exportObj.exportedAt,
+                app: exportObj.app,
+                data: exportObj.data,
+                hash: hash
+            };
+            const finalOrder = CANONICAL_ORDER.concat(['hash']);
+            const finalParts = [];
+            for (let i = 0; i < finalOrder.length; i++) {
+                const key = finalOrder[i];
+                finalParts.push(JSON.stringify(key) + ':' + JSON.stringify(finalObj[key]));
+            }
+            const pretty = '{' + finalParts.map(function (p, idx) {
+                const keyName = finalOrder[idx];
+                const colonIdx = p.indexOf(':');
+                const valStr = p.substring(colonIdx + 1);
+                if (keyName === 'data') {
+                    return '\n  ' + JSON.stringify(keyName) + ': ' + JSON.stringify(finalObj.data, null, 2).split('\n').map(function (line) { return '  ' + line; }).join('\n');
+                }
+                return '\n  ' + JSON.stringify(keyName) + ': ' + valStr;
+            }).join(',') + '\n}';
+            triggerDownload('yunshu_backup_' + exportBackupTodayStr() + '.json', pretty);
+            if (count === 0) {
+                alert('当前没有可导出的数据，已生成空的备份文件。\n哈希值：' + hash.substring(0, 16) + '…');
+            } else {
+                alert('导出成功，共 ' + count + ' 项数据已保存到文件。\n文件哈希：' + hash.substring(0, 24) + '…');
+            }
+        }
+
+        async function importSiteData() {
+            const fileInput = document.getElementById('dataImportFile');
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                alert('请先选择要导入的 JSON 文件。');
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                try {
+                    let imported = JSON.parse(e.target.result);
+                    if (!imported || typeof imported !== 'object' || Array.isArray(imported)) {
+                        throw new Error('文件内容格式不正确');
+                    }
+
+                    const providedHash = imported.hash;
+                    let toImport;
+                    if (imported.data && typeof imported.data === 'object') {
+                        toImport = imported.data;
+                    } else {
+                        toImport = imported;
+                    }
+
+                    if (providedHash && typeof providedHash === 'string') {
+                        const coreObj = {};
+                        for (let i = 0; i < CANONICAL_ORDER.length; i++) {
+                            const key = CANONICAL_ORDER[i];
+                            if (Object.prototype.hasOwnProperty.call(imported, key)) {
+                                coreObj[key] = imported[key];
+                            } else if (key === 'data') {
+                                coreObj[key] = toImport;
+                            } else if (key === 'version') {
+                                coreObj[key] = imported.version || 1;
+                            } else if (key === 'exportedAt') {
+                                coreObj[key] = imported.exportedAt || '';
+                            } else if (key === 'app') {
+                                coreObj[key] = imported.app || 'yunshu';
+                            }
+                        }
+                        const canonical = canonicalStringify(coreObj);
+                        const recomputed = await computeSha256(canonical);
+                        if (recomputed !== providedHash) {
+                            const msg = '文件完整性校验失败：哈希不匹配。\n\n可能原因：\n- 文件内容被修改过\n- 文件损坏\n\n原始哈希：' + providedHash.substring(0, 32) + '…\n重新计算：' + recomputed.substring(0, 32) + '…\n\n是否忽略校验，强行导入？\n⚠️ 不建议这么做，可能导致数据损坏。';
+                            if (!confirm(msg)) {
+                                alert('已取消导入。');
+                                return;
+                            }
+                        }
+                    } else {
+                        if (!confirm('该备份文件不含防篡改哈希（可能是旧版文件），无法验证其完整性。\n\n是否仍然继续导入？')) {
+                            return;
+                        }
+                    }
+
+                    const entries = [];
+                    EXPORT_KEYS.forEach(function (key) {
+                        if (Object.prototype.hasOwnProperty.call(toImport, key) && toImport[key] !== null && toImport[key] !== undefined) {
+                            entries.push({ key: key, value: toImport[key] });
+                        }
+                    });
+
+                    if (entries.length === 0) {
+                        alert('文件中未识别到可导入的数据。');
+                        return;
+                    }
+
+                    const summary = entries.map(function (it) { return '- ' + it.key; }).join('\n');
+                    const msg = '将导入以下 ' + entries.length + ' 项数据：\n' + summary + '\n\n导入将覆盖当前对应的数据，确定继续？';
+                    if (!confirm(msg)) return;
+
+                    entries.forEach(function (it) {
+                        const v = it.value;
+                        if (typeof v === 'string') {
+                            localStorage.setItem(it.key, v);
+                        } else {
+                            localStorage.setItem(it.key, JSON.stringify(v));
+                        }
+                    });
+
+                    fileInput.value = '';
+                    if (typeof window.loadUserData === 'function') {
+                        try { window.loadUserData(); } catch (err) { }
+                    }
+                    if (typeof window.loadTodos === 'function' && typeof window.renderTodoTable === 'function') {
+                        try {
+                            window.loadTodos();
+                            window.renderTodoTable();
+                        } catch (err) { }
+                    }
+                    alert('导入成功！\n各模块页面（记账、采购、转账、聊天等）中的数据请重新打开对应页面以刷新。');
+                } catch (err) {
+                    alert('导入失败：' + (err && err.message ? err.message : err));
+                }
+            };
+            reader.onerror = function () {
+                alert('读取文件时出错。');
+            };
+            reader.readAsText(file);
+        }
+    </script>
+    <script src="UI/primoUI 0.1/js/modules/feedback.js"></script>
+    <script src="UI/primoUI 0.1/js/modules/modal.js"></script>
+    <script src="UI/primoUI 0.1/js/modules/tabs.js"></script>
+    <script src="UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script src="UI/primoUI 0.1/js/modules/nav.js"></script>
+    <script src="UI/primoUI 0.1/js/modules/calendar.js"></script>
+
+</body>
+
+</html>
