@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会员中心</title>
+    <link rel="stylesheet" href="../../UI/primoUI 0.2/css/ui.css">
+    <link rel="stylesheet" href="../../css/stat.css">
+    <link rel="stylesheet" href="../../css/toolbar.css">
+
+    <style>
+        body {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .dashboard-cards {
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--main), transparent);
+        }
+
+        .stat-card.total .stat-value {
+            color: var(--main);
+        }
+
+        .stat-card.members .stat-value {
+            color: #6366f1;
+        }
+
+        .stat-card.balance .stat-value {
+            color: #10b981;
+        }
+
+        .toolbar {
+            margin-bottom: 20px;
+        }
+
+        .tabs-content {
+            margin-bottom: 20px;
+        }
+
+        .tabs-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-pane button {
+            margin-right: 8px;
+            margin-bottom: 8px;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--btn-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .tab-pane button:hover {
+            background: var(--main);
+            color: white;
+            border-color: var(--main);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--btn-bg);
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .status-processing {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .status-cancelled {
+            background: rgba(156, 163, 175, 0.1);
+            color: #9ca3af;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-action {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: var(--main);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            opacity: 0.8;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            align-items: center;
+        }
+
+        .pagination button {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            background: var(--btn-bg);
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--main);
+            color: white;
+            border-color: var(--main);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            padding: 0 8px;
+            color: var(--text-sub);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-sub);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--text-sub);
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nav"></div>
+
+    <h1>会员中心</h1>
+    <hr>
+
+    <div class="dashboard-cards">
+        <div class="stat-card total">
+            <div class="stat-header">
+                <span>会员订单总数</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#4a90d9">
+                    <path
+                        d="M3,3H21V7H3V3M4,8H20V21H4V8M9.5,11A0.5,0.5 0 0,0 9,11.5A0.5,0.5 0 0,0 9.5,12A0.5,0.5 0 0,0 10,11.5A0.5,0.5 0 0,0 9.5,11Z" />
+                </svg>
+            </div>
+            <div class="stat-value" id="statTotalOrders">0</div>
+            <div class="stat-sub">本月新增: <span id="statMonthOrders">0</span></div>
+        </div>
+
+        <div class="stat-card members">
+            <div class="stat-header">
+                <span>会员总数</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#6366f1">
+                    <path
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+            </div>
+            <div class="stat-value" id="statTotalMembers">0</div>
+            <div class="stat-sub">本月新增: <span id="statMonthMembers">0</span></div>
+        </div>
+
+        <div class="stat-card balance">
+            <div class="stat-header">
+                <span>所有会员余额总数</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#10b981">
+                    <path
+                        d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
+                </svg>
+            </div>
+            <div class="stat-value" id="statTotalBalance">¥0.00</div>
+            <div class="stat-sub">本月新增: ¥<span id="statMonthBalance">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索订单编号、客户名称、商品、备注..." oninput="renderTable()">
+            <button class="btn btn-primary" onclick="renderTable()">搜索</button>
+        </div>
+        <div class="filter-group">
+            <span style="font-size: 0.85rem; color: color-mix(in srgb, var(--text) 60%, transparent);">状态:</span>
+            <button class="btn active" onclick="setStatusFilter('all', this)">全部</button>
+            <button class="btn" onclick="setStatusFilter('pending', this)">待确认</button>
+            <button class="btn" onclick="setStatusFilter('processing', this)">进行中</button>
+            <button class="btn" onclick="setStatusFilter('completed', this)">已完成</button>
+            <button class="btn" onclick="setStatusFilter('cancelled', this)">已取消</button>
+        </div>
+        <div class="filter-group">
+            <span style="font-size: 0.85rem; color: color-mix(in srgb, var(--text) 60%, transparent);">日期:</span>
+            <input type="date" id="filterDateFrom" onchange="renderTable()">
+            <span>~</span>
+            <input type="date" id="filterDateTo" onchange="renderTable()">
+        </div>
+    </div>
+
+    <div class="tabs-container">
+        <div class="tabs-browser">
+            <button class="tab-browser active" onclick="switchTab('Edit', event)">编辑</button>
+            <button class="tab-browser" onclick="switchTab('date', event)">数据</button>
+        </div>
+
+        <div class="tabs-content">
+            <div class="tab-pane active" id="Edit">
+                <button onclick="openAddMemberModal()">添加会员</button>
+                <button onclick="deleteSelected()">删除选中</button>
+                <button onclick="batchProcess()">批量处理</button>
+                <button onclick="mergeData()">合并数据</button>
+            </div>
+            <div class="tab-pane" id="date">
+                <h4>导入</h4>
+                <button onclick="importJSON()">JSON</button>
+                <button onclick="importCSV()">CSV</button>
+                <h4>导出</h4>
+                <button onclick="exportJSON()">JSON</button>
+                <button onclick="exportCSV()">CSV</button>
+                <hr>
+                <h4>删除</h4>
+                <button onclick="clearAllData()">清空数据</button>
+            </div>
+
+
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs-browser">
+                <button class="tab-browser active" onclick="switchTab('tab1', event)">会员列表</button>
+                <button class="tab-browser" onclick="switchTab('tab2', event)">会员订单</button>
+            </div>
+
+            <div class="tabs-content">
+                <div class="tab-pane active" id="tab1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllMembers" onclick="toggleSelectAll('members')">
+                                </th>
+                                <th>会员编号</th>
+                                <th>客户名称</th>
+                                <th>联系方式</th>
+                                <th>余额</th>
+                                <th>注册日期</th>
+                                <th>状态</th>
+                                <th>订单数</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersTableBody">
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="membersPagination">
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab2">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllOrders" onclick="toggleSelectAll('orders')">
+                                </th>
+                                <th>订单编号</th>
+                                <th>客户名称</th>
+                                <th>消费金额</th>
+                                <th>订购服务</th>
+                                <th>下单日期</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="ordersPagination">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div id="modalContent"
+            style="background: var(--card-bg); border-radius: 12px; padding: 24px; width: 90%; max-width: 480px; box-shadow: var(--shadow);">
+            <h3 id="modalTitle" style="margin-top: 0;">添加会员</h3>
+            <form id="memberForm">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">客户名称</label>
+                    <input type="text" id="memberName" required
+                        style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--btn-bg); color: var(--text);">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">联系方式</label>
+                    <input type="text" id="memberContact"
+                        style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--btn-bg); color: var(--text);">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">初始余额</label>
+                    <input type="number" id="memberBalance" min="0" step="0.01" value="0"
+                        style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--btn-bg); color: var(--text);">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">状态</label>
+                    <select id="memberStatus"
+                        style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--btn-bg); color: var(--text);">
+                        <option value="active">活跃</option>
+                        <option value="inactive">非活跃</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button type="button" onclick="closeModal()"
+                        style="padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; background: var(--btn-bg); color: var(--text); cursor: pointer;">取消</button>
+                    <button type="submit"
+                        style="padding: 8px 16px; border: none; border-radius: 6px; background: var(--main); color: white; cursor: pointer;">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteModal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div
+            style="background: var(--card-bg); border-radius: 12px; padding: 24px; width: 90%; max-width: 480px; box-shadow: var(--shadow);">
+            <h3 style="margin-top: 0; color: #ef4444;">确认删除</h3>
+            <hr>
+            <div style="margin-bottom: 12px; color: #ef4444; font-size: 0.9rem;">⚠️ 警告：此操作不可恢复！</div>
+            <div id="deleteMessage" style="margin-bottom: 16px; font-size: 0.95rem;"></div>
+            <div
+                style="padding: 12px; background: var(--btn-bg); border-radius: 6px; text-align: center; margin-bottom: 16px;">
+                <span
+                    style="font-family: 'Courier New', Courier, monospace; font-size: 1.4rem; font-weight: bold; color: var(--main); letter-spacing: 4px;"
+                    id="deleteCodeDisplay"></span>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 4px; font-size: 0.9rem; color: #d91f29;">输入验证码确认删除</label>
+                <input type="text" id="deletePassword" placeholder="请输入上方的验证码"
+                    style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--btn-bg); color: var(--text);">
+            </div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button type="button" onclick="closeDeleteModal()"
+                    style="padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; background: var(--btn-bg); color: var(--text); cursor: pointer;">取消</button>
+                <button type="button" onclick="confirmDelete()"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; background: #ef4444; color: white; cursor: pointer;">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/nav.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script src="../../UI/primoUI 0.2/js/modules/tabs.js"></script>
+
+    <script>
+        const originalSwitchTab = window.switchTab;
+        function switchTab(tabId, event) {
+            if (!event) {
+                if (originalSwitchTab) originalSwitchTab(tabId);
+                return;
+            }
+
+            const container = event.target.closest('.tabs-container');
+            if (!container) {
+                if (originalSwitchTab) originalSwitchTab(tabId, event);
+                return;
+            }
+
+            container.querySelectorAll('.tabs-content .tab-pane').forEach(pane => pane.classList.remove('active'));
+            container.querySelectorAll('.tabs-browser .tab-browser').forEach(tab => tab.classList.remove('active'));
+
+            const targetPane = document.getElementById(tabId);
+            if (targetPane) {
+                targetPane.classList.add('active');
+            }
+
+            if (event.target) {
+                event.target.classList.add('active');
+            }
+        }
+        const STORAGE_MEMBERS = 'members';
+        const STORAGE_ORDERS = 'order_records';
+
+        let members = [];
+        let orders = [];
+        let currentDeleteAction = null;
+        let currentDeleteParam = null;
+        let deleteVerificationCode = '';
+
+        function generateDeleteCode() {
+            const pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let code = '';
+            for (let i = 0; i < 10; i++) {
+                code += pool[Math.floor(Math.random() * pool.length)];
+            }
+            deleteVerificationCode = code;
+            document.getElementById('deleteCodeDisplay').textContent = deleteVerificationCode;
+        }
+
+        function openDeleteModal(message, action, param) {
+            currentDeleteAction = action;
+            currentDeleteParam = param;
+            document.getElementById('deleteMessage').textContent = message;
+            document.getElementById('deletePassword').value = '';
+            generateDeleteCode();
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            currentDeleteAction = null;
+            currentDeleteParam = null;
+        }
+
+        function confirmDelete() {
+            const input = document.getElementById('deletePassword').value.trim();
+            if (!input) {
+                alert('请输入验证码');
+                return;
+            }
+            if (input !== deleteVerificationCode) {
+                alert('验证码输入错误，请重新输入');
+                document.getElementById('deletePassword').value = '';
+                generateDeleteCode();
+                return;
+            }
+
+            if (currentDeleteAction) {
+                currentDeleteAction(currentDeleteParam);
+            }
+            closeDeleteModal();
+        }
+
+        let currentStatusFilter = 'all';
+        let currentSearchText = '';
+        let currentDateFrom = '';
+        let currentDateTo = '';
+        let membersPage = 1;
+        let ordersPage = 1;
+        const pageSize = 10;
+
+        function getMembers() {
+            const str = localStorage.getItem(STORAGE_MEMBERS);
+            return str ? JSON.parse(str) : [];
+        }
+
+        function saveMembers(list) {
+            localStorage.setItem(STORAGE_MEMBERS, JSON.stringify(list));
+        }
+
+        function getOrders() {
+            const str = localStorage.getItem(STORAGE_ORDERS);
+            return str ? JSON.parse(str) : [];
+        }
+
+        function saveOrders(list) {
+            localStorage.setItem(STORAGE_ORDERS, JSON.stringify(list));
+        }
+
+        function initData() {
+            members = getMembers();
+            orders = getOrders();
+        }
+
+        function updateStats() {
+            const memberOrders = getMemberOrders();
+            const totalOrders = memberOrders.length;
+            const totalMembers = members.length;
+            const totalBalance = members.reduce((sum, m) => sum + (m.balance || 0), 0);
+
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const monthOrders = memberOrders.filter(o => {
+                const d = new Date(getOrderDate(o));
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            }).length;
+
+            const monthMembers = members.filter(m => {
+                const d = new Date(m.registerDate || '');
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            }).length;
+
+            const monthBalance = members.filter(m => {
+                const d = new Date(m.registerDate || '');
+                return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            }).reduce((sum, m) => sum + (m.balance || 0), 0);
+
+            document.getElementById('statTotalOrders').textContent = totalOrders;
+            document.getElementById('statMonthOrders').textContent = monthOrders;
+            document.getElementById('statTotalMembers').textContent = totalMembers;
+            document.getElementById('statMonthMembers').textContent = monthMembers;
+            document.getElementById('statTotalBalance').textContent = '¥' + totalBalance.toFixed(2);
+            document.getElementById('statMonthBalance').textContent = monthBalance.toFixed(2);
+        }
+
+        function getMemberOrders() {
+            const memberNames = members.map(m => m.name);
+            return orders.filter(o => {
+                const customer = o.customer || '';
+                return memberNames.some(name => customer.includes(name) || name.includes(customer));
+            });
+        }
+
+        function refreshData() {
+            members = getMembers();
+            orders = getOrders();
+        }
+
+        function getMemberOrderCount(memberName) {
+            return orders.filter(o => (o.customer || '').includes(memberName)).length;
+        }
+
+        function getOrderProduct(order) {
+            if (order.items && Array.isArray(order.items) && order.items.length > 0) {
+                return order.items.map(i => i.name).join('、');
+            }
+            return order.product || order.service || '-';
+        }
+
+        function getOrderDate(order) {
+            if (order.date) return order.date;
+            if (order.createdAt) return new Date(order.createdAt).toISOString().split('T')[0];
+            return '-';
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'active': { class: 'status-active', text: '活跃' },
+                'inactive': { class: 'status-inactive', text: '非活跃' },
+                'pending': { class: 'status-pending', text: '待确认' },
+                'processing': { class: 'status-processing', text: '进行中' },
+                'completed': { class: 'status-completed', text: '已完成' },
+                'cancelled': { class: 'status-cancelled', text: '已取消' }
+            };
+            const b = badges[status] || badges['active'];
+            return `<span class="status-badge ${b.class}">${b.text}</span>`;
+        }
+
+        function renderMembersTable() {
+            const tbody = document.getElementById('membersTableBody');
+            let filtered = members;
+
+            if (currentSearchText) {
+                const search = currentSearchText.toLowerCase();
+                filtered = filtered.filter(m =>
+                    m.id.toLowerCase().includes(search) ||
+                    m.name.toLowerCase().includes(search) ||
+                    (m.contact || '').toLowerCase().includes(search)
+                );
+            }
+
+            const totalPages = Math.ceil(filtered.length / pageSize);
+            membersPage = Math.min(membersPage, totalPages);
+            membersPage = Math.max(membersPage, 1);
+
+            const start = (membersPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filtered.slice(start, end);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><br>暂无会员数据</td></tr>`;
+                document.getElementById('membersPagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = pageData.map(member => `
+                <tr>
+                    <td><input type="checkbox" class="member-checkbox" data-id="${member.id}"></td>
+                    <td>${member.id}</td>
+                    <td>${member.name}</td>
+                    <td>${member.contact || '-'}</td>
+                    <td>¥${(member.balance || 0).toFixed(2)}</td>
+                    <td>${member.registerDate || '-'}</td>
+                    <td>${getStatusBadge(member.status)}</td>
+                    <td>${getMemberOrderCount(member.name)}</td>
+                    <td class="btn-group">
+                        <button class="btn-action btn-edit" onclick="editMember('${member.id}')">编辑</button>
+                        <button class="btn-action btn-delete" onclick="deleteMember('${member.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            renderPagination('membersPagination', membersPage, totalPages, 'membersPage');
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            let filtered = getMemberOrders();
+
+            if (currentStatusFilter !== 'all') {
+                filtered = filtered.filter(o => o.status === currentStatusFilter);
+            }
+
+            if (currentSearchText) {
+                const search = currentSearchText.toLowerCase();
+                filtered = filtered.filter(o => {
+                    const code = (o.code || o.id || '').toLowerCase();
+                    const customer = (o.customer || '').toLowerCase();
+                    const product = (o.product || o.service || '').toLowerCase();
+                    const items = o.items && Array.isArray(o.items)
+                        ? o.items.map(i => i.name).join(' ').toLowerCase()
+                        : '';
+                    const remark = (o.remark || '').toLowerCase();
+                    return code.includes(search) || customer.includes(search) ||
+                        product.includes(search) || items.includes(search) || remark.includes(search);
+                });
+            }
+
+            if (currentDateFrom) {
+                filtered = filtered.filter(o => getOrderDate(o) >= currentDateFrom);
+            }
+
+            if (currentDateTo) {
+                filtered = filtered.filter(o => getOrderDate(o) <= currentDateTo);
+            }
+
+            const totalPages = Math.ceil(filtered.length / pageSize);
+            ordersPage = Math.min(ordersPage, totalPages);
+            ordersPage = Math.max(ordersPage, 1);
+
+            const start = (ordersPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filtered.slice(start, end);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3,3H21V7H3V3M4,8H20V21H4V8M9.5,11A0.5,0.5 0 0,0 9,11.5A0.5,0.5 0 0,0 9.5,12A0.5,0.5 0 0,0 10,11.5A0.5,0.5 0 0,0 9.5,11Z"/></svg><br>暂无会员订单数据</td></tr>`;
+                document.getElementById('ordersPagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = pageData.map(order => `
+                <tr>
+                    <td><input type="checkbox" class="order-checkbox" data-id="${order.id}"></td>
+                    <td>${order.code || order.id}</td>
+                    <td>${order.customer || '未知客户'}</td>
+                    <td>¥${(order.amount || 0).toFixed(2)}</td>
+                    <td>${getOrderProduct(order)}</td>
+                    <td>${getOrderDate(order)}</td>
+                    <td>${getStatusBadge(order.status)}</td>
+                    <td class="btn-group">
+                        <button class="btn-action btn-edit" onclick="editOrder('${order.id}')">编辑</button>
+                        <button class="btn-action btn-delete" onclick="deleteOrder('${order.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            renderPagination('ordersPagination', ordersPage, totalPages, 'ordersPage');
+        }
+
+        function renderPagination(containerId, currentPage, totalPages, pageVarName) {
+            if (totalPages <= 1) {
+                document.getElementById(containerId).innerHTML = '';
+                return;
+            }
+
+            let html = `<button onclick="${pageVarName}=1;renderTable()" ${currentPage === 1 ? 'disabled' : ''}>首页</button>`;
+            html += `<button onclick="${pageVarName}--;renderTable()" ${currentPage === 1 ? 'disabled' : ''}>上一页</button>`;
+
+            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                if (i === currentPage) {
+                    html += `<span style="font-weight: 600;">${i}</span>`;
+                } else {
+                    html += `<button onclick="${pageVarName}=${i};renderTable()">${i}</button>`;
+                }
+            }
+
+            html += `<button onclick="${pageVarName}++;renderTable()" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>`;
+            html += `<button onclick="${pageVarName}=${totalPages};renderTable()" ${currentPage === totalPages ? 'disabled' : ''}>末页</button>`;
+
+            document.getElementById(containerId).innerHTML = html;
+        }
+
+        function renderTable() {
+            refreshData();
+            currentSearchText = document.getElementById('searchInput').value;
+            currentDateFrom = document.getElementById('filterDateFrom').value;
+            currentDateTo = document.getElementById('filterDateTo').value;
+
+            membersPage = 1;
+            ordersPage = 1;
+
+            renderMembersTable();
+            renderOrdersTable();
+        }
+
+        function setStatusFilter(status, btn) {
+            currentStatusFilter = status;
+
+            document.querySelectorAll('.filter-group .btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            renderTable();
+        }
+
+        function toggleSelectAll(type) {
+            const checkbox = document.getElementById(type === 'members' ? 'selectAllMembers' : 'selectAllOrders');
+            const checkboxes = document.querySelectorAll(type === 'members' ? '.member-checkbox' : '.order-checkbox');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+
+        function openAddMemberModal() {
+            document.getElementById('modalTitle').textContent = '添加会员';
+            document.getElementById('memberForm').reset();
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        document.getElementById('memberForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('memberName').value;
+            const contact = document.getElementById('memberContact').value;
+            const balance = parseFloat(document.getElementById('memberBalance').value) || 0;
+            const status = document.getElementById('memberStatus').value;
+
+            const newMember = {
+                id: 'M' + String(members.length + 1).padStart(3, '0'),
+                name: name,
+                contact: contact,
+                balance: balance,
+                registerDate: new Date().toISOString().split('T')[0],
+                status: status
+            };
+
+            members.push(newMember);
+            saveMembers(members);
+
+            updateStats();
+            renderMembersTable();
+            closeModal();
+        });
+
+        function editMember(id) {
+            const member = members.find(m => m.id === id);
+            if (!member) return;
+
+            const newName = prompt('输入新的客户名称:', member.name);
+            if (newName === null) return;
+
+            const newBalance = parseFloat(prompt('输入新的余额:', member.balance));
+            if (isNaN(newBalance)) return;
+
+            member.name = newName;
+            member.balance = newBalance;
+
+            saveMembers(members);
+            updateStats();
+            renderMembersTable();
+        }
+
+        function deleteMember(id) {
+            const member = members.find(m => m.id === id);
+            const message = `确定要删除会员「${member ? member.name : id}」吗？`;
+            openDeleteModal(message, function () {
+                members = members.filter(m => m.id !== id);
+                saveMembers(members);
+                updateStats();
+                renderMembersTable();
+                renderOrdersTable();
+            }, id);
+        }
+
+        function deleteSelected() {
+            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+            if (selectedMembers.length === 0) {
+                alert('请先选择要删除的会员');
+                return;
+            }
+
+            const message = `确定要删除选中的 ${selectedMembers.length} 个会员吗？`;
+            openDeleteModal(message, function () {
+                const idsToDelete = Array.from(document.querySelectorAll('.member-checkbox:checked')).map(cb => cb.dataset.id);
+                members = members.filter(m => !idsToDelete.includes(m.id));
+                saveMembers(members);
+                updateStats();
+                renderMembersTable();
+                renderOrdersTable();
+            }, null);
+        }
+
+        function editOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+
+            const newStatus = prompt('输入新的状态 (pending/processing/completed/cancelled):', order.status);
+            if (newStatus === null) return;
+
+            const validStatuses = ['pending', 'processing', 'completed', 'cancelled'];
+            if (!validStatuses.includes(newStatus)) {
+                alert('无效的状态值');
+                return;
+            }
+
+            order.status = newStatus;
+            saveOrders(orders);
+
+            updateStats();
+            renderOrdersTable();
+        }
+
+        function deleteOrder(id) {
+            const order = orders.find(o => o.id === id);
+            const message = `确定要删除订单「${order ? order.code || order.id : id}」吗？`;
+            openDeleteModal(message, function () {
+                orders = orders.filter(o => o.id !== id);
+                saveOrders(orders);
+                updateStats();
+                renderOrdersTable();
+            }, id);
+        }
+
+        function batchProcess() {
+            const selectedMembers = document.querySelectorAll('.member-checkbox:checked');
+            if (selectedMembers.length === 0) {
+                alert('请先选择要批量处理的会员');
+                return;
+            }
+
+            const action = prompt('批量处理操作 (active/inactive):');
+            if (action === null) return;
+
+            const validActions = ['active', 'inactive'];
+            if (!validActions.includes(action)) {
+                alert('无效的操作值');
+                return;
+            }
+
+            const idsToUpdate = Array.from(selectedMembers).map(cb => cb.dataset.id);
+            members.forEach(m => {
+                if (idsToUpdate.includes(m.id)) {
+                    m.status = action;
+                }
+            });
+
+            saveMembers(members);
+            renderMembersTable();
+        }
+
+        function mergeData() {
+            alert('合并数据功能需要进一步配置，请联系管理员。');
+        }
+
+        function importJSON() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.members) members = [...members, ...data.members];
+
+                        saveMembers(members);
+
+                        updateStats();
+                        renderTable();
+                        alert('导入成功');
+                    } catch (err) {
+                        alert('导入失败：JSON格式错误');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function importCSV() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    try {
+                        const lines = event.target.result.split('\n');
+                        const headers = lines[0].split(',');
+
+                        for (let i = 1; i < lines.length; i++) {
+                            const values = lines[i].split(',');
+                            if (values.length >= headers.length) {
+                                const member = {};
+                                headers.forEach((h, idx) => {
+                                    member[h.trim()] = values[idx] ? values[idx].trim() : '';
+                                });
+                                if (member.id && member.name) {
+                                    member.balance = parseFloat(member.balance) || 0;
+                                    members.push(member);
+                                }
+                            }
+                        }
+
+                        saveMembers(members);
+                        updateStats();
+                        renderTable();
+                        alert('导入成功');
+                    } catch (err) {
+                        alert('导入失败：CSV格式错误');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function exportJSON() {
+            const data = { members, orders: getMemberOrders() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '会员数据_' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportCSV() {
+            let csv = '会员编号,客户名称,联系方式,余额,注册日期,状态\n';
+            members.forEach(m => {
+                csv += `${m.id},${m.name},${m.contact || ''},${m.balance || 0},${m.registerDate || ''},${m.status || ''}\n`;
+            });
+
+            const memberOrders = getMemberOrders();
+            csv += '\n订单编号,客户名称,消费金额,订购服务,下单日期,状态\n';
+            memberOrders.forEach(o => {
+                csv += `${o.code || o.id},${o.customer || ''},${o.amount || 0},${o.product || o.service || ''},${o.date || o.orderDate || ''},${o.status || ''}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '会员数据_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearAllData() {
+            const message = '确定要清空所有会员数据吗？此操作不可恢复！';
+            openDeleteModal(message, function () {
+                members = [];
+                saveMembers(members);
+                updateStats();
+                renderTable();
+            }, null);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initData();
+            updateStats();
+            renderTable();
+        });
+
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'order_records' || e.key === 'members') {
+                refreshData();
+                updateStats();
+                renderTable();
+            }
+        });
+
+        document.getElementById('modalOverlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+
+</html>
