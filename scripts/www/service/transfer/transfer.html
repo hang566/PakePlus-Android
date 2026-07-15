@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>网页文件文字互传</title>
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/variables.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/base.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/layout.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/forms.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/feedback.css">
+    <script src="../../UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.11.1/simplepeer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.7.2/client.min.js"></script>
+    <style>
+        /* 主容器 */
+        .wrap {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部状态栏 */
+        .top-bar {
+            background: var(--card-bg);
+            padding: 14px 16px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 9;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-bar .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--main);
+        }
+
+        .state-wait .status-dot {
+            background: #ff9500
+        }
+
+        .state-disconnect .status-dot {
+            background: #ff3b30
+        }
+
+        .state-normal .status-dot {
+            background: #34c759
+        }
+
+        .state-text {
+            color: var(--text)
+        }
+
+        /* 二维码卡片 */
+        .qr-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin: 16px;
+            padding: 20px;
+        }
+
+        .qr-box {
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 12px;
+        }
+
+        #qrCanvas {
+            width: 200px;
+            height: 200px;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .qr-tip {
+            color: var(--text);
+            font-size: 14px;
+            margin-top: 12px;
+            opacity: 0.7;
+        }
+
+        /* 聊天区域卡片 */
+        .chat-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin: 0 16px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header .icon {
+            color: var(--main)
+        }
+
+        .chat-box {
+            padding: 12px 16px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        .msg-item {
+            margin: 10px 0;
+            display: flex
+        }
+
+        .msg-self {
+            justify-content: flex-end
+        }
+
+        .msg-other {
+            justify-content: flex-start
+        }
+
+        .msg-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 15px;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .msg-self .msg-bubble {
+            background: var(--main);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-other .msg-bubble {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* 文件上传卡片 */
+        .upload-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin: 16px;
+            padding: 20px;
+        }
+
+        .upload-area {
+            padding: 24px 20px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-area:hover,
+        .upload-area.active {
+            border-color: var(--main);
+            background: rgba(0, 122, 255, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px
+        }
+
+        .upload-text {
+            font-size: 15px;
+            color: var(--text);
+            font-weight: 500
+        }
+
+        .upload-sub {
+            font-size: 13px;
+            color: var(--text);
+            opacity: 0.6;
+            margin-top: 6px
+        }
+
+        #fileInput {
+            display: none
+        }
+
+        /* 进度条 */
+        .progress-wrap {
+            margin: 12px 0 0;
+            display: none
+        }
+
+        .progress-name {
+            font-size: 13px;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between
+        }
+
+        .progress-bg {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--main);
+            transition: 0.15s;
+            border-radius: 3px
+        }
+
+        /* 底部输入区 */
+        .input-footer {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 600px;
+            width: 100%;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            padding: 10px 16px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 -2px 8px var(--shadow);
+        }
+
+        #textInput {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 15px;
+            outline: none;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        #textInput:focus {
+            border-color: var(--main)
+        }
+
+        #sendTextBtn {
+            background: var(--main);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 15px;
+        }
+
+        #sendTextBtn:hover {
+            opacity: 0.9
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nav"></div>
+    <div class="wrap" style="margin-top: 30px;">
+        <!-- 顶部连接状态栏 -->
+        <div class="top-bar state-wait" id="topBar">
+            <div class="status-dot"></div>
+            <span class="state-text">等待对方扫码连接</span>
+        </div>
+
+        <!-- 二维码卡片 -->
+        <div class="qr-card">
+            <div class="qr-box">
+                <canvas id="qrCanvas"></canvas>
+                <div class="qr-tip">另一台设备打开本网页，扫描上方二维码即可配对</div>
+            </div>
+        </div>
+
+        <!-- 聊天消息卡片 -->
+        <div class="chat-card">
+            <div class="chat-header">
+                <span class="icon">💬</span>
+                <span>消息记录</span>
+            </div>
+            <div class="chat-box" id="chatBox"></div>
+        </div>
+
+        <!-- 文件上传卡片 -->
+        <div class="upload-card">
+            <div id="uploadBox" class="upload-area">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">点击或拖拽文件到此处</div>
+                <div class="upload-sub">支持图片、文档、视频、压缩包</div>
+            </div>
+            <input id="fileInput" multiple type="file">
+            <div class="progress-wrap" id="progressBox">
+                <div class="progress-name">
+                    <span id="progressName">正在发送...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bg">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部文字输入框 -->
+    <div class="input-footer">
+        <input id="textInput" placeholder="输入文字消息..." maxlength="500">
+        <button id="sendTextBtn">发送</button>
+    </div>
+
+    <script>
+        // ==================== Toast 提示功能（使用 primoUI 样式） ====================
+        function showToast(message, duration = 2000) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), duration);
+        }
+
+        // 底层稳定配置
+        const SIGNAL_SERVER = "wss://simple-signal.glitch.me";
+        const CHUNK_SIZE = 256 * 1024;
+        const HB_INTERVAL = 3000;
+        const HB_OFFLINE = 12000;
+        const MAX_AUTO_RETRY = 5;
+
+        // 全局变量
+        let socket, peer, roomId;
+        let heartbeatTimer = null, lastHbTime = 0, retryTimes = 0;
+        let recvFileCache = new Map();
+        const pageUrl = location.origin + location.pathname;
+
+        // DOM节点
+        const topBar = document.getElementById("topBar");
+        const qrCanvas = document.getElementById("qrCanvas");
+        const uploadBox = document.getElementById("uploadBox");
+        const fileInput = document.getElementById("fileInput");
+        const progressBox = document.getElementById("progressBox");
+        const progressName = document.getElementById("progressName");
+        const progressPercent = document.getElementById("progressPercent");
+        const progressBar = document.getElementById("progressBar");
+        const chatBox = document.getElementById("chatBox");
+        const textInput = document.getElementById("textInput");
+        const sendTextBtn = document.getElementById("sendTextBtn");
+
+        // 随机生成房间ID
+        function createRandomRoom() {
+            const num = Math.floor(Math.random() * 900000 + 100000);
+            roomId = num.toString();
+            QRCode.toCanvas(qrCanvas, pageUrl + "?r=" + roomId, { width: 200 }, err => { });
+            socket = io(SIGNAL_SERVER);
+            socket.emit("join", roomId);
+            showToast("二维码已生成，等待设备扫码接入");
+            socket.on("ready", () => {
+                peer = new SimplePeer({ initiator: socket.id < socket.partnerId, trickle: false });
+                bindPeerEvent();
+                peer.on("signal", sig => socket.emit("signal", roomId, sig));
+                socket.on("signal", data => peer.signal(data));
+            })
+        }
+
+        // 顶部状态更新
+        function updateState(type, text) {
+            topBar.className = "top-bar";
+            if (type === "connect") topBar.classList.add("state-normal");
+            if (type === "waiting") topBar.classList.add("state-wait");
+            if (type === "disconnect") topBar.classList.add("state-disconnect");
+            topBar.querySelector(".state-text").innerText = text;
+        }
+
+        // 心跳保活+自动重连
+        function startHeartbeat() {
+            lastHbTime = Date.now();
+            clearInterval(heartbeatTimer);
+            heartbeatTimer = setInterval(() => {
+                if (!peer || !peer.connected) {
+                    updateState("waiting", "网络波动，正在自动重连");
+                    autoReconnect();
+                    return;
+                }
+                const gap = Date.now() - lastHbTime;
+                if (gap > HB_OFFLINE) {
+                    updateState("disconnect", "连接断开，请重新扫码配对");
+                    stopHeartbeat();
+                    if (peer) peer.destroy();
+                    peer = null;
+                    return;
+                }
+                updateState("connect", "已连接，可以发文字/文件");
+                peer.send({ type: "hb" });
+            }, HB_INTERVAL);
+        }
+        function stopHeartbeat() { clearInterval(heartbeatTimer); }
+        function autoReconnect() {
+            if (retryTimes >= MAX_AUTO_RETRY) return;
+            retryTimes++;
+            showToast(`网络波动，自动重试第${retryTimes}次`);
+            setTimeout(() => socket.emit("join", roomId), 2000);
+        }
+
+        // 渲染聊天文字气泡
+        function addChatMsg(text, isSelf) {
+            const div = document.createElement("div");
+            div.className = "msg-item " + (isSelf ? "msg-self" : "msg-other");
+            div.innerHTML = `<div class="msg-bubble">${text}</div>`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // 发送文本消息
+        function sendTextMsg() {
+            const txt = textInput.value.trim();
+            if (!txt) return;
+            if (!peer || !peer.connected) {
+                showToast("未连接对方，无法发送消息");
+                return;
+            }
+            addChatMsg(txt, true);
+            peer.send({ type: "text", content: txt });
+            textInput.value = "";
+        }
+
+        // 绑定P2P所有事件
+        function bindPeerEvent() {
+            peer.on("connect", () => {
+                retryTimes = 0;
+                updateState("connect", "已连接，可以发文字/文件");
+                showToast("两台设备配对成功，可发送文字、文件");
+                startHeartbeat();
+            });
+            peer.on("close", () => {
+                updateState("waiting", "连接中断，尝试自动恢复");
+                stopHeartbeat();
+                autoReconnect();
+            });
+            peer.on("error", () => { });
+            peer.on("data", async pkg => {
+                if (pkg.type === "hb") {
+                    lastHbTime = Date.now();
+                    return;
+                }
+                if (pkg.type === "text") {
+                    addChatMsg(pkg.content, false);
+                    return;
+                }
+                if (pkg.type === "file_head") {
+                    recvFileCache.set(pkg.fid, { name: pkg.name, chunks: [] });
+                    return;
+                }
+                if (pkg.type === "chunk") {
+                    const task = recvFileCache.get(pkg.fid);
+                    task.chunks.push(pkg.data);
+                    if (task.chunks.length === pkg.total) {
+                        const blob = new Blob(task.chunks);
+                        const a = document.createElement("a");
+                        a.href = URL.createObjectURL(blob);
+                        a.download = task.name;
+                        addChatMsg(`收到文件：${task.name} <a href="${a.href}" download="${task.name}" style="color:var(--main)">点击下载</a>`, false);
+                        recvFileCache.delete(pkg.fid);
+                        progressBox.style.display = "none";
+                        showToast(`文件 ${task.name} 接收完成`);
+                    }
+                }
+            })
+        }
+
+        // 发送文件逻辑
+        async function sendFile(file) {
+            if (!peer || !peer.connected) {
+                showToast("还未连接另一台设备，请先扫码配对");
+                return;
+            }
+            progressBox.style.display = "block";
+            progressName.innerText = "正在发送：" + file.name;
+            progressPercent.innerText = "0%";
+            progressBar.style.width = "0%";
+            const fid = Math.random().toString(36).slice(2);
+            const buffer = await file.arrayBuffer();
+            const totalChunk = Math.ceil(buffer.byteLength / CHUNK_SIZE);
+            peer.send({ type: "file_head", fid, name: file.name, total: totalChunk });
+            addChatMsg(`正在发送文件：${file.name}`, true);
+            for (let i = 0; i < totalChunk; i++) {
+                const slice = buffer.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+                peer.send({ type: "chunk", fid, index: i, total: totalChunk, data: slice });
+                const percent = ((i + 1) / totalChunk * 100).toFixed(1);
+                progressBar.style.width = percent + "%";
+                progressPercent.innerText = percent + "%";
+                await new Promise(r => setTimeout(r, 20));
+            }
+            addChatMsg(`文件 ${file.name} 发送完成`, true);
+            showToast(`文件 ${file.name} 发送完成`);
+            setTimeout(() => progressBox.style.display = "none", 800);
+        }
+
+        // 文件上传绑定
+        uploadBox.onclick = () => fileInput.click();
+        fileInput.onchange = e => {
+            const files = e.target.files;
+            for (let f of files) sendFile(f);
+        }
+        uploadBox.ondragover = e => {
+            e.preventDefault();
+            uploadBox.classList.add("active");
+        }
+        uploadBox.ondragleave = () => uploadBox.classList.remove("active");
+        uploadBox.ondrop = e => {
+            e.preventDefault();
+            uploadBox.classList.remove("active");
+            const files = e.dataTransfer.files;
+            for (let f of files) sendFile(f);
+        }
+
+        // 文本发送
+        sendTextBtn.onclick = sendTextMsg;
+        textInput.onkeydown = e => {
+            if (e.key === "Enter") sendTextMsg();
+        }
+
+        // 页面初始化
+        window.onload = () => {
+            const params = new URLSearchParams(location.search);
+            if (params.has("r")) {
+                roomId = params.get("r");
+                QRCode.toCanvas(qrCanvas, pageUrl + "?r=" + roomId, { width: 200 });
+                socket = io(SIGNAL_SERVER);
+                socket.emit("join", roomId);
+                socket.on("ready", () => {
+                    peer = new SimplePeer({ initiator: socket.id < socket.partnerId, trickle: false });
+                    bindPeerEvent();
+                    peer.on("signal", sig => socket.emit("signal", roomId, sig));
+                    socket.on("signal", data => peer.signal(data));
+                })
+                updateState("waiting", "已进入房间，等待对方连接");
+            } else {
+                createRandomRoom();
+            }
+        }
+    </script>
+
+    <script src="../../js/nav.js"></script>
+</body>
+
+</html>
