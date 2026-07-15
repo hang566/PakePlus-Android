@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>primoUI - 原生 UI 组件库</title>
+  <link rel="stylesheet" href="css/modules/variables.css">
+  <link rel="stylesheet" href="css/modules/base.css">
+  <link rel="stylesheet" href="css/modules/layout.css">
+  <link rel="stylesheet" href="css/modules/forms.css">
+  <link rel="stylesheet" href="css/modules/navigation.css">
+  <link rel="stylesheet" href="css/modules/display.css">
+  <link rel="stylesheet" href="css/modules/feedback.css">
+  <link rel="stylesheet" href="css/modules/tabs-browser.css">
+  <style>
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, var(--main) 0%, rgba(0,122,255,0.08) 100%);
+      border-radius: var(--radius-lg);
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0,122,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0,180,42,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: var(--text);
+      font-weight: 700;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-sub);
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--main);
+      display: inline-block;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 30%;
+      height: 3px;
+      background: var(--success);
+    }
+    .demo-box {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .demo-box:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      border-color: rgba(0,122,255,0.2);
+    }
+    .demo-box h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: var(--text);
+      font-size: 1.25rem;
+    }
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
+      font-size: 13px;
+      margin-top: 20px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .code-block code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+      border-color: rgba(0,122,255,0.3);
+    }
+    .feature-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .feature-card h3 {
+      margin-bottom: 12px;
+      font-size: 1.125rem;
+    }
+    .feature-card p {
+      margin: 0;
+      color: var(--text-sub);
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+    .nav-spacer {
+      padding-top: 90px;
+    }
+    .copy-btn {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      padding: 4px 12px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .code-block:hover .copy-btn {
+      opacity: 1;
+    }
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .theme-grid button {
+      padding: 12px 8px;
+      font-size: 13px;
+      min-width: auto;
+    }
+    .component-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .footer {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-placeholder);
+      border-top: 1px solid var(--border);
+      margin-top: 48px;
+    }
+    .footer p {
+      margin: 4px 0;
+      font-size: 0.9em;
+    }
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero {
+        padding: 50px 16px;
+      }
+      .nav-spacer {
+        padding-top: 130px;
+      }
+      .demo-box {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">primoUI</div>
+    <ul class="navbar-nav">
+      <li><a href="#features">特性</a></li>
+      <li><a href="#themes">主题</a></li>
+      <li><a href="#components">组件</a></li>
+      <li><a href="#quickstart">快速开始</a></li>
+      <li><a href="demo/index.html">示例</a></li>
+    </ul>
+  </nav>
+
+  <div class="container nav-spacer">
+    <div class="hero">
+      <div class="hero-content">
+        <h1>primoUI</h1>
+        <p>原生 HTML5 / CSS3 / JavaScript 组件库，零依赖，开箱即用</p>
+        <div class="btn-group">
+          <button class="btn-main" onclick="showToast('欢迎使用 primoUI！', 2000, 'success')">开始使用</button>
+          <button onclick="document.getElementById('quickstart').scrollIntoView({behavior:'smooth'})">查看文档</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="features">
+      <h2 class="section-title">核心特性</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>多主题支持</h3>
+          <p>内置20+主题配色，支持系统跟随和时间自动切换</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>零依赖</h3>
+          <p>纯原生实现，无第三方依赖，轻量高效</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">♿</div>
+          <h3>无障碍设计</h3>
+          <p>高对比度模式、键盘导航、屏幕阅读器支持</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>轻量高效</h3>
+          <p>组件原子化设计，按需引入，性能优异</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="themes">
+      <h2 class="section-title">主题切换</h2>
+      <div class="demo-box">
+        <div class="theme-grid">
+          <button onclick="setTheme('light')">浅色</button>
+          <button onclick="setTheme('dark')">深色</button>
+          <button onclick="setTheme('system')">跟随系统</button>
+          <button onclick="setTheme('time')">时间自动</button>
+          <button onclick="resetTheme()">重置</button>
+        </div>
+        <div class="theme-grid">
+          <button onclick="setTheme('red')">红色</button>
+          <button onclick="setTheme('blue')">蓝色</button>
+          <button onclick="setTheme('green')">绿色</button>
+          <button onclick="setTheme('purple')">紫色</button>
+          <button onclick="setTheme('orange')">橙色</button>
+        </div>
+        <div class="theme-grid">
+          <button onclick="setTheme('high-contrast')">高对比度</button>
+          <button onclick="setTheme('eye-care')">护眼模式</button>
+          <button onclick="setTheme('sunset')">日落</button>
+          <button onclick="setTheme('ocean')">海洋</button>
+          <button onclick="setTheme('forest')">森林</button>
+        </div>
+        <div class="code-block" id="theme-code">
+          <button class="btn copy-btn" onclick="copyCode('theme-code')">复制</button>
+          <code>// 设置主题
+setTheme('dark');
+setTheme('system');
+setTheme('time');
+setTheme('blue');
+
+// 重置主题
+resetTheme();</code>
+        </div>
+      </div>
+    </div>
+
+    <div id="components">
+      <h2 class="section-title">组件演示</h2>
+
+      <div class="demo-box">
+        <h3>按钮</h3>
+        <div class="btn-group">
+          <button>普通按钮</button>
+          <button class="btn-main">主按钮</button>
+          <button class="btn-success">成功</button>
+          <button class="btn-warning">警告</button>
+          <button class="btn-danger">危险</button>
+          <button disabled>禁用</button>
+          <button class="btn-loading">加载中</button>
+        </div>
+        <div class="code-block" id="btn-code">
+          <button class="btn copy-btn" onclick="copyCode('btn-code')">复制</button>
+          <code>&lt;button&gt;普通按钮&lt;/button&gt;
+&lt;button class="btn-main"&gt;主按钮&lt;/button&gt;
+&lt;button class="btn-success"&gt;成功&lt;/button&gt;
+&lt;button class="btn-warning"&gt;警告&lt;/button&gt;
+&lt;button class="btn-danger"&gt;危险&lt;/button&gt;</code>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>表单元素</h3>
+        <div class="row">
+          <div class="col">
+            <div class="form-item">
+              <label class="form-label">输入框</label>
+              <input type="text" placeholder="请输入内容">
+            </div>
+            <div class="form-item">
+              <label class="form-label">下拉框</label>
+              <select>
+                <option>选项 1</option>
+                <option>选项 2</option>
+                <option>选项 3</option>
+              </select>
+            </div>
+            <div class="form-item">
+              <label class="form-label">文本域</label>
+              <textarea placeholder="请输入多行文本"></textarea>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-item">
+              <label class="form-label">开关</label>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="form-item">
+              <label class="form-label">滑块</label>
+              <div class="slider-wrapper">
+                <input type="range" class="slider-input" min="0" max="100" value="50">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>单选框与复选框</h3>
+        <div class="row">
+          <div class="col">
+            <div class="radio-item">
+              <input type="radio" name="radio" id="r1" checked>
+              <label for="r1">选项 A</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="radio" id="r2">
+              <label for="r2">选项 B</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="radio" id="r3">
+              <label for="r3">选项 C</label>
+            </div>
+          </div>
+          <div class="col">
+            <div class="checkbox-item">
+              <input type="checkbox" id="c1" checked>
+              <label for="c1">选项 1</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="c2">
+              <label for="c2">选项 2</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="c3">
+              <label for="c3">选项 3</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>卡片与布局</h3>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-header">卡片标题</div>
+              <p>这是卡片内容区域，支持自定义标题和页脚</p>
+              <div class="card-footer">
+                <button class="btn-main">操作</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="panel">
+              <div class="panel-header">面板标题</div>
+              <p>这是面板内容区域，适合表单分区使用</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>标签页</h3>
+        <div class="tabs-browser">
+          <button class="tab-browser active" onclick="switchTab('tab1', event)">首页</button>
+          <button class="tab-browser" onclick="switchTab('tab2', event)">文档</button>
+          <button class="tab-browser" onclick="switchTab('tab3', event)">示例</button>
+        </div>
+        <div class="tabs-content">
+          <div class="tab-pane active" id="tab1">
+            <h4>首页内容</h4>
+            <p>欢迎使用 primoUI 组件库！</p>
+          </div>
+          <div class="tab-pane" id="tab2">
+            <h4>文档内容</h4>
+            <p>这里是详细的组件文档说明</p>
+          </div>
+          <div class="tab-pane" id="tab3">
+            <h4>示例内容</h4>
+            <p>这里是各种组件的使用示例</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>数据展示</h3>
+        <table>
+          <thead>
+            <tr><th>姓名</th><th>年龄</th><th>城市</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>张三</td><td>25</td><td>北京</td></tr>
+            <tr><td>李四</td><td>30</td><td>上海</td></tr>
+            <tr><td>王五</td><td>28</td><td>广州</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 20px;">
+          <span class="tag">普通标签</span>
+          <span class="tag tag-success">成功</span>
+          <span class="tag tag-warning">警告</span>
+          <span class="tag tag-danger">危险</span>
+          <span class="tag tag-info">信息</span>
+        </div>
+        <div style="margin-top: 16px;">
+          <span class="badge">5</span>
+          <span class="badge badge-success">3</span>
+          <span class="badge badge-danger">1</span>
+        </div>
+        <div class="progress" style="margin-top: 16px;">
+          <div class="progress-bar" style="width: 75%"></div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>反馈组件</h3>
+        <div class="btn-group">
+          <button onclick="openModal()">打开模态框</button>
+          <button onclick="showToast('操作成功！', 2000, 'success')">成功Toast</button>
+          <button onclick="showToast('警告信息', 2000, 'warning')">警告Toast</button>
+          <button onclick="showToast('错误提示', 2000, 'danger')">危险Toast</button>
+          <button onclick="showNotification('消息提醒', '您有新的待办事项')">系统通知</button>
+        </div>
+        <div class="btn-group" style="margin-top: 12px;">
+          <button onclick="showPopconfirm('确定删除该数据？删除后不可恢复！').then(function(result) { if(result) showToast('已删除', 2000, 'success'); })">确认弹窗</button>
+          <button onclick="showLoading('加载中...'); setTimeout(hideLoading, 2000)">加载动画</button>
+          <span class="tooltip">悬停提示<span class="tooltip-text">这是提示信息</span></span>
+        </div>
+        <div class="code-block" id="feedback-code">
+          <button class="btn copy-btn" onclick="copyCode('feedback-code')">复制</button>
+          <code>// Toast提示
+showToast('操作成功', 2000, 'success');
+showToast('警告信息', 3000, 'warning');
+
+// 确认弹窗（Promise）
+if(await showPopconfirm('确定删除？')) {
+  // 执行删除逻辑
+}
+
+// 系统通知
+showNotification('标题', '内容');
+
+// 加载动画
+showLoading('加载中...');
+setTimeout(hideLoading, 2000);</code>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>导航组件</h3>
+        <div class="breadcrumb">
+          <span class="breadcrumb-item">首页</span>
+          <span class="breadcrumb-item">组件</span>
+          <span class="breadcrumb-item">导航</span>
+        </div>
+        <div class="pagination">
+          <span class="page-item disabled">上一页</span>
+          <span class="page-item active">1</span>
+          <span class="page-item">2</span>
+          <span class="page-item">3</span>
+          <span class="page-item">下一页</span>
+        </div>
+        <ul class="menu">
+          <li class="menu-item">菜单项 1</li>
+          <li class="menu-item active">菜单项 2</li>
+          <li class="menu-divider"></li>
+          <li class="menu-item">菜单项 3</li>
+        </ul>
+      </div>
+
+      <div class="demo-box">
+        <h3>胶囊导航</h3>
+        <div class="nav-pills nav-horizontal">
+          <span class="nav-pill active" onclick="switchPill('pill1', event)">首页</span>
+          <span class="nav-pill" onclick="switchPill('pill2', event)">文档</span>
+          <span class="nav-pill" onclick="switchPill('pill3', event)">示例</span>
+          <span class="nav-pill" onclick="switchPill('pill4', event)">关于</span>
+        </div>
+        <div style="margin-top: 16px;">
+          <div class="pill-content active" id="pill1">
+            <p>欢迎来到 primoUI 首页！这是一个原生的 UI 组件库。</p>
+          </div>
+          <div class="pill-content" id="pill2">
+            <p>详细的文档说明，帮助您快速上手使用 primoUI 组件。</p>
+          </div>
+          <div class="pill-content" id="pill3">
+            <p>丰富的使用示例，展示各种组件的实际应用场景。</p>
+          </div>
+          <div class="pill-content" id="pill4">
+            <p>关于 primoUI 的更多信息，包括设计理念和开发团队。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>折叠组件</h3>
+        <div class="collapse-header" onclick="toggleCollapse('collapse1')">
+          <span>点击展开/折叠内容</span>
+          <span>▼</span>
+        </div>
+        <div class="collapse" id="collapse1">
+          <div class="collapse-body">
+            <p>这是折叠区域的内容，支持多层嵌套和动画过渡效果。可以用于展示详细信息、帮助文档、设置面板等场景。</p>
+            <div class="collapse-header" onclick="toggleCollapse('collapse-inner'); event.stopPropagation()">
+              <span>嵌套折叠</span>
+              <span>▼</span>
+            </div>
+            <div class="collapse" id="collapse-inner">
+              <div class="collapse-body" style="margin-top: 4px;">
+                <p>这是嵌套的折叠内容，支持多层嵌套。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>弹出框 (Popover)</h3>
+        <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
+          <div class="popover top" id="popover1">
+            <button onclick="togglePopover('popover1')">上侧弹出</button>
+            <div class="popover-content">
+              <div class="popover-title">标题</div>
+              <div class="popover-body">这是弹出框内容，可以包含更多详细信息。</div>
+            </div>
+          </div>
+          <div class="popover right" id="popover2">
+            <button onclick="togglePopover('popover2')">右侧弹出</button>
+            <div class="popover-content">
+              <div class="popover-title">标题</div>
+              <div class="popover-body">右侧弹出的Popover内容。</div>
+            </div>
+          </div>
+          <div class="popover left" id="popover3">
+            <button onclick="togglePopover('popover3')">左侧弹出</button>
+            <div class="popover-content">
+              <div class="popover-title">标题</div>
+              <div class="popover-body">左侧弹出的Popover内容。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>轮播组件</h3>
+        <div class="carousel" id="demo-carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item">
+              <div style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--main) 0%, rgba(0,122,255,0.3) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">🎨</span>
+              </div>
+              <div class="carousel-caption">
+                <h4>第一张幻灯片</h4>
+                <p>支持自动轮播和手动切换</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--success) 0%, rgba(0,180,42,0.3) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">📦</span>
+              </div>
+              <div class="carousel-caption">
+                <h4>第二张幻灯片</h4>
+                <p>响应式设计，适配各种屏幕</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--warning) 0%, rgba(255,193,7,0.3) 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 3rem;">⚡</span>
+              </div>
+              <div class="carousel-caption">
+                <h4>第三张幻灯片</h4>
+                <p>优雅的过渡动画效果</p>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control carousel-control-prev">‹</button>
+          <button class="carousel-control carousel-control-next">›</button>
+          <ol class="carousel-indicators">
+            <li class="carousel-indicator active"></li>
+            <li class="carousel-indicator"></li>
+            <li class="carousel-indicator"></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>Jumbotron 超大屏幕</h3>
+        <div class="jumbotron">
+          <h1>欢迎使用 primoUI</h1>
+          <p class="lead">原生 HTML5 / CSS3 / JavaScript 组件库</p>
+          <p>遵循六大设计原则：确定性、安全性、多元性、低学习成本、资源低占用、开箱即用</p>
+          <div class="btn-group">
+            <button class="btn-main">立即开始</button>
+            <button>查看文档</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h3>排版样式</h3>
+        <div class="display-1">Display 1</div>
+        <div class="display-2">Display 2</div>
+        <div class="display-3">Display 3</div>
+        <div class="display-4">Display 4</div>
+        <hr>
+        <p><mark>高亮标记文本</mark></p>
+        <p><small>小号文本</small></p>
+        <blockquote>这是一段引用文字，用于展示引用内容的样式。</blockquote>
+        <dl>
+          <dt>定义术语</dt>
+          <dd>这是术语的详细描述内容。</dd>
+        </dl>
+        <p><kbd>Ctrl</kbd> + <kbd>S</kbd> 保存文件</p>
+      </div>
+
+      <div class="demo-box">
+        <h3>高亮标记</h3>
+        <p>这是 <span class="highlight markYellow">黄色高亮</span> 文字</p>
+        <p>这是 <span class="highlight markGreen">绿色高亮</span> 文字</p>
+        <p>这是 <span class="highlight markRed">红色高亮</span> 文字</p>
+        <p>这是 <span class="highlight markBlue">蓝色高亮</span> 文字</p>
+        <p>这是 <span class="highlight markOrange">橙色高亮</span> 文字</p>
+        <p>这是 <span class="highlight markPurple">紫色高亮</span> 文字</p>
+      </div>
+
+      <div class="demo-box">
+        <h3>自适应文字</h3>
+        <div style="background: var(--main); padding: 24px; border-radius: var(--radius-md);">
+          <p class="text-auto-contrast">白色背景显示深色，深色背景显示白色</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="quickstart">
+      <h2 class="section-title">快速开始</h2>
+      <div class="demo-box">
+        <h3>1. 引入CSS模块</h3>
+        <div class="code-block" id="css-code">
+          <button class="btn copy-btn" onclick="copyCode('css-code')">复制</button>
+          <code>&lt;link rel="stylesheet" href="css/modules/variables.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/base.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/layout.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/forms.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/navigation.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/display.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/feedback.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/tabs-browser.css"&gt;</code>
+        </div>
+
+        <h3>2. 引入JS模块</h3>
+        <div class="code-block" id="js-code">
+          <button class="btn copy-btn" onclick="copyCode('js-code')">复制</button>
+          <code>&lt;script src="js/modules/theme.js"&gt;&lt;/script&gt;
+&lt;script src="js/modules/tabs.js"&gt;&lt;/script&gt;
+&lt;script src="js/modules/modal.js"&gt;&lt;/script&gt;
+&lt;script src="js/modules/feedback.js"&gt;&lt;/script&gt;</code>
+        </div>
+
+        <h3>3. 使用组件</h3>
+        <div class="code-block" id="usage-code">
+          <button class="btn copy-btn" onclick="copyCode('usage-code')">复制</button>
+          <code>&lt;!-- 按钮 --&gt;
+&lt;button class="btn-main"&gt;主按钮&lt;/button&gt;
+
+&lt;!-- 卡片 --&gt;
+&lt;div class="card"&gt;
+  &lt;div class="card-header"&gt;标题&lt;/div&gt;
+  &lt;p&gt;内容&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;!-- 主题切换 --&gt;
+&lt;button onclick="setTheme('dark')"&gt;深色模式&lt;/button&gt;</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>primoUI · 原生 HTML5 / CSS3 / JavaScript</p>
+      <p>零依赖 · 开箱即用</p>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>模态框标题</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>这是模态框的内容区域，支持自定义内容和操作按钮。</p>
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeModal()">取消</button>
+        <button class="btn-main" onclick="closeModal(); showToast('操作成功！', 2000, 'success')">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/modules/theme.js"></script>
+  <script src="js/modules/tabs.js"></script>
+  <script src="js/modules/modal.js"></script>
+  <script src="js/modules/feedback.js"></script>
+  <script src="js/modules/utils.js"></script>
+  <script src="js/modules/carousel.js"></script>
+  <script src="js/modules/scrollspy.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      initCarousel('demo-carousel');
+      initScrollspy('.navbar-nav', 'div[id]');
+    });
+  </script>
+</body>
+</html>
