@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>编码生成&解析工具 时间戳+10位随机码</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #222
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 15px;
+            cursor: pointer;
+            background: #2b78e4;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #2060bd
+        }
+
+        textarea,
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 15px;
+            margin: 8px 0;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+        }
+
+        #genResult {
+            min-height: 120px;
+            white-space: pre-line;
+        }
+
+        #parseInfo {
+            white-space: pre-line;
+            line-height: 1.7;
+            color: #111
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #005ea6
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h3>一、生成编码（时间戳 + 10位随机字符）</h3>
+        <button onclick="createCode()">生成新编码</button>
+        <div id="genResult"></div>
+    </div>
+
+    <div class="box">
+        <h3>二、解析已有编码（翻译/拆解信息）</h3>
+        <input id="codeInput" placeholder="粘贴上面生成的完整编码，例如：1789685423109s9kF2xQ7zR">
+        <button onclick="parseCode()">解析编号信息</button>
+        <div id="parseInfo"></div>
+    </div>
+
+    <script>
+        // 1. 生成N位随机字符：数字+小写+大写字母
+        function getRandomStr(len = 10) {
+            const pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let res = '';
+            for (let i = 0; i < len; i++) {
+                let r = Math.floor(Math.random() * pool.length);
+                res += pool[r];
+            }
+            return res;
+        }
+
+        // 2. 生成完整编码：毫秒时间戳 + 10位随机串
+        function getFullCode() {
+            const stamp = Date.now();
+            const rand10 = getRandomStr(10);
+            return stamp + rand10;
+        }
+
+        // 生成按钮
+        function createCode() {
+            const code = getFullCode();
+            const box = document.getElementById('genResult');
+            box.innerHTML += code + '\n';
+        }
+
+        // 3. 解析编码，拆解+翻译说明
+        function parseCode() {
+            const code = document.getElementById('codeInput').value.trim();
+            const infoBox = document.getElementById('parseInfo');
+            if (!code) {
+                infoBox.innerText = '请输入需要解析的编码！';
+                return;
+            }
+
+            // 分割：前面纯数字是时间戳，后面10位是随机码
+            let stampStr = '';
+            let randStr = '';
+            // 从后截取10位随机字符
+            if (code.length > 10) {
+                randStr = code.slice(-10);
+                stampStr = code.slice(0, code.length - 10);
+            } else {
+                infoBox.innerText = '编码长度不足，不是标准格式！\n标准格式：毫秒时间戳(多位数字)+10位随机字符';
+                return;
+            }
+
+            const timestamp = Number(stampStr);
+            if (isNaN(timestamp)) {
+                infoBox.innerText = '前部无法识别为时间戳数字，编码格式错误';
+                return;
+            }
+
+            // 时间戳转本地时间
+            const timeObj = new Date(timestamp);
+            const localTime = timeObj.toLocaleString('zh-CN', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false
+            });
+
+            // 分类统计随机串字符
+            let numCount = 0, lowerCount = 0, upperCount = 0;
+            for (let c of randStr) {
+                if (/[0-9]/.test(c)) numCount++;
+                else if (/[a-z]/.test(c)) lowerCount++;
+                else if (/[A-Z]/.test(c)) upperCount++;
+            }
+
+            // 输出解析信息（带中文说明翻译）
+            const text =
+                `【完整原始编号】：${code}
+
+<span class="info-label">1. 时间戳分段信息</span>
+· 毫秒时间戳数值：${timestamp}
+· 对应生成时间：${localTime}
+· 含义翻译：该编码创建的精确本地时间，精确到毫秒，可用于排序、溯源创建顺序
+
+<span class="info-label">2. 随机校验串（固定10位）</span>
+· 随机字符段：${randStr}
+· 数字数量：${numCount} 个
+· 小写字母：${lowerCount} 个
+· 大写字母：${upperCount} 个
+· 字符池说明：由 0-9、a-z、A-Z 62种字符随机组合
+· 作用翻译：防止编号重复、做简易校验标识，同一毫秒内可生成大量不重复编码
+
+<span class="info-label">3. 整体规则说明</span>
+格式规则 = 毫秒时间戳(不定长数字) + 10位随机混合字符
+原理：时间戳保证大体时序，10位高随机字符消除同毫秒重复，适合订单、批次、设备唯一编码`;
+
+            infoBox.innerHTML = text;
+        }
+    </script>
+</body>
+
+</html>
