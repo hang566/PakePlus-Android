@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云枢|订单管理</title>
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/variables.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/base.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/layout.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/forms.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/navigation.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/display.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/feedback.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/tabs-browser.css">
+    <link rel="stylesheet" href="../css/toolbar.css">
+    
+    <style>
+        /* 使用 primoUI 主题变量 */
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--main);
+        }
+
+        .stat-card .stat-sub {
+            font-size: 0.85rem;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+        }
+
+        .stat-card.pending .stat-value {
+            color: #faad14;
+        }
+
+        .stat-card.revenue .stat-value,
+        .stat-card.completed .stat-value {
+            color: #52c41a;
+        }
+
+        
+
+        .btn {
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--btn-bg);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--main);
+            color: #fff;
+            border-color: var(--main);
+        }
+
+        .btn-primary {
+            background: var(--main);
+            color: #fff;
+            border-color: var(--main);
+        }
+
+        .btn-primary:hover {
+            background: color-mix(in srgb, var(--main) 85%, black);
+            border-color: color-mix(in srgb, var(--main) 85%, black);
+        }
+
+        .btn-success {
+            background: #52c41a;
+            color: #fff;
+            border-color: #52c41a;
+        }
+
+        .btn-success:hover {
+            background: #45a017;
+            border-color: #45a017;
+        }
+
+        .btn-danger {
+            background: #f5222d;
+            color: #fff;
+            border-color: #f5222d;
+        }
+
+        .btn-danger:hover {
+            background: #d91f29;
+            border-color: #d91f29;
+        }
+
+        .btn-secondary {
+            background: var(--btn-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--btn-hover);
+            color: var(--text);
+        }
+
+        .data-table-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+            margin-bottom: 24px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .data-table-wrapper table {
+            width: 100%;
+            min-width: 900px;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table-wrapper thead {
+            background: var(--btn-bg);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .data-table-wrapper th,
+        .data-table-wrapper td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .data-table-wrapper th {
+            font-weight: 600;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table-wrapper tbody tr:hover {
+            background: var(--btn-bg);
+        }
+
+        .data-table-wrapper .actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: nowrap;
+        }
+
+        .data-table-wrapper .actions button {
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .data-table-wrapper .actions button:hover {
+            background: var(--main);
+            color: #fff;
+            border-color: var(--main);
+        }
+
+        .data-table-wrapper td.amount {
+            font-weight: 600;
+            color: #52c41a;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background: #fff7e6;
+            color: #d48806;
+            border: 1px solid #ffe58f;
+        }
+
+        .status-badge.processing {
+            background: #e6f7ff;
+            color: #0050b3;
+            border: 1px solid #91d5ff;
+        }
+
+        .status-badge.completed {
+            background: #f6ffed;
+            color: #389e0d;
+            border: 1px solid #b7eb8f;
+        }
+
+        .status-badge.cancelled {
+            background: #fff1f0;
+            color: #cf1322;
+            border: 1px solid #ffa39e;
+        }
+
+        .code-display {
+            padding: 8px 12px;
+            background: var(--btn-bg);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+            word-break: break-all;
+        }
+
+        .modal-content {
+            max-width: 520px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--main);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--main) 20%, transparent);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tabs-browser {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tab-browser {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .tab-browser.active {
+            background: var(--main);
+            color: #fff;
+            border-color: var(--main);
+        }
+
+        .tabs-content .tab-pane {
+            display: none;
+        }
+
+        .tabs-content .tab-pane.active {
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .data-table-wrapper table,
+            .data-table-wrapper thead,
+            .data-table-wrapper tbody,
+            .data-table-wrapper th,
+            .data-table-wrapper td,
+            .data-table-wrapper tr {
+                display: block;
+            }
+
+            .data-table-wrapper thead {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .data-table-wrapper tbody tr {
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                padding: 12px;
+                background: var(--card-bg);
+            }
+
+            .data-table-wrapper td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+                border-bottom: 1px solid var(--border);
+                max-width: none;
+                white-space: normal;
+                word-break: break-all;
+            }
+
+            .data-table-wrapper td:last-child {
+                border-bottom: none;
+            }
+
+            .data-table-wrapper td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: color-mix(in srgb, var(--text) 60%, transparent);
+                font-size: 0.85rem;
+                margin-right: 8px;
+                flex-shrink: 0;
+            }
+
+            .data-table-wrapper .actions {
+                width: 100%;
+                justify-content: flex-end;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="nav"></div>
+
+    <div class="container">
+        <h1 class="section-title">订单概览</h1>
+        <hr>
+
+        <div class="dashboard-cards">
+            <div class="stat-card total">
+                <div class="stat-header">
+                    <span>订单总数</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#4a90d9"><path d="M3,3H21V7H3V3M4,8H20V21H4V8M9.5,11A0.5,0.5 0 0,0 9,11.5A0.5,0.5 0 0,0 9.5,12A0.5,0.5 0 0,0 10,11.5A0.5,0.5 0 0,0 9.5,11Z"/></svg>
+                </div>
+                <div class="stat-value" id="totalOrders">0</div>
+                <div class="stat-sub">本月新增: 0</div>
+            </div>
+
+            <div class="stat-card pending">
+                <div class="stat-header">
+                    <span>待处理订单</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#faad14"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"/></svg>
+                </div>
+                <div class="stat-value" id="pendingOrders">0</div>
+                <div class="stat-sub">含进行中订单</div>
+            </div>
+
+            <div class="stat-card revenue">
+                <div class="stat-header">
+                    <span>订单总额</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#52c41a"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M7,12L12,17L17,12H7Z"/></svg>
+                </div>
+                <div class="stat-value" id="totalRevenue">¥0.00</div>
+                <div class="stat-sub">本月收入: ¥0.00</div>
+            </div>
+
+            <div class="stat-card completed">
+                <div class="stat-header">
+                    <span>已完成订单</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#52c41a"><path d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z"/></svg>
+                </div>
+                <div class="stat-value" id="completedOrders">0</div>
+                <div class="stat-sub">完成率: 0%</div>
+            </div>
+        </div>
+
+        <hr>
+        <h1 class="section-title">操作</h1>
+        <div style="margin-bottom: 16px;">
+            <button class="btn btn-success" onclick="openAddModal()">+ 新增订单</button>
+            <button class="btn btn-primary" onclick="reportSelectedToBookkeeping()">上报选中到记账</button>
+            <button class="btn btn-secondary" onclick="deleteSelected()">删除选中</button>
+            <!-- <button class="btn btn-secondary" onclick="exportData('json')">JSON</button>
+            <button class="btn btn-secondary" onclick="exportData('csv')">CSV</button> -->
+        </div>
+        <hr>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索订单编号、客户名称、商品、备注..." oninput="renderTable()">
+                <button class="btn btn-primary" onclick="renderTable()">搜索</button>
+            </div>
+            <div class="filter-group">
+                <span style="font-size: 0.85rem; color: color-mix(in srgb, var(--text) 60%, transparent);">状态:</span>
+                <button class="btn active" onclick="setStatusFilter('all', this)">全部</button>
+                <button class="btn" onclick="setStatusFilter('pending', this)">待确认</button>
+                <button class="btn" onclick="setStatusFilter('processing', this)">进行中</button>
+                <button class="btn" onclick="setStatusFilter('completed', this)">已完成</button>
+                <button class="btn" onclick="setStatusFilter('cancelled', this)">已取消</button>
+            </div>
+            <div class="filter-group">
+                <span style="font-size: 0.85rem; color: color-mix(in srgb, var(--text) 60%, transparent);">日期:</span>
+                <input type="date" id="filterDateFrom" onchange="renderTable()">
+                <span>~</span>
+                <input type="date" id="filterDateTo" onchange="renderTable()">
+            </div>
+        </div>
+
+        <div class="tabs-browser">
+            <button class="tab-browser active" onclick="switchTab('tab1', this)">订单列表</button>
+            <button class="tab-browser" onclick="switchTab('tab2', this)">数据管理</button>
+        </div>
+        <div class="tabs-content">
+            <div class="tab-pane active" id="tab1">
+                <div class="data-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th>
+                                <th>订单编号</th>
+                                <th>客户名称</th>
+                                <th>商品/服务</th>
+                                <th>订单日期</th>
+                                <th>金额</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab2">
+                <div style="padding: 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow);">
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 12px;">导出数据</h3>
+                        <button class="btn btn-secondary" onclick="exportData('json')">导出 JSON</button>
+                        <button class="btn btn-secondary" onclick="exportData('csv')">导出 CSV</button>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 12px;">导入数据</h3>
+                        <input type="file" id="importFile" accept=".json" style="margin-bottom: 8px;">
+                        <br>
+                        <button class="btn btn-primary" onclick="importData()">导入</button>
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom: 12px; color: #f5222d;">危险操作</h3>
+                        <button class="btn btn-danger" onclick="resetData()">重置所有数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">新增订单</h3>
+            <hr>
+            <input type="hidden" id="editId">
+
+            <div class="form-group">
+                <label>订单编号</label>
+                <div id="codeDisplay" class="code-display"></div>
+            </div>
+
+            <div class="form-group">
+                <label>客户名称 <span style="color:#f5222d;">*</span></label>
+                <input type="text" id="inputCustomer" placeholder="请输入客户名称">
+            </div>
+
+            <div class="form-group">
+                <label>商品/服务 <span style="color:#f5222d;">*</span></label>
+                <input type="text" id="inputProduct" placeholder="例如：网站开发服务">
+            </div>
+
+            <div class="row" style="gap: 16px; display: flex;">
+                <div class="form-group" style="flex: 1;">
+                    <label>订单日期 <span style="color:#f5222d;">*</span></label>
+                    <input type="date" id="inputDate">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>状态</label>
+                    <select id="inputStatus">
+                        <option value="pending">待确认</option>
+                        <option value="processing">进行中</option>
+                        <option value="completed">已完成</option>
+                        <option value="cancelled">已取消</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>订单金额 (¥) <span style="color:#f5222d;">*</span></label>
+                <input type="number" id="inputAmount" placeholder="请输入订单金额" step="0.01" min="0">
+            </div>
+
+            <div class="form-group">
+                <label>客户联系方式</label>
+                <input type="text" id="inputContact" placeholder="电话或邮箱">
+            </div>
+
+            <div class="form-group">
+                <label>备注</label>
+                <textarea id="inputRemark" rows="3" placeholder="请输入备注信息"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('modal')">关闭</button>
+                <button class="btn btn-primary" onclick="saveRecord()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <h3>确认重置所有数据吗？</h3>
+            <hr>
+            <div style="margin-bottom: 12px; color: #f5222d; font-size: 0.9rem;">⚠️ 警告：重置后所有数据将被永久删除，此操作不可恢复！</div>
+            <div style="margin-bottom: 16px; font-size: 0.9rem;">请输入下方的随机确认密码以继续：</div>
+            <div style="padding: 12px; background: var(--btn-bg); border-radius: 6px; text-align: center; margin-bottom: 16px;">
+                <span style="font-family: 'Courier New', Courier, monospace; font-size: 1.4rem; font-weight: bold; color: var(--main); letter-spacing: 4px;" id="resetCodeDisplay"></span>
+            </div>
+            <div class="form-group">
+                <label style="color: #d91f29;">确认密码</label>
+                <input type="text" id="resetPassword" placeholder="请输入上方的确认密码">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('resetModal')">取消</button>
+                <button class="btn btn-danger" onclick="confirmReset()">确认重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../UI/primoUI 0.1/js/modules/feedback.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/modal.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/tabs.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/nav.js"></script>
+    <script src="../../js/nav.js"></script>
+    <script>
+        let records = JSON.parse(localStorage.getItem('order_records') || '[]');
+        let currentStatusFilter = 'all';
+        let resetVerificationCode = '';
+
+        function getRandomStr(len = 10) {
+            const pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let res = '';
+            for (let i = 0; i < len; i++) {
+                let r = Math.floor(Math.random() * pool.length);
+                res += pool[r];
+            }
+            return res;
+        }
+
+        function getFullCode() {
+            const stamp = Date.now();
+            const rand10 = getRandomStr(10);
+            return stamp + rand10;
+        }
+
+        function generateCode() {
+            const codeDisplay = document.getElementById('codeDisplay');
+            if (codeDisplay) {
+                codeDisplay.textContent = getFullCode();
+            }
+        }
+
+        function formatMoney(num) {
+            return '¥' + Number(num || 0).toFixed(2);
+        }
+
+        function todayStr() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-browser').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
+
+        function setStatusFilter(status, btn) {
+            currentStatusFilter = status;
+            document.querySelectorAll('.toolbar .filter-group button').forEach(b => {
+                if (b.textContent && b !== document.querySelector('.toolbar .filter-group span')) {
+                    b.classList.remove('active');
+                }
+            });
+            if (btn) btn.classList.add('active');
+            renderTable();
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '新增订单';
+            document.getElementById('editId').value = '';
+            document.getElementById('inputCustomer').value = '';
+            document.getElementById('inputProduct').value = '';
+            document.getElementById('inputDate').value = todayStr();
+            document.getElementById('inputStatus').value = 'pending';
+            document.getElementById('inputAmount').value = '';
+            document.getElementById('inputContact').value = '';
+            document.getElementById('inputRemark').value = '';
+            generateCode();
+            openModal('modal');
+        }
+
+        function openEditModal(id) {
+            const rec = records.find(r => r.id === id);
+            if (!rec) return;
+            document.getElementById('modalTitle').textContent = '编辑订单';
+            document.getElementById('editId').value = rec.id;
+            document.getElementById('inputCustomer').value = rec.customer || '';
+            document.getElementById('inputProduct').value = rec.product || '';
+            document.getElementById('inputDate').value = rec.date || '';
+            document.getElementById('inputStatus').value = rec.status || 'pending';
+            document.getElementById('inputAmount').value = rec.amount || '';
+            document.getElementById('inputContact').value = rec.contact || '';
+            document.getElementById('inputRemark').value = rec.remark || '';
+            document.getElementById('codeDisplay').textContent = rec.code || getFullCode();
+            openModal('modal');
+        }
+
+        function saveRecord() {
+            const id = document.getElementById('editId').value;
+            const customer = document.getElementById('inputCustomer').value.trim();
+            const product = document.getElementById('inputProduct').value.trim();
+            const date = document.getElementById('inputDate').value;
+            const amount = parseFloat(document.getElementById('inputAmount').value);
+
+            if (!customer) {
+                alert('请输入客户名称');
+                return;
+            }
+            if (!product) {
+                alert('请输入商品/服务名称');
+                return;
+            }
+            if (!date) {
+                alert('请选择订单日期');
+                return;
+            }
+            if (!amount || amount <= 0) {
+                alert('请输入有效的订单金额');
+                return;
+            }
+
+            const record = {
+                id: id || Date.now().toString(),
+                code: document.getElementById('codeDisplay').textContent,
+                customer: customer,
+                product: product,
+                date: date,
+                status: document.getElementById('inputStatus').value,
+                amount: amount,
+                contact: document.getElementById('inputContact').value.trim(),
+                remark: document.getElementById('inputRemark').value.trim(),
+                createdAt: id ? (records.find(r => r.id === id) || {}).createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            if (id) {
+                const idx = records.findIndex(r => r.id === id);
+                if (idx !== -1) records[idx] = record;
+            } else {
+                records.unshift(record);
+            }
+
+            saveData();
+            closeModal('modal');
+            renderTable();
+            updateDashboard();
+        }
+
+        function saveData() {
+            localStorage.setItem('order_records', JSON.stringify(records));
+        }
+
+        function generateResetCode() {
+            const pool = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789一二三四五六七八九十你我他';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += pool[Math.floor(Math.random() * pool.length)];
+            }
+            resetVerificationCode = code;
+            document.getElementById('resetCodeDisplay').textContent = resetVerificationCode;
+        }
+
+        function resetData() {
+            generateResetCode();
+            document.getElementById('resetPassword').value = '';
+            openModal('resetModal');
+        }
+
+        function confirmReset() {
+            const input = document.getElementById('resetPassword').value.trim();
+            if (!input) {
+                alert('请输入确认密码');
+                return;
+            }
+            if (input !== resetVerificationCode) {
+                alert('密码输入错误，请重新输入');
+                document.getElementById('resetPassword').value = '';
+                generateResetCode();
+                return;
+            }
+            records = [];
+            saveData();
+            renderTable();
+            updateDashboard();
+            closeModal('resetModal');
+        }
+
+        function exportData(format) {
+            const fmt = format || 'json';
+            const filename = 'order_records_' + todayStr();
+            let dataStr, mimeType, ext;
+
+            if (fmt === 'csv') {
+                const headers = ['订单编号', '客户名称', '商品/服务', '订单日期', '金额', '状态', '联系方式', '备注'];
+                const statusMap = { pending: '待确认', processing: '进行中', completed: '已完成', cancelled: '已取消' };
+                const escape = (v) => {
+                    const s = String(v == null ? '' : v);
+                    return '"' + s.replace(/"/g, '""') + '"';
+                };
+                const rows = records.map(r => [
+                    r.code || '',
+                    r.customer || '',
+                    r.product || '',
+                    r.date || '',
+                    r.amount || 0,
+                    statusMap[r.status] || r.status || '',
+                    r.contact || '',
+                    r.remark || ''
+                ].map(escape).join(','));
+                dataStr = '\ufeff' + [headers.map(escape).join(',')].concat(rows).join('\n');
+                mimeType = 'text/csv;charset=utf-8';
+                ext = 'csv';
+            } else {
+                dataStr = JSON.stringify(records, null, 2);
+                mimeType = 'application/json;charset=utf-8';
+                ext = 'json';
+            }
+
+            const dataUri = 'data:' + mimeType + ',' + encodeURIComponent(dataStr);
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', filename + '.' + ext);
+            linkElement.click();
+        }
+
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('请选择要导入的文件');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        if (confirm(`导入 ${imported.length} 条订单记录？（将覆盖现有数据）`)) {
+                            records = imported;
+                            saveData();
+                            renderTable();
+                            updateDashboard();
+                            alert('导入成功');
+                        }
+                    } else {
+                        alert('文件格式不正确');
+                    }
+                } catch (err) {
+                    alert('文件解析失败: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function getFilteredRecords() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+
+            return records.filter(r => {
+                if (currentStatusFilter !== 'all' && r.status !== currentStatusFilter) return false;
+                if (search) {
+                    const searchText = (r.customer + ' ' + (r.code || '') + ' ' + (r.product || '') + ' ' + (r.remark || '')).toLowerCase();
+                    if (!searchText.includes(search)) return false;
+                }
+                if (dateFrom && r.date < dateFrom) return false;
+                if (dateTo && r.date > dateTo) return false;
+                return true;
+            });
+        }
+
+        function getStatusBadge(status) {
+            const map = {
+                pending: { text: '待确认', cls: 'pending' },
+                processing: { text: '进行中', cls: 'processing' },
+                completed: { text: '已完成', cls: 'completed' },
+                cancelled: { text: '已取消', cls: 'cancelled' }
+            };
+            const s = map[status] || { text: status, cls: 'pending' };
+            return `<span class="status-badge ${s.cls}">${s.text}</span>`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const filtered = getFilteredRecords();
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <div class="icon">📋</div>
+                                <div>暂无订单记录</div>
+                                <div style="margin-top: 8px; font-size: 0.85rem;">点击"新增订单"开始记录</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => `
+                <tr>
+                    <td data-label="选择"><input type="checkbox" class="row-check" data-id="${r.id}"></td>
+                    <td data-label="订单编号" style="font-size: 0.8rem; color: #888; font-family: monospace;">${(r.code || '').substring(0, 16)}</td>
+                    <td data-label="客户名称"><strong>${r.customer || '-'}</strong></td>
+                    <td data-label="商品/服务">${r.product || '-'}</td>
+                    <td data-label="订单日期">${r.date || '-'}</td>
+                    <td data-label="金额" class="amount">${formatMoney(r.amount)}</td>
+                    <td data-label="状态" class="status">${getStatusBadge(r.status)}</td>
+                    <td data-label="操作" class="actions">
+                        <button onclick="printOrder('${r.id}')">打印</button>
+                        <button onclick="reportToBookkeeping('${r.id}')">${r.reported ? '已上报' : '上报'}</button>
+                        <button onclick="openEditModal('${r.id}')">编辑</button>
+                        <button onclick="deleteRecord('${r.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteRecord(id) {
+            if (!confirm('确定删除该订单记录？')) return;
+            records = records.filter(r => r.id !== id);
+            saveData();
+            renderTable();
+            updateDashboard();
+        }
+
+        function toggleSelectAll() {
+            const checked = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.row-check').forEach(cb => cb.checked = checked);
+        }
+
+        function deleteSelected() {
+            const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(cb => cb.dataset.id);
+            if (!ids.length) {
+                alert('请先选择要删除的记录');
+                return;
+            }
+            if (!confirm(`确定删除选中的 ${ids.length} 条记录？`)) return;
+            records = records.filter(r => !ids.includes(r.id));
+            saveData();
+            renderTable();
+            updateDashboard();
+        }
+
+        function orderToBookkeeping(order) {
+            return {
+                id: 'o_' + (order.id || Date.now().toString()),
+                code: order.code || getFullCode(),
+                orderNo: order.code || '',
+                title: '[订单] ' + (order.product || '订单收入'),
+                date: order.date || todayStr(),
+                tag: order.customer || '订单',
+                amount: Number(order.amount || 0),
+                type: 'income',
+                dining: '',
+                remark: order.contact ? `客户：${order.customer} | 联系方式：${order.contact}${order.remark ? ' | ' + order.remark : ''}` : `客户：${order.customer}${order.remark ? ' | ' + order.remark : ''}`,
+                source: 'order',
+                sourceId: order.id,
+                reportedAt: new Date().toISOString()
+            };
+        }
+
+        function saveBookkeepingData(bkRecords) {
+            localStorage.setItem('bookkeeping_records', JSON.stringify(bkRecords));
+        }
+
+        function getBookkeepingRecords() {
+            return JSON.parse(localStorage.getItem('bookkeeping_records') || '[]');
+        }
+
+        function reportToBookkeeping(id) {
+            const rec = records.find(r => r.id === id);
+            if (!rec) return;
+            if (rec.reported) {
+                if (!confirm('该订单已上报过，是否再次上报（将产生新的记账记录）？')) return;
+            }
+            const amount = Number(rec.amount || 0);
+            if (amount <= 0) {
+                if (!confirm('该订单金额为 0，是否仍然上报？')) return;
+            }
+            const bkRecord = orderToBookkeeping(rec);
+            const bkRecords = getBookkeepingRecords();
+            bkRecords.unshift(bkRecord);
+            saveBookkeepingData(bkRecords);
+            rec.reported = true;
+            rec.reportedAt = new Date().toISOString();
+            saveData();
+            renderTable();
+            alert(`已成功上报到记账本！\n订单：${rec.product}\n金额：¥${amount.toFixed(2)}`);
+        }
+
+        function reportSelectedToBookkeeping() {
+            const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(cb => cb.dataset.id);
+            if (!ids.length) {
+                alert('请先勾选要上报的订单');
+                return;
+            }
+            const selected = records.filter(r => ids.includes(r.id));
+            const alreadyReported = selected.filter(r => r.reported).length;
+            let msg = `即将上报 ${selected.length} 条订单记录到记账本`;
+            if (alreadyReported > 0) msg += `（其中 ${alreadyReported} 条已上报过，将产生新的记账记录）`;
+            const totalAmt = selected.reduce((s, r) => s + Number(r.amount || 0), 0);
+            msg += `\n总金额：¥${totalAmt.toFixed(2)}\n\n确认上报？`;
+            if (!confirm(msg)) return;
+
+            const bkRecords = getBookkeepingRecords();
+            let reportedCount = 0;
+            selected.forEach(rec => {
+                const bkRecord = orderToBookkeeping(rec);
+                bkRecords.unshift(bkRecord);
+                rec.reported = true;
+                rec.reportedAt = new Date().toISOString();
+                reportedCount++;
+            });
+            saveBookkeepingData(bkRecords);
+            saveData();
+            renderTable();
+            alert(`上报完成！\n成功上报 ${reportedCount} 条订单记录到记账本服务。\n总金额：¥${totalAmt.toFixed(2)}`);
+        }
+
+        function updateDashboard() {
+            const totalOrders = records.length;
+            const pendingOrders = records.filter(r => r.status === 'pending' || r.status === 'processing').length;
+            const completedOrders = records.filter(r => r.status === 'completed').length;
+            const totalRevenue = records.reduce((sum, r) => sum + (r.amount || 0), 0);
+            
+            const currentMonth = new Date().getMonth();
+            const thisMonthOrders = records.filter(r => {
+                const d = new Date(r.date);
+                return d.getMonth() === currentMonth;
+            });
+            const thisMonthRevenue = thisMonthOrders.reduce((sum, r) => sum + (r.amount || 0), 0);
+
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('pendingOrders').textContent = pendingOrders;
+            document.getElementById('totalRevenue').textContent = formatMoney(totalRevenue);
+            document.getElementById('completedOrders').textContent = completedOrders;
+
+            document.querySelector('.stat-card.total .stat-sub').textContent = '本月新增: ' + thisMonthOrders.length;
+            document.querySelector('.stat-card.revenue .stat-sub').textContent = '本月收入: ' + formatMoney(thisMonthRevenue);
+            document.querySelector('.stat-card.completed .stat-sub').textContent = '完成率: ' + (totalOrders > 0 ? ((completedOrders / totalOrders) * 100).toFixed(1) : 0) + '%';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            updateDashboard();
+        });
+
+        // ========== 打印功能 ==========
+        let currentPrintOrder = null;
+        let currentPrinterType = 'normal';
+        let printSettings = {};
+
+        function loadPrintSettings() {
+            const saved = localStorage.getItem('print_settings');
+            if (saved) {
+                printSettings = JSON.parse(saved);
+            } else {
+                printSettings = {
+                    shopName: '云枢餐饮',
+                    shopInfo: '',
+                    thankYou: '谢谢惠顾，欢迎再次光临',
+                    showOrderNo: true,
+                    showDate: true,
+                    showCustomer: true,
+                    showPayment: true,
+                    showDining: true,
+                    showRemark: true,
+                    paperWidth: 80
+                };
+            }
+            return printSettings;
+        }
+
+        function printOrder(id) {
+            const order = records.find(r => r.id === id);
+            if (!order) {
+                alert('订单不存在');
+                return;
+            }
+            currentPrintOrder = order;
+            loadPrintSettings();
+            generateReceiptHTMLBackend(order);
+            document.getElementById('printPreviewModal').style.display = 'flex';
+        }
+
+        function closePrintModal() {
+            document.getElementById('printPreviewModal').style.display = 'none';
+        }
+
+        function selectPrinterBackend(type, el) {
+            currentPrinterType = type;
+            document.querySelectorAll('.printer-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            if (currentPrintOrder) {
+                generateReceiptHTMLBackend(currentPrintOrder);
+            }
+        }
+
+function generateReceiptHTML(order) {
+    const printSettings = window.printSettings || {};
+    const currentPrinterType = window.currentPrinterType || 'thermal';
+    const container = document.getElementById('receiptContent');
+    if (!container) return Promise.resolve(false);
+
+    // 订单数据兜底
+    const safeOrder = {
+        code: '-', createdAt: new Date(), customer: '', contact: '',
+        paymentText: '-', diningText: '-', subtotal: 0, serviceFee: 0,
+        packFee: 0, deliveryFee: 0, amount: 0, remark: '', items: [],
+        ...(order || {})
+    };
+
+    // 容器基础样式
+    container.style.display = 'block';
+    container.style.visibility = 'visible';
+    container.style.overflow = 'hidden';
+    container.style.padding = '4px'; // 大幅缩小内边距
+
+    if (currentPrinterType === 'thermal') {
+        const paperW = printSettings.paperWidth === '58' ? '220px' : '280px';
+        container.style.width = paperW;
+        container.style.maxWidth = '90vw';
+        container.style.minHeight = 'auto';
+
+        // 订单信息紧凑行内布局
+        let orderInfoHtml = '';
+        const infoArr = [];
+        if (printSettings.showOrderNo) infoArr.push(`订单:${safeOrder.code}`);
+        if (printSettings.showDate) infoArr.push(`${formatDateTime(safeOrder.createdAt)}`);
+        if (printSettings.showCustomer && safeOrder.customer) infoArr.push(`客户:${safeOrder.customer}`);
+        if (printSettings.showCustomer && safeOrder.contact) infoArr.push(`电话:${safeOrder.contact}`);
+        if (printSettings.showPayment) infoArr.push(`${safeOrder.paymentText}`);
+        if (printSettings.showDining) infoArr.push(`${safeOrder.diningText}`);
+        orderInfoHtml = `<div style="font-size:11px;line-height:1.4;word-break:break-all;">${infoArr.join(' | ')}</div>`;
+
+        // 金额汇总 右对齐
+        let summaryHtml = `<div style="display:flex;justify-content:space-between;font-size:12px;line-height:1.5;"><span>小计</span><span>${formatMoney(safeOrder.subtotal)}</span></div>`;
+        if (printSettings.showServiceFee && safeOrder.serviceFee > 0) {
+            summaryHtml += `<div style="display:flex;justify-content:space-between;font-size:12px;line-height:1.5;"><span>服务费</span><span>${formatMoney(safeOrder.serviceFee)}</span></div>`;
+        }
+        if (printSettings.showOtherFee && safeOrder.packFee > 0) {
+            summaryHtml += `<div style="display:flex;justify-content:space-between;font-size:12px;line-height:1.5;"><span>包装费</span><span>${formatMoney(safeOrder.packFee)}</span></div>`;
+        }
+        if (printSettings.showOtherFee && safeOrder.deliveryFee > 0) {
+            summaryHtml += `<div style="display:flex;justify-content:space-between;font-size:12px;line-height:1.5;"><span>配送费</span><span>${formatMoney(safeOrder.deliveryFee)}</span></div>`;
+        }
+        summaryHtml += `<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:bold;border-top:1px dashed #666;margin-top:4px;padding-top:4px;"><span>合计</span><span>${formatMoney(safeOrder.amount)}</span></div>`;
+
+        // 商品列表：三栏弹性，名称不竖排、超长省略
+        const itemListHtml = (safeOrder.items || []).map(item => `
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;line-height:1.4;margin:2px 0;">
+                <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px;">${item.name || ''}</span>
+                <span style="width:30px;text-align:center;flex-shrink:0;">${item.quantity || 0}</span>
+                <span style="width:70px;text-align:right;flex-shrink:0;">${formatMoney((item.price || 0) * (item.quantity || 0))}</span>
+            </div>
+        `).join('');
+
+        // 紧凑小票HTML，全局缩小间距、消除空白
+        let html = `
+            <style>
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family:system-ui, sans-serif; font-size:12px; }
+                .shop-name { font-weight:bold; font-size:16px; text-align:center; margin-bottom:4px; }
+                .shop-info { font-size:10px; text-align:center; margin-bottom:4px; color:#333; }
+                .divider { border-bottom:1px dashed #888; margin:4px 0; }
+                .footer-txt { font-size:11px; text-align:center; line-height:1.3; margin-top:6px; }
+                @media print {
+                    @page { margin:0; size:${paperW} auto; }
+                    #receiptContent { width:${paperW} !important; padding:2px !important; }
+                }
+            </style>
+            <div class="shop-name">${printSettings.shopName || '云枢餐饮'}</div>
+            ${printSettings.shopInfo ? `<div class="shop-info">${printSettings.shopInfo}</div>` : ''}
+            <div class="divider"></div>
+
+            ${orderInfoHtml}
+            <div class="divider"></div>
+
+            <!-- 表头三栏撑满 -->
+            <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:12px;margin-bottom:2px;">
+                <span style="flex:1;">商品</span>
+                <span style="width:30px;text-align:center;">数量</span>
+                <span style="width:70px;text-align:right;">金额</span>
+            </div>
+            ${itemListHtml}
+            <div class="divider"></div>
+
+            <div style="margin:4px 0;">${summaryHtml}</div>
+
+            ${printSettings.showRemark && safeOrder.remark ? `<div style="font-size:11px;margin-top:4px;padding:4px;background:#f6f6f6;">备注:${safeOrder.remark}</div>` : ''}
+
+            <div class="divider"></div>
+            <div class="footer-txt">
+                <div style="font-weight:bold;font-size:14px;">${printSettings.thankYou || '谢谢惠顾'}</div>
+                <div style="font-size:10px;color:#666;">欢迎再次光临</div>
+            </div>
+        `;
+        container.innerHTML = html;
+    } else {
+        // A4模式保留原有逻辑，可按需同样压缩间距
+        container.style.width = '100%';
+        container.style.maxWidth = '500px';
+        container.style.minHeight = 'auto';
+
+        let summaryRows = `<p style="margin: 4px 0;font-size:13px;">小计：<strong>${formatMoney(safeOrder.subtotal)}</strong></p>`;
+        if (printSettings.showServiceFee && safeOrder.serviceFee > 0) {
+            summaryRows += `<p style="margin: 4px 0;font-size:13px;">服务费：<strong>${formatMoney(safeOrder.serviceFee)}</strong></p>`;
+        }
+        if (printSettings.showOtherFee && safeOrder.packFee > 0) {
+            summaryRows += `<p style="margin: 4px 0;font-size:13px;">包装费：<strong>${formatMoney(safeOrder.packFee)}</strong></p>`;
+        }
+        if (printSettings.showOtherFee && safeOrder.deliveryFee > 0) {
+            summaryRows += `<p style="margin: 4px 0;font-size:13px;">配送费：<strong>${formatMoney(safeOrder.deliveryFee)}</strong></p>`;
+        }
+
+        const tableItemHtml = (safeOrder.items || []).map(item => `
+            <tr>
+                <td style="padding:4px 2px; border-bottom:1px solid #eee;font-size:12px;">${item.name || ''}</td>
+                <td style="padding:4px 2px; text-align:center; border-bottom:1px solid #eee;font-size:12px;">${item.quantity || 0}</td>
+                <td style="padding:4px 2px; text-align:right; border-bottom:1px solid #eee;font-size:12px;">${formatMoney(item.price || 0)}</td>
+                <td style="padding:4px 2px; text-align:right; border-bottom:1px solid #eee;font-size:12px;">${formatMoney((item.price || 0) * (item.quantity || 0))}</td>
+            </tr>
+        `).join('');
+
+        let html = `
+            <style>@media print { #receiptContent { max-width:100% !important; width:100% !important; } }</style>
+            <div style="padding:12px; font-family: Arial, sans-serif;font-size:13px;">
+                <div style="text-align:center;margin-bottom:10px;">
+                    <h2 style="margin:0;font-size:18px;">${printSettings.shopName || '云枢餐饮'}</h2>
+                    ${printSettings.shopInfo ? `<p style="margin:3px 0;color:#666;font-size:11px;">${printSettings.shopInfo}</p>` : ''}
+                </div>
+                <hr style="border:1px solid #ddd;margin:8px 0;">
+                <table style="width:100%;">
+                    <tr>
+                        <td style="padding:3px 0;width:80px;"><strong>订单号：</strong></td>
+                        <td style="padding:3px 0;">${printSettings.showOrderNo ? safeOrder.code : ''}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:3px 0;"><strong>下单时间：</strong></td>
+                        <td style="padding:3px 0;">${printSettings.showDate ? formatDateTime(safeOrder.createdAt) : ''}</td>
+                    </tr>
+                    ${printSettings.showCustomer && safeOrder.customer ? `<tr><td style="padding:3px 0;"><strong>客户：</strong></td><td style="padding:3px 0;">${safeOrder.customer}</td></tr>` : ''}
+                    ${printSettings.showCustomer && safeOrder.contact ? `<tr><td style="padding:3px 0;"><strong>电话：</strong></td><td style="padding:3px 0;">${safeOrder.contact}</td></tr>` : ''}
+                    ${printSettings.showPayment ? `<tr><td style="padding:3px 0;"><strong>支付方式：</strong></td><td style="padding:3px 0;">${safeOrder.paymentText}</td></tr>` : ''}
+                    ${printSettings.showDining ? `<tr><td style="padding:3px 0;"><strong>就餐方式：</strong></td><td style="padding:3px 0;">${safeOrder.diningText}</td></tr>` : ''}
+                </table>
+                <hr style="border:1px solid #ddd;margin:8px 0;">
+                <table style="width:100%;border-collapse:collapse;margin-top:6px;">
+                    <thead>
+                        <tr style="background:#f5f5f5;">
+                            <th style="padding:5px 2px;text-align:left;border-bottom:1px solid #ddd;font-size:12px;">商品名称</th>
+                            <th style="padding:5px 2px;text-align:center;border-bottom:1px solid #ddd;font-size:12px;">数量</th>
+                            <th style="padding:5px 2px;text-align:right;border-bottom:1px solid #ddd;font-size:12px;">单价</th>
+                            <th style="padding:5px 2px;text-align:right;border-bottom:1px solid #ddd;font-size:12px;">金额</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableItemHtml}</tbody>
+                </table>
+                <div style="margin-top:10px;text-align:right;">
+                    ${summaryRows}
+                    <p style="margin:6px 0;font-size:16px;color:#f5222d;"><strong>总计：${formatMoney(safeOrder.amount)}</strong></p>
+                </div>
+                ${printSettings.showRemark && safeOrder.remark ? `<div style="margin-top:10px;padding:6px;background:#f9f9f9;border-radius:4px;font-size:12px;"><strong>备注：</strong>${safeOrder.remark}</div>` : ''}
+                <hr style="border:1px solid #ddd;margin:12px 0;">
+                <div style="text-align:center;color:#666;font-size:11px;">
+                    <p style="margin:3px 0;">${printSettings.thankYou || '谢谢惠顾，欢迎再次光临'}</p>
+                </div>
+            </div>
+        `;
+        container.innerHTML = html;
+    }
+
+    return new Promise(resolve => {
+        requestAnimationFrame(() => setTimeout(() => resolve(true), 80));
+    });
+}
+        function doPrint() {
+            if (!currentPrintOrder) return;
+
+            const receiptContent = document.getElementById('receiptContentBackend');
+            const printArea = document.getElementById('printAreaBackend');
+            printArea.innerHTML = receiptContent.innerHTML;
+            printArea.style.width = receiptContent.style.width || '';
+            printArea.style.maxWidth = receiptContent.style.maxWidth || '';
+            printArea.style.display = 'block';
+
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => {
+                    printArea.style.display = 'none';
+                    printArea.innerHTML = '';
+                    printArea.style.width = '';
+                    printArea.style.maxWidth = '';
+                }, 100);
+            }, 100);
+        }
+
+        function exportESCPOSBackend() {
+            if (!currentPrintOrder) return;
+            const order = currentPrintOrder;
+            const settings = printSettings;
+
+            let escData = '';
+            escData += '\x1B\x40';
+            escData += '\x1B\x61\x01';
+            escData += '\x1D\x21\x11';
+            escData += (settings.shopName || '云枢餐饮') + '\n';
+            escData += '\x1D\x21\x00';
+            if (settings.shopInfo) escData += settings.shopInfo + '\n';
+            escData += '\n\x1B\x61\x00';
+
+            if (settings.showOrderNo) escData += '订单号: ' + (order.code || order.id || '-') + '\n';
+            if (settings.showDate) escData += '时间: ' + (order.date || '-') + '\n';
+            if (settings.showCustomer && order.customer) escData += '客户: ' + order.customer + '\n';
+            if (order.contact) escData += '联系: ' + order.contact + '\n';
+            if (settings.showPayment && order.paymentText) escData += '支付: ' + order.paymentText + '\n';
+            if (settings.showDining && order.diningText) escData += '方式: ' + order.diningText + '\n';
+
+            escData += '\n--------------------------------\n';
+            if (order.items) {
+                order.items.forEach(item => {
+                    escData += item.name.substring(0,12) + ' x' + item.quantity + ' ¥' + (item.price * item.quantity).toFixed(2) + '\n';
+                });
+            } else {
+                escData += (order.product || '-') + '\n';
+            }
+            escData += '--------------------------------\n';
+
+            if (order.subtotal) escData += '小计: ¥' + order.subtotal.toFixed(2) + '\n';
+            if (order.serviceFee) escData += '服务费: ¥' + order.serviceFee.toFixed(2) + '\n';
+            escData += '\x1B\x45\x01合计: ¥' + (order.amount || 0).toFixed(2) + '\n\x1B\x45\x00';
+
+            if (settings.showRemark && order.remark) escData += '\n备注: ' + order.remark + '\n';
+
+            escData += '\n\x1B\x61\x01--------------------------------\n' + (settings.thankYou || '谢谢惠顾') + '\n\n\n';
+            escData += '\x1B\x64\x03\x1D\x56\x01';
+
+            const blob = new Blob([escData], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `receipt_${order.code || order.id}.bin`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('ESC/POS文件已导出');
+        }
+    </script>
+
+    <!-- 打印预览模态框 -->
+    <div class="modal" id="printPreviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="modal-content" style="background: var(--card-bg); border-radius: 8px; padding: 20px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <h3 style="margin-bottom: 15px;">打印订单</h3>
+            <hr style="border-color: var(--border);">
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <div class="printer-option selected" onclick="selectPrinterBackend('normal', this)" style="padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center; flex: 1;">
+                    <div style="font-size: 24px;">🖨️</div>
+                    <div style="font-size: 14px; font-weight: 500;">普通打印机</div>
+                    <div style="font-size: 12px; color: color-mix(in srgb, var(--text) 60%, transparent);">A4纸张</div>
+                </div>
+                <div class="printer-option" onclick="selectPrinterBackend('thermal', this)" style="padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center; flex: 1;">
+                    <div style="font-size: 24px;">🧾</div>
+                    <div style="font-size: 14px; font-weight: 500;">热敏小票打印机</div>
+                    <div style="font-size: 12px; color: color-mix(in srgb, var(--text) 60%, transparent);">58/80mm</div>
+                </div>
+            </div>
+            <div id="receiptContentBackend" style="background: #fff; color: #000; padding: 10px; margin-bottom: 16px;"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closePrintModal()">关闭</button>
+                <button class="btn btn-primary" onclick="doPrint()">打印</button>
+                <button class="btn btn-secondary" onclick="exportESCPOSBackend()">导出ESC/POS</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .printer-option.selected { border-color: var(--main); background: color-mix(in srgb, var(--main) 10%, transparent); }
+        @media print {
+            body * { visibility: hidden; }
+            #printAreaBackend, #printAreaBackend * { visibility: visible; }
+            #printAreaBackend { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; box-sizing: border-box; background: #fff; }
+            #printAreaBackend > * { margin: 0 auto; text-align: center; }
+        }
+    </style>
+    <div id="printAreaBackend" style="display: none;"></div>
+</body>
+
+</html>
