@@ -1,0 +1,1087 @@
+/* ========== 主页专属样式 ========== */
+
+/* ---- Tab 内容容器 ---- */
+.tab-panels-wrapper {
+  flex: 1;
+  margin-left: 80px;
+  margin-top: 80px;
+  width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ---- 常驻左侧侧边栏（覆盖 navigation.css 默认隐藏样式） ---- */
+.sidebar.sidebar-fixed {
+  position: fixed;
+  top: 70px;
+  left: 12px;
+  width: 60px;
+  height: auto;
+  padding: 8px 0;
+  transform: translateX(0);
+  transition: width 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  border-radius: 12px;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  z-index: 90;
+  border: 1px solid var(--border);
+}
+
+.sidebar.sidebar-fixed .sidebar-menu {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar.sidebar-fixed .sidebar-menu li {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: var(--text);
+  transition: background 0.2s, color 0.2s, width 0.3s ease, padding 0.3s ease, gap 0.3s ease;
+}
+
+.sidebar.sidebar-fixed .sidebar-menu li svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--text);
+  transition: fill 0.2s;
+}
+
+.sidebar.sidebar-fixed .sidebar-menu li:hover {
+  background: var(--btn-bg);
+  color: var(--main);
+}
+
+.sidebar.sidebar-fixed .sidebar-menu li:hover svg {
+  fill: var(--main);
+}
+
+.sidebar.sidebar-fixed .sidebar-menu li.active {
+  background: var(--main);
+  color: #fff;
+}
+
+.sidebar.sidebar-fixed .sidebar-menu li.active svg {
+  fill: #fff;
+}
+
+/* ---- 侧边栏状态：仅图标（默认） ---- */
+.sidebar.sidebar-fixed .sidebar-menu li span {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* ---- 侧边栏状态：图标+文字 ---- */
+.sidebar.sidebar-fixed.sidebar-expanded {
+  width: 150px;
+}
+
+.sidebar.sidebar-fixed.sidebar-expanded .sidebar-menu li {
+  width: auto;
+  margin: 0 8px;
+  padding: 0 12px;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.sidebar.sidebar-fixed.sidebar-expanded .sidebar-menu li span {
+  display: inline;
+  opacity: 1;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* ---- 侧边栏状态：隐藏 ---- */
+.sidebar.sidebar-fixed.sidebar-collapsed {
+  transform: translateX(-100px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- 切换按钮内的 SVG ---- */
+.card button svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--text);
+}
+
+.card button:hover svg {
+  fill: var(--main);
+}
+
+/* ---- 右侧栏切换 ---- */
+.right-panel {
+  transition: opacity 0.3s ease, transform 0.3s ease, flex 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+}
+
+.right-panel.hidden {
+  opacity: 0;
+  transform: translateX(20px);
+  flex: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  pointer-events: none;
+  max-width: 0;
+}
+
+/* ---- 左侧内容区自动扩展 ---- */
+.left-panel {
+  transition: flex 0.3s ease, min-width 0.3s ease;
+  min-width: 0;
+}
+
+.left-panel.expanded {
+  flex: 1 !important;
+  min-width: 100% !important;
+}
+
+.left-panel.expanded .tool-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 16px !important;
+}
+
+.left-panel.expanded .tool-card {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- 右侧栏隐藏时强制布局调整 ---- */
+.right-panel.hidden ~ .left-panel,
+.left-panel:only-child {
+  flex: 1 !important;
+  min-width: 100% !important;
+}
+
+/* ---- 修复 flex 布局问题 ---- */
+.tab-content .row {
+  display: flex;
+  gap: 0;
+}
+
+.tab-content .row .col {
+  min-width: 0;
+}
+
+/* ---- 内容区 margin 随侧边栏状态变化 ---- */
+.sidebar.sidebar-fixed.sidebar-expanded ~ .tab-panels-wrapper {
+  margin-left: 170px;
+}
+
+.sidebar.sidebar-fixed.sidebar-collapsed ~ .tab-panels-wrapper {
+  margin-left: 0;
+}
+
+/* ---- 导航栏 ---- */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border-radius: 0;
+  padding: 10px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navbar-header li {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.navbar-header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: none;
+  background: var(--btn-bg);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.navbar-header button:hover {
+  background: var(--btn-hover, rgba(255, 255, 255, 0.2));
+  transform: scale(1.05);
+}
+
+.navbar-header button svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--text);
+  transition: fill 0.2s;
+}
+
+.navbar-header button:hover svg {
+  fill: var(--main);
+}
+
+.brand-icon {
+  width: 28px;
+  height: 28px;
+  fill: var(--main);
+}
+
+.theme-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.theme-btns button {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  min-width: 36px;
+  line-height: 1;
+}
+
+.theme-btns .active-theme {
+  border-color: var(--main);
+  box-shadow: 0 0 0 2px var(--main);
+}
+
+/* ---- Hero 时钟卡片 ---- */
+.hero-card {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 32px 20px;
+}
+
+.hero-card .time {
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+
+.hero-card .date {
+  font-size: 16px;
+  color: var(--text);
+  opacity: 0.65;
+  margin-top: 12px;
+}
+
+/* ---- 工具卡片网格 ---- */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 12px 0 8px;
+}
+
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px 20px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  text-decoration: none !important;
+  color: var(--text) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid transparent;
+  margin: 0 !important;
+}
+
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-color: var(--main);
+  text-decoration: none !important;
+}
+
+.tool-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--btn-bg);
+  border-radius: 14px;
+  transition: background 0.2s;
+}
+
+.tool-card:hover .tool-icon {
+  background: var(--main);
+}
+
+.tool-icon svg {
+  width: 30px;
+  height: 30px;
+  fill: var(--main);
+  transition: fill 0.2s;
+}
+
+.tool-card:hover .tool-icon svg {
+  fill: #fff;
+}
+
+.tool-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 4px;
+  color: var(--text);
+}
+
+.tool-desc {
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.55;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ---- 分组标题 ---- */
+.group {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin: 28px 0 14px !important;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- 日程表格样式 ---- */
+.card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.card th,
+.card td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.card th {
+  font-weight: 600;
+  background: var(--btn-bg);
+}
+
+.card tbody tr:hover {
+  background: var(--btn-bg);
+}
+
+.card tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---- 全局 SVG ---- */
+svg {
+  fill: var(--text);
+}
+
+/* ---- 页脚 ---- */
+.foot {
+  text-align: center !important;
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.5;
+  margin-top: 32px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid var(--border);
+}
+
+/* ========== 响应式适配 ========== */
+@media (max-width: 1200px) {
+  .tab-content .row {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .left-panel {
+    flex: 1 !important;
+  }
+
+  .right-panel {
+    flex: 1 !important;
+    max-width: 100%;
+  }
+
+  .right-panel .card {
+    max-width: 400px;
+    margin: 0 auto 16px;
+  }
+
+  .tool-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .tool-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sidebar.sidebar-fixed {
+    width: 50px;
+  }
+
+  .sidebar.sidebar-fixed .sidebar-menu li {
+    width: 36px;
+    height: 36px;
+  }
+
+  .sidebar.sidebar-fixed .sidebar-menu li svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .sidebar.sidebar-fixed.sidebar-expanded {
+    width: 120px;
+  }
+
+  .sidebar.sidebar-fixed.sidebar-expanded ~ .tab-panels-wrapper {
+    margin-left: 140px;
+  }
+
+  .tab-panels-wrapper {
+    margin-left: 70px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tool-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .tool-card {
+    padding: 18px 10px 14px;
+  }
+
+  .tool-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .tool-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .navbar {
+    padding: 8px 16px;
+  }
+
+  .navbar-header {
+    gap: 8px;
+  }
+
+  .navbar-brand {
+    font-size: 16px;
+  }
+
+  .navbar-header button {
+    padding: 8px;
+  }
+
+  .navbar-header button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .navbar-nav li a {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .sidebar.sidebar-fixed {
+    transform: translateX(-100px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sidebar.sidebar-fixed.sidebar-expanded {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+    left: 8px;
+  }
+
+  .tab-panels-wrapper {
+    margin-left: 0;
+  }
+
+  .right-panel .card {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .card table {
+    min-width: 320px;
+  }
+
+  .card th,
+  .card td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .card th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  #time-hhmm {
+    font-size: 32px !important;
+  }
+
+  #time-ss {
+    font-size: 20px !important;
+  }
+
+  #date {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .tool-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .tool-name {
+    font-size: 14px;
+  }
+
+  .tool-desc {
+    font-size: 11px;
+  }
+
+  .card th,
+  .card td {
+    font-size: 11px;
+    padding: 4px 6px;
+  }
+}
+
+/* ========== 设置页面样式 ========== */
+.settings-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.settings-sidebar {
+  width: 160px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+
+.settings-sidebar li {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.settings-sidebar li:hover {
+  background: var(--btn-bg);
+  color: var(--main);
+}
+
+.settings-sidebar li.active {
+  background: var(--main);
+  color: #fff;
+}
+
+.settings-content {
+  flex: 1;
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  min-height: 200px;
+}
+
+.settings-panel {
+  display: none;
+}
+
+.settings-panel.active {
+  display: block;
+}
+
+.settings-panel h3 {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+.settings-panel label {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.settings-panel select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.settings-panel select:focus {
+  border-color: var(--main);
+}
+
+@media (max-width: 640px) {
+  .settings-layout {
+    flex-direction: column;
+  }
+  .settings-sidebar {
+    width: 100%;
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+  }
+  .settings-sidebar li {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* ========== 插件中心专属样式 ========== */
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 12px 0 8px;
+}
+
+.plugin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 14px 16px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  color: var(--text);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid transparent;
+  margin: 0 !important;
+  cursor: pointer;
+  user-select: none;
+}
+
+.plugin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-color: var(--main);
+}
+
+.plugin-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--btn-bg);
+  border-radius: 14px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.plugin-card:hover .plugin-icon {
+  background: var(--main);
+}
+
+.plugin-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--main);
+  transition: fill 0.2s;
+}
+
+.plugin-card:hover .plugin-icon svg {
+  fill: #fff;
+}
+
+.plugin-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 2px;
+  color: var(--text);
+  text-align: center;
+}
+
+.plugin-desc {
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.55;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.plugin-developer {
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.5;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.plugin-developer a {
+  color: var(--main);
+  text-decoration: none;
+}
+
+.plugin-developer a:hover {
+  text-decoration: underline;
+}
+
+.plugin-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.plugin-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--btn-bg);
+  border-radius: 8px;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.plugin-add-btn {
+  margin-top: 6px;
+  padding: 6px 16px;
+  background: var(--main);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.plugin-add-btn:hover:not(:disabled) {
+  background: var(--main-hover, #1a73e8);
+  transform: scale(1.05);
+}
+
+.plugin-add-btn:disabled {
+  background: var(--btn-bg);
+  color: var(--text);
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ========== 已安装插件删除按钮 ========== */
+.installed-plugin {
+  position: relative;
+}
+
+.plugin-remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 107, 107, 0.8);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+  z-index: 10;
+}
+
+.installed-plugin:hover .plugin-remove-btn {
+  opacity: 1;
+}
+
+.plugin-remove-btn:hover {
+  background: #ff6b6b;
+}
+
+/* ========== 插件区域占位样式 ========== */
+.plugins-empty-placeholder {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.plugins-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--btn-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.plugins-empty-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: var(--text);
+  opacity: 0.4;
+}
+
+.plugins-empty-text {
+  margin: 0 0 6px 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+.plugins-empty-hint {
+  margin: 0;
+  color: var(--main);
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+@media (max-width: 900px) {
+  .plugin-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .plugin-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .plugin-card {
+    padding: 16px 10px 12px;
+  }
+
+  .plugin-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .plugin-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 400px) {
+  .plugin-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+ul, li {
+   list-style: none;
+}
+
+/* ---- 导航栏下拉菜单 ---- */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navbar-nav li {
+  position: relative;
+}
+
+.navbar-nav li a {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s;
+  background: var(--btn-bg);
+}
+
+.navbar-nav li a:hover {
+  background: var(--btn-hover, rgba(255, 255, 255, 0.15));
+  transform: scale(1.02);
+}
+
+.navbar-nav .dropdown {
+  position: relative;
+}
+
+.navbar-nav .dropdown-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  background: var(--btn-bg);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.navbar-nav .dropdown-btn:hover {
+  background: var(--main);
+}
+
+.navbar-nav .dropdown-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--text);
+  transition: fill 0.2s;
+}
+
+.navbar-nav .dropdown-btn:hover svg {
+  fill: #fff;
+}
+
+.navbar-nav .dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  padding: 8px 0;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  list-style: none;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  z-index: 200;
+  border: 1px solid var(--border);
+}
+
+.navbar-nav .dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.navbar-nav .dropdown-menu li {
+  padding: 0;
+}
+
+.navbar-nav .dropdown-menu li a {
+  display: block;
+  padding: 10px 16px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.navbar-nav .dropdown-menu li a:hover {
+  background: var(--btn-bg);
+}
+
+.navbar-nav .dropdown-menu li:first-child a {
+  border-radius: 8px 8px 0 0;
+}
+
+.navbar-nav .dropdown-menu li:last-child a {
+  border-radius: 0 0 8px 8px;
+}
+
+/* ---- 用户项样式 ---- */
+.navbar-nav .user-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-nav .user-item .user-icon {
+  width: 18px;
+  height: 18px;
+  fill: var(--text);
+}
+
+.navbar-nav .user-item:hover .user-icon {
+  fill: var(--main);
+}
