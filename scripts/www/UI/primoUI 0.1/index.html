@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrimoUI - 组件库</title>
+  <link rel="stylesheet" href="css/modules/variables.css">
+  <link rel="stylesheet" href="css/modules/base.css">
+  <link rel="stylesheet" href="css/modules/layout.css">
+  <link rel="stylesheet" href="css/modules/forms.css">
+  <link rel="stylesheet" href="css/modules/navigation.css">
+  <link rel="stylesheet" href="css/modules/display.css">
+  <link rel="stylesheet" href="css/modules/feedback.css">
+  <link rel="stylesheet" href="css/modules/tabs-browser.css">
+  <style>
+    /* 简洁头部 */
+    .page-header {
+      text-align: center;
+      padding: 40px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 30px;
+    }
+    .page-header h1 {
+      font-size: 2.2em;
+      margin: 0 0 8px 0;
+    }
+    .page-header p {
+      margin: 0 0 15px 0;
+      color: var(--text);
+      opacity: 0.8;
+    }
+    .page-header a {
+      color: var(--main);
+      text-decoration: none;
+    }
+
+    /* 组件区域 */
+    .section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .section h3 {
+      margin: 0 0 20px 0;
+      font-size: 1.2em;
+      color: var(--text);
+    }
+
+    /* 主题表格 */
+    .theme-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+    }
+    .theme-table th,
+    .theme-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .theme-table th {
+      background: var(--bg);
+      font-weight: normal;
+    }
+    .color-preview {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* 特殊主题 */
+    .special-themes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* 页脚 */
+    .footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text);
+      opacity: 0.6;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 简洁头部 -->
+    <div class="page-header">
+      <h1>PrimoUI</h1>
+      <p>简洁、优雅的 UI 组件库</p>
+      <a href="docs.html">查看文档 →</a>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="section">
+      <h3>主题切换</h3>
+      
+      <table class="theme-table">
+        <thead>
+          <tr>
+            <th>色系</th>
+            <th>浅色版本</th>
+            <th>深色版本</th>
+            <th>其他</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="color-preview" style="background: #86868b;"></span>深色系</td>
+            <td><button onclick="setTheme('')">默认浅色</button></td>
+            <td><button onclick="setTheme('dark')">深色</button> <button onclick="setTheme('darker')">更深色</button></td>
+            <td><button onclick="setTheme('gray')">灰色</button></td>
+          </tr>
+          <tr>
+            <td><span class="color-preview" style="background: #ff3b30;"></span>红色系</td>
+            <td><button onclick="setTheme('red')">红色</button></td>
+            <td><button onclick="setTheme('red-dark')">红色深色</button></td>
+            <td><button onclick="setTheme('rose')">玫瑰色</button></td>
+          </tr>
+          <tr>
+            <td><span class="color-preview" style="background: #ff9500;"></span>橙色系</td>
+            <td><button onclick="setTheme('orange')">橙色</button></td>
+            <td><button onclick="setTheme('orange-dark')">橙色深色</button></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="color-preview" style="background: #ffcc00;"></span>黄色系</td>
+            <td><button onclick="setTheme('yellow')">黄色</button></td>
+            <td><button onclick="setTheme('yellow-dark')">黄色深色</button></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="color-preview" style="background: #34c759;"></span>绿色系</td>
+            <td><button onclick="setTheme('green')">绿色</button></td>
+            <td><button onclick="setTheme('green-dark')">绿色深色</button></td>
+            <td><button onclick="setTheme('teal')">青色绿</button></td>
+          </tr>
+          <tr>
+            <td><span class="color-preview" style="background: #00bcd4;"></span>青色系</td>
+            <td><button onclick="setTheme('cyan')">青色</button></td>
+            <td><button onclick="setTheme('cyan-dark')">青色深色</button></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><span class="color-preview" style="background: #007aff;"></span>蓝色系</td>
+            <td><button onclick="setTheme('blue')">蓝色</button></td>
+            <td><button onclick="setTheme('blue-dark')">蓝色深色</button></td>
+            <td><button onclick="setTheme('indigo')">靛蓝</button></td>
+          </tr>
+          <tr>
+            <td><span class="color-preview" style="background: #af52de;"></span>紫色系</td>
+            <td><button onclick="setTheme('purple')">紫色</button></td>
+            <td><button onclick="setTheme('purple-dark')">紫色深色</button></td>
+            <td><button onclick="setTheme('violet')">紫罗兰</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin-top: 30px;">特殊主题</h4>
+      <div class="special-themes">
+        <button onclick="setTheme('high-contrast')">高对比度</button>
+        <button onclick="setTheme('eye-care')">护眼模式</button>
+        <button onclick="setTheme('sunset')">日落</button>
+        <button onclick="setTheme('ocean')">海洋</button>
+        <button onclick="setTheme('forest')">森林</button>
+        <button onclick="setTheme('rainbow')">彩虹</button>
+        <button onclick="setTheme('system')">跟随系统</button>
+        <button onclick="setTheme('time')">时间自动</button>
+        <button onclick="resetTheme()">重置主题</button>
+      </div>
+    </div>
+
+    <!-- 按钮 -->
+    <div class="section">
+      <h3>按钮</h3>
+      <div class="btn-group">
+        <button>普通按钮</button>
+        <button class="btn">主要按钮</button>
+        <button>次要按钮</button>
+      </div>
+    </div>
+
+    <!-- 表单 -->
+    <div class="section">
+      <h3>表单元素</h3>
+      <div class="form-item">
+        <label class="form-label">输入框：</label>
+        <input type="text" placeholder="请输入内容">
+      </div>
+      <div class="form-item">
+        <label class="form-label">下拉框：</label>
+        <select>
+          <option>选项 1</option>
+          <option>选项 2</option>
+          <option>选项 3</option>
+        </select>
+      </div>
+      <div class="form-item">
+        <label class="form-label">文本域：</label>
+        <textarea placeholder="请输入多行文本"></textarea>
+      </div>
+      <div class="form-item">
+        <label class="form-label">开关：</label>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="form-item">
+        <label class="form-label">滑块：</label>
+        <input type="range" class="slider-input" min="0" max="100" value="50">
+      </div>
+      <div class="form-item">
+        <label class="form-label">单选框：</label>
+        <div class="radio-item">
+          <input type="radio" name="radio" id="r1" checked>
+          <label for="r1">选项 A</label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" name="radio" id="r2">
+          <label for="r2">选项 B</label>
+        </div>
+      </div>
+      <div class="form-item">
+        <label class="form-label">复选框：</label>
+        <div class="checkbox-item">
+          <input type="checkbox" id="c1" checked>
+          <label for="c1">选项 1</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="c2">
+          <label for="c2">选项 2</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 评分 -->
+    <div class="section">
+      <h3>评分</h3>
+      <div class="rate">★ ★ ★ ★ ☆</div>
+    </div>
+
+    <!-- 布局 -->
+    <div class="section">
+      <h3>布局</h3>
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <strong>卡片 1</strong>
+            <p>这是一个卡片组件</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <strong>卡片 2</strong>
+            <p>这是另一个卡片</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <strong>面板标题</strong>
+        <p>这是面板的内容区域</p>
+      </div>
+    </div>
+
+    <!-- 标签页 -->
+    <div class="section">
+      <h3>标签页</h3>
+      <div class="tabs-browser">
+        <button class="tab-browser active" onclick="switchTab('tab1')">首页</button>
+        <button class="tab-browser" onclick="switchTab('tab2')">文档</button>
+        <button class="tab-browser" onclick="switchTab('tab3')">示例</button>
+      </div>
+      <div class="tabs-content">
+        <div class="tab-pane active" id="tab1">
+          <h4>首页内容</h4>
+          <p>欢迎使用 PrimoUI！</p>
+        </div>
+        <div class="tab-pane" id="tab2">
+          <h4>文档内容</h4>
+          <p>这里是组件文档</p>
+        </div>
+        <div class="tab-pane" id="tab3">
+          <h4>示例内容</h4>
+          <p>这里是使用示例</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 导航 -->
+    <div class="section">
+      <h3>导航</h3>
+      <div class="breadcrumb">
+        <span class="breadcrumb-item">首页</span>
+        <span class="breadcrumb-item">组件</span>
+        <span class="breadcrumb-item">导航</span>
+      </div>
+      <div class="pagination">
+        <span class="page-item">上一页</span>
+        <span class="page-item active">1</span>
+        <span class="page-item">2</span>
+        <span class="page-item">3</span>
+        <span class="page-item">下一页</span>
+      </div>
+      <ul class="menu">
+        <li class="menu-item">菜单项 1</li>
+        <li class="menu-item">菜单项 2</li>
+        <li class="menu-item">菜单项 3</li>
+      </ul>
+    </div>
+
+    <!-- 数据展示 -->
+    <div class="section">
+      <h3>数据展示</h3>
+      <table>
+        <tr>
+          <th>姓名</th>
+          <th>年龄</th>
+          <th>城市</th>
+        </tr>
+        <tr>
+          <td>张三</td>
+          <td>25</td>
+          <td>北京</td>
+        </tr>
+        <tr>
+          <td>李四</td>
+          <td>30</td>
+          <td>上海</td>
+        </tr>
+      </table>
+      <ul class="list">
+        <li class="list-item">列表项 1</li>
+        <li class="list-item">列表项 2</li>
+        <li class="list-item">列表项 3</li>
+      </ul>
+      <div>
+        <div class="avatar">U</div>
+        <span class="tag">标签</span>
+        <span>徽章<span class="badge">5</span></span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar"></div>
+      </div>
+      <ul class="tree">
+        <li class="tree-item">
+          根节点
+          <ul class="tree-children">
+            <li class="tree-item">子节点 1</li>
+            <li class="tree-item">子节点 2</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 反馈组件 -->
+    <div class="section">
+      <h3>反馈组件</h3>
+      <div class="btn-group">
+        <button onclick="openModal()">打开模态框</button>
+        <button onclick="showToast()">显示 Toast</button>
+        <button onclick="showPopconfirm()">确认框</button>
+        <button onclick="showNotification()">系统通知</button>
+        <span class="tooltip">
+          悬停提示
+          <span class="tooltip-text">这是提示信息</span>
+        </span>
+        <span class="loading"></span>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p>PrimoUI | 简洁、优雅</p>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>模态框标题</h3>
+      <p>这是模态框的内容区域</p>
+      <div class="btn-group">
+        <button onclick="closeModal()">确定</button>
+        <button onclick="closeModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/modules/theme.js"></script>
+  <script src="js/modules/tabs.js"></script>
+  <script src="js/modules/modal.js"></script>
+  <script src="js/modules/feedback.js"></script>
+</body>
+</html>
