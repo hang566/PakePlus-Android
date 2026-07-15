@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>采购列表</title>
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/base.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/display.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/feedback.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/forms.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/layout.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/navigation.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/tabs-browser.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/variables.css">
+    <style>
+        :root {
+            /* 业务特定变量 - 不覆盖主题变量 */
+            --used-color: #f5222d;
+            --budget-color: #52c41a;
+            --pending-color: #faad14;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 0.85rem;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+        }
+
+        .stat-card.budget .stat-value {
+            color: var(--budget-color);
+        }
+
+        .stat-card.used .stat-value {
+            color: var(--used-color);
+        }
+
+        .stat-card.remaining .stat-value {
+            color: var(--main);
+        }
+
+        .stat-card.count .stat-value {
+            color: var(--pending-color);
+        }
+
+        .stat-card .progress {
+            margin-top: 12px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .toolbar .search-box {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .toolbar .search-box input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .toolbar .filter-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--btn-bg);
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .btn:hover {
+            background: var(--main);
+            color: white;
+            border-color: var(--main);
+        }
+
+        .btn-primary {
+            background: var(--main);
+            color: white;
+            border-color: var(--main);
+        }
+
+        .btn-primary:hover {
+            background: color-mix(in srgb, var(--main) 85%, black);
+            border-color: color-mix(in srgb, var(--main) 85%, black);
+        }
+
+        .btn-success {
+            background: var(--budget-color);
+            color: white;
+            border-color: var(--budget-color);
+        }
+
+        .btn-success:hover {
+            background: #45a017;
+            border-color: #45a017;
+        }
+
+        .btn-danger {
+            background: var(--used-color);
+            color: white;
+            border-color: var(--used-color);
+        }
+
+        .btn-danger:hover {
+            background: #d91f29;
+            border-color: #d91f29;
+        }
+
+        .btn-secondary {
+            background: var(--btn-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .data-table-wrapper {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+            margin-bottom: 24px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .data-table-wrapper table {
+            width: 100%;
+            min-width: 900px;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table-wrapper thead {
+            background: var(--btn-bg);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .data-table-wrapper th,
+        .data-table-wrapper td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .data-table-wrapper th {
+            font-weight: 600;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table-wrapper tbody tr:hover {
+            background: var(--btn-bg);
+        }
+
+        .data-table-wrapper .actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: nowrap;
+        }
+
+        .data-table-wrapper .actions button {
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            color: var(--text);
+        }
+
+        .data-table-wrapper .actions button:hover {
+            background: var(--main);
+            color: white;
+            border-color: var(--main);
+        }
+
+        .data-table-wrapper td.amount {
+            font-weight: 600;
+            color: var(--used-color);
+        }
+
+        .data-table-wrapper td.budget {
+            color: var(--budget-color);
+        }
+
+        .data-table-wrapper td.status {
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background: #fff7e6;
+            color: #d48806;
+            border: 1px solid #ffe58f;
+        }
+
+        .status-badge.processing {
+            background: #e6f7ff;
+            color: #0050b3;
+            border: 1px solid #91d5ff;
+        }
+
+        .status-badge.completed {
+            background: #f6ffed;
+            color: #389e0d;
+            border: 1px solid #b7eb8f;
+        }
+
+        .status-badge.cancelled {
+            background: #fff1f0;
+            color: #cf1322;
+            border: 1px solid #ffa39e;
+        }
+
+        .code-display {
+            padding: 8px 12px;
+            background: var(--btn-bg);
+            border: 1px dashed var(--border);
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+            word-break: break-all;
+        }
+
+        .modal-content {
+            max-width: 520px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--main);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--main) 15%, transparent);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tabs-browser {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tab-browser {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .tab-browser.active {
+            background: var(--main);
+            color: white;
+            border-color: var(--main);
+        }
+
+        .tabs-content .tab-pane {
+            display: none;
+        }
+
+        .tabs-content .tab-pane.active {
+            display: block;
+        }
+
+        .item-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .item-row input {
+            flex: 1;
+        }
+
+        .item-row .btn-remove {
+            padding: 6px 12px;
+            background: #fff1f0;
+            color: #cf1322;
+            border: 1px solid #ffa39e;
+        }
+
+        .item-row .btn-remove:hover {
+            background: #cf1322;
+            color: white;
+            border-color: #cf1322;
+        }
+
+        .add-item-btn {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed var(--border);
+            background: transparent;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .add-item-btn:hover {
+            border-color: var(--main);
+            color: var(--main);
+            background: color-mix(in srgb, var(--main) 5%, transparent);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e8e8e8;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--main);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-bar-fill.warning {
+            background: var(--pending-color);
+        }
+
+        .progress-bar-fill.danger {
+            background: var(--used-color);
+        }
+
+        @media (max-width: 768px) {
+
+            .data-table-wrapper table,
+            .data-table-wrapper thead,
+            .data-table-wrapper tbody,
+            .data-table-wrapper th,
+            .data-table-wrapper td,
+            .data-table-wrapper tr {
+                display: block;
+            }
+
+            .data-table-wrapper thead {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .data-table-wrapper tbody tr {
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                padding: 12px;
+                background: var(--card-bg);
+            }
+
+            .data-table-wrapper td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+                border-bottom: 1px solid var(--border);
+                max-width: none;
+                white-space: normal;
+                word-break: break-all;
+            }
+
+            .data-table-wrapper td:last-child {
+                border-bottom: none;
+            }
+
+            .data-table-wrapper td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: color-mix(in srgb, var(--text) 60%, transparent);
+                font-size: 0.85rem;
+                margin-right: 8px;
+                flex-shrink: 0;
+            }
+
+            .data-table-wrapper .actions {
+                width: 100%;
+                justify-content: flex-end;
+                gap: 8px;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: color-mix(in srgb, var(--text) 60%, transparent);
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nav"></div>
+    <script src="../../js/nav.js"></script>
+    <div class="wrap" style="margin-top: 30px;">
+
+       <div class="container">
+        <h1 class="section-title">采购概览</h1>
+        <hr>
+
+        <div class="dashboard-cards">
+            <div class="stat-card budget">
+                <div class="stat-header">
+                    <span>总采购预算</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#52c41a">
+                        <path
+                            d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z" />
+                    </svg>
+                </div>
+                <div class="stat-value" id="totalBudget">¥0.00</div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="budgetProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card used">
+                <div class="stat-header">
+                    <span>已用金额</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#f5222d">
+                        <path d="M7,10L12,15L17,10H7Z" />
+                    </svg>
+                </div>
+                <div class="stat-value" id="totalUsed">¥0.00</div>
+                <div class="stat-sub" id="usedPercent">占预算 0%</div>
+            </div>
+
+            <div class="stat-card remaining">
+                <div class="stat-header">
+                    <span>剩余可用</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#4a90d9">
+                        <path
+                            d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4" />
+                    </svg>
+                </div>
+                <div class="stat-value" id="totalRemaining">¥0.00</div>
+                <div class="stat-sub" id="remainingSub">预算充足</div>
+            </div>
+
+            <div class="stat-card count">
+                <div class="stat-header">
+                    <span>采购单数</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#faad14">
+                        <path
+                            d="M3,3H21V7H3V3M4,8H20V21H4V8M9.5,11A0.5,0.5 0 0,0 9,11.5A0.5,0.5 0 0,0 9.5,12A0.5,0.5 0 0,0 10,11.5A0.5,0.5 0 0,0 9.5,11Z" />
+                    </svg>
+                </div>
+                <div class="stat-value" id="totalOrders">0</div>
+                <div class="stat-sub" id="ordersSub">进行中: 0</div>
+            </div>
+        </div>
+
+        <hr>
+        <h1 class="section-title">操作</h1>
+        <div style="margin-bottom: 16px;">
+            <button class="btn btn-success" onclick="openAddModal()">+ 新增采购</button>
+            <button class="btn btn-primary" onclick="reportSelectedToBookkeeping()">上报选中到记账</button>
+            <button class="btn btn-secondary" onclick="deleteSelected()">删除选中</button>
+            <button class="btn btn-secondary" onclick="exportData('json')">JSON</button>
+            <button class="btn btn-secondary" onclick="exportData('csv')">CSV</button>
+        </div>
+        <hr>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索采购项目、编号、供应商、备注..." oninput="renderTable()">
+                <button class="btn btn-primary" onclick="renderTable()">搜索</button>
+            </div>
+            <div class="filter-group">
+                <span style="font-size: 0.85rem; color: color-mix(in srgb, var(--text) 60%, transparent);">状态:</span>
+                <button class="btn active" onclick="setStatusFilter('all', this)">全部</button>
+                <button class="btn" onclick="setStatusFilter('pending', this)">待处理</button>
+                <button class="btn" onclick="setStatusFilter('processing', this)">进行中</button>
+                <button class="btn" onclick="setStatusFilter('completed', this)">已完成</button>
+                <button class="btn" onclick="setStatusFilter('cancelled', this)">已取消</button>
+            </div>
+            <div class="filter-group">
+                <span style="font-size: 0.85rem; color: color-mix(in srgb, var(--text) 60%, transparent);">日期:</span>
+                <input type="date" id="filterDateFrom" onchange="renderTable()">
+                <span>~</span>
+                <input type="date" id="filterDateTo" onchange="renderTable()">
+            </div>
+        </div>
+
+        <div class="tabs-browser">
+            <button class="tab-browser active" onclick="switchTab('tab1', this)">采购列表</button>
+            <button class="tab-browser" onclick="switchTab('tab2', this)">数据管理</button>
+        </div>
+        <div class="tabs-content">
+            <div class="tab-pane active" id="tab1">
+                <div class="data-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th>
+                                <th>采购编号</th>
+                                <th>采购项目</th>
+                                <th>供应商</th>
+                                <th>采购日期</th>
+                                <th>预算</th>
+                                <th>实际金额</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab2">
+                <div
+                    style="padding: 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow);">
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 12px;">导出数据</h3>
+                        <button class="btn btn-secondary" onclick="exportData('json')">JSON</button>
+                        <button class="btn btn-secondary" onclick="exportData('csv')">CSV</button>
+
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 12px;">导入数据</h3>
+                        <input type="file" id="importFile" accept=".json" style="margin-bottom: 8px;">
+                        <br>
+                        <button class="btn btn-primary" onclick="importData()">导入</button>
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom: 12px; color: var(--used-color);">危险操作</h3>
+                        <button class="btn btn-danger" onclick="resetData()">重置所有数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">新增采购</h3>
+            <hr>
+            <input type="hidden" id="editId">
+
+            <div class="form-group">
+                <label>采购编号</label>
+                <div id="codeDisplay" class="code-display"></div>
+            </div>
+
+            <div class="form-group">
+                <label>采购项目 <span style="color: var(--used-color);">*</span></label>
+                <input type="text" id="inputName" placeholder="例如：办公用品采购">
+            </div>
+
+            <div class="form-group">
+                <label>供应商</label>
+                <input type="text" id="inputSupplier" placeholder="请输入供应商名称">
+            </div>
+
+            <div class="row" style="gap: 16px; display: flex;">
+                <div class="form-group" style="flex: 1;">
+                    <label>采购日期 <span style="color: var(--used-color);">*</span></label>
+                    <input type="date" id="inputDate">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>状态</label>
+                    <select id="inputStatus">
+                        <option value="pending">待处理</option>
+                        <option value="processing">进行中</option>
+                        <option value="completed">已完成</option>
+                        <option value="cancelled">已取消</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row" style="gap: 16px; display: flex;">
+                <div class="form-group" style="flex: 1;">
+                    <label>预算金额 (¥)</label>
+                    <input type="number" id="inputBudget" placeholder="请输入预算金额" step="0.01" min="0">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>实际金额 (¥)</label>
+                    <input type="number" id="inputAmount" placeholder="请输入实际金额" step="0.01" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>采购详情</label>
+                <div id="itemsList">
+                    <div class="item-row">
+                        <input type="text" id="itemName0" placeholder="物品名称">
+                        <input type="number" id="itemQty0" placeholder="数量" min="1" style="max-width: 100px;">
+                        <input type="number" id="itemPrice0" placeholder="单价" step="0.01" min="0"
+                            style="max-width: 120px;">
+                        <button class="btn btn-remove" onclick="removeItemRow(0)">×</button>
+                    </div>
+                </div>
+                <button class="add-item-btn" onclick="addItemRow()">+ 添加物品</button>
+            </div>
+
+            <div class="form-group">
+                <label>备注</label>
+                <textarea id="inputRemark" rows="3" placeholder="请输入备注信息"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('modal')">关闭</button>
+                <button class="btn btn-primary" onclick="saveRecord()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <h3>确认重置所有数据吗？</h3>
+            <hr>
+            <div style="margin-bottom: 12px; color: var(--used-color); font-size: 0.9rem;">⚠️ 警告：重置后所有数据将被永久删除，此操作不可恢复！</div>
+            <div style="margin-bottom: 16px; font-size: 0.9rem;">请输入下方的随机确认密码以继续：</div>
+            <div
+                style="padding: 12px; background: var(--btn-bg); border-radius: 4px; text-align: center; margin-bottom: 16px;">
+                <span
+                    style="font-family: 'Courier New', Courier, monospace; font-size: 1.4rem; font-weight: bold; color: var(--main); letter-spacing: 4px;"
+                    id="resetCodeDisplay"></span>
+            </div>
+            <div class="form-group">
+                <label style="color: var(--used-color);">确认密码</label>
+                <input type="text" id="resetPassword" placeholder="请输入上方的确认密码">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('resetModal')">取消</button>
+                <button class="btn btn-danger" onclick="confirmReset()">确认重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../UI/primoUI 0.1/js/modules/feedback.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/modal.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/tabs.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/nav.js"></script>
+    <script>
+        let records = JSON.parse(localStorage.getItem('purchase_records') || '[]');
+        let currentStatusFilter = 'all';
+        let itemRowCount = 1;
+        let resetVerificationCode = '';
+
+        function getRandomStr(len = 10) {
+            const pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let res = '';
+            for (let i = 0; i < len; i++) {
+                let r = Math.floor(Math.random() * pool.length);
+                res += pool[r];
+            }
+            return res;
+        }
+
+        function getFullCode() {
+            const stamp = Date.now();
+            const rand10 = getRandomStr(10);
+            return stamp + rand10;
+        }
+
+        function generateCode() {
+            const codeDisplay = document.getElementById('codeDisplay');
+            if (codeDisplay) {
+                codeDisplay.textContent = getFullCode();
+            }
+        }
+
+        function formatMoney(num) {
+            return '¥' + Number(num || 0).toFixed(2);
+        }
+
+        function formatMoneyPlain(num) {
+            return Number(num || 0).toFixed(2);
+        }
+
+        function todayStr() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-browser').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
+
+        function setStatusFilter(status, btn) {
+            currentStatusFilter = status;
+            document.querySelectorAll('.toolbar .filter-group button').forEach(b => {
+                if (b.textContent && b !== document.querySelector('.toolbar .filter-group span')) {
+                    b.classList.remove('active');
+                }
+            });
+            if (btn) btn.classList.add('active');
+            renderTable();
+        }
+
+        function addItemRow() {
+            const idx = itemRowCount++;
+            const itemsList = document.getElementById('itemsList');
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.id = 'itemRow' + idx;
+            row.innerHTML = `
+                <input type="text" id="itemName${idx}" placeholder="物品名称">
+                <input type="number" id="itemQty${idx}" placeholder="数量" min="1" style="max-width: 100px;">
+                <input type="number" id="itemPrice${idx}" placeholder="单价" step="0.01" min="0" style="max-width: 120px;">
+                <button class="btn btn-remove" onclick="removeItemRow(${idx})">×</button>
+            `;
+            itemsList.appendChild(row);
+        }
+
+        function removeItemRow(idx) {
+            const row = document.getElementById('itemRow' + idx);
+            if (row) row.remove();
+            const rows = document.querySelectorAll('#itemsList .item-row');
+            if (rows.length === 0) {
+                addItemRow();
+            }
+        }
+
+        function collectItems() {
+            const rows = document.querySelectorAll('#itemsList .item-row');
+            const items = [];
+            rows.forEach((row, i) => {
+                const inputs = row.querySelectorAll('input[type="text"], input[type="number"]');
+                if (inputs.length >= 3) {
+                    const name = inputs[0].value.trim();
+                    const qty = parseInt(inputs[1].value) || 0;
+                    const price = parseFloat(inputs[2].value) || 0;
+                    if (name) {
+                        items.push({ name, qty, price });
+                    }
+                }
+            });
+            return items;
+        }
+
+        function populateItems(items) {
+            const itemsList = document.getElementById('itemsList');
+            itemsList.innerHTML = '';
+            itemRowCount = 0;
+            if (!items || items.length === 0) {
+                addItemRow();
+                return;
+            }
+            items.forEach((item, i) => {
+                const idx = itemRowCount++;
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                row.id = 'itemRow' + idx;
+                row.innerHTML = `
+                    <input type="text" id="itemName${idx}" placeholder="物品名称" value="${item.name || ''}">
+                    <input type="number" id="itemQty${idx}" placeholder="数量" min="1" style="max-width: 100px;" value="${item.qty || ''}">
+                    <input type="number" id="itemPrice${idx}" placeholder="单价" step="0.01" min="0" style="max-width: 120px;" value="${item.price || ''}">
+                    <button class="btn btn-remove" onclick="removeItemRow(${idx})">×</button>
+                `;
+                itemsList.appendChild(row);
+            });
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '新增采购';
+            document.getElementById('editId').value = '';
+            document.getElementById('inputName').value = '';
+            document.getElementById('inputSupplier').value = '';
+            document.getElementById('inputDate').value = todayStr();
+            document.getElementById('inputStatus').value = 'pending';
+            document.getElementById('inputBudget').value = '';
+            document.getElementById('inputAmount').value = '';
+            document.getElementById('inputRemark').value = '';
+            generateCode();
+            itemRowCount = 0;
+            document.getElementById('itemsList').innerHTML = '';
+            addItemRow();
+            openModal('modal');
+        }
+
+        function openEditModal(id) {
+            const rec = records.find(r => r.id === id);
+            if (!rec) return;
+            document.getElementById('modalTitle').textContent = '编辑采购';
+            document.getElementById('editId').value = rec.id;
+            document.getElementById('inputName').value = rec.name || '';
+            document.getElementById('inputSupplier').value = rec.supplier || '';
+            document.getElementById('inputDate').value = rec.date || '';
+            document.getElementById('inputStatus').value = rec.status || 'pending';
+            document.getElementById('inputBudget').value = rec.budget || '';
+            document.getElementById('inputAmount').value = rec.amount || '';
+            document.getElementById('inputRemark').value = rec.remark || '';
+            document.getElementById('codeDisplay').textContent = rec.code || getFullCode();
+            populateItems(rec.items || []);
+            openModal('modal');
+        }
+
+        function saveRecord() {
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('inputName').value.trim();
+            const date = document.getElementById('inputDate').value;
+
+            if (!name) {
+                alert('请输入采购项目名称');
+                return;
+            }
+            if (!date) {
+                alert('请选择采购日期');
+                return;
+            }
+
+            const items = collectItems();
+
+            const record = {
+                id: id || Date.now().toString(),
+                code: document.getElementById('codeDisplay').textContent,
+                name: name,
+                supplier: document.getElementById('inputSupplier').value.trim(),
+                date: date,
+                status: document.getElementById('inputStatus').value,
+                budget: parseFloat(document.getElementById('inputBudget').value) || 0,
+                amount: parseFloat(document.getElementById('inputAmount').value) || 0,
+                remark: document.getElementById('inputRemark').value.trim(),
+                items: items,
+                createdAt: id ? (records.find(r => r.id === id) || {}).createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            if (!record.createdAt) {
+                record.createdAt = new Date().toISOString();
+            }
+
+            if (id) {
+                const idx = records.findIndex(r => r.id === id);
+                if (idx !== -1) records[idx] = record;
+            } else {
+                records.unshift(record);
+            }
+
+            saveData();
+            closeModal('modal');
+            renderTable();
+            updateDashboard();
+        }
+
+        function saveData() {
+            localStorage.setItem('purchase_records', JSON.stringify(records));
+        }
+
+        function generateResetCode() {
+            const pool = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789一二三四五六七八九十你我他';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += pool[Math.floor(Math.random() * pool.length)];
+            }
+            resetVerificationCode = code;
+            document.getElementById('resetCodeDisplay').textContent = resetVerificationCode;
+        }
+
+        function resetData() {
+            generateResetCode();
+            document.getElementById('resetPassword').value = '';
+            openModal('resetModal');
+        }
+
+        function confirmReset() {
+            const input = document.getElementById('resetPassword').value.trim();
+            if (!input) {
+                alert('请输入确认密码');
+                return;
+            }
+            if (input !== resetVerificationCode) {
+                alert('密码输入错误，请重新输入');
+                document.getElementById('resetPassword').value = '';
+                generateResetCode();
+                return;
+            }
+            records = [];
+            saveData();
+            renderTable();
+            updateDashboard();
+            closeModal('resetModal');
+        }
+
+        function exportData(format) {
+            const fmt = format || 'json';
+            const filename = 'purchase_records_' + todayStr();
+            let dataStr, mimeType, ext;
+
+            if (fmt === 'csv') {
+                const headers = ['编号', '采购项目', '供应商', '采购日期', '状态', '预算', '实际金额', '备注', '物品明细'];
+                const statusMap = { pending: '待处理', processing: '进行中', completed: '已完成', cancelled: '已取消' };
+                const escape = (v) => {
+                    const s = String(v == null ? '' : v);
+                    return '"' + s.replace(/"/g, '""') + '"';
+                };
+                const rows = records.map(r => [
+                    r.code || '',
+                    r.name || '',
+                    r.supplier || '',
+                    r.date || '',
+                    statusMap[r.status] || r.status || '',
+                    r.budget || 0,
+                    r.amount || 0,
+                    r.remark || '',
+                    (r.items || []).map(it => `${it.name}×${it.qty}(¥${it.price})`).join('; ')
+                ].map(escape).join(','));
+                dataStr = '\ufeff' + [headers.map(escape).join(',')].concat(rows).join('\n');
+                mimeType = 'text/csv;charset=utf-8';
+                ext = 'csv';
+            } else {
+                dataStr = JSON.stringify(records, null, 2);
+                mimeType = 'application/json;charset=utf-8';
+                ext = 'json';
+            }
+
+            const dataUri = 'data:' + mimeType + ',' + encodeURIComponent(dataStr);
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', filename + '.' + ext);
+            linkElement.click();
+        }
+
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('请选择要导入的文件');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        if (confirm(`导入 ${imported.length} 条记录？（将覆盖现有数据）`)) {
+                            records = imported;
+                            saveData();
+                            renderTable();
+                            updateDashboard();
+                            alert('导入成功');
+                        }
+                    } else {
+                        alert('文件格式不正确');
+                    }
+                } catch (err) {
+                    alert('文件解析失败: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function getFilteredRecords() {
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+
+            return records.filter(r => {
+                if (currentStatusFilter !== 'all' && r.status !== currentStatusFilter) return false;
+                if (search) {
+                    const searchText = (r.name + ' ' + (r.code || '') + ' ' + (r.supplier || '') + ' ' + (r.remark || '')).toLowerCase();
+                    if (!searchText.includes(search)) return false;
+                }
+                if (dateFrom && r.date < dateFrom) return false;
+                if (dateTo && r.date > dateTo) return false;
+                return true;
+            });
+        }
+
+        function getStatusBadge(status) {
+            const map = {
+                pending: { text: '待处理', cls: 'pending' },
+                processing: { text: '进行中', cls: 'processing' },
+                completed: { text: '已完成', cls: 'completed' },
+                cancelled: { text: '已取消', cls: 'cancelled' }
+            };
+            const s = map[status] || { text: status, cls: 'pending' };
+            return `<span class="status-badge ${s.cls}">${s.text}</span>`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const filtered = getFilteredRecords();
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">
+                                <div class="icon">📋</div>
+                                <div>暂无采购记录</div>
+                                <div style="margin-top: 8px; font-size: 0.85rem;">点击"新增采购"开始记录</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => `
+                <tr>
+                    <td data-label="选择"><input type="checkbox" class="row-check" data-id="${r.id}"></td>
+                    <td data-label="采购编号" style="font-size: 0.8rem; color: #888; font-family: monospace;">${(r.code || '').substring(0, 16)}</td>
+                    <td data-label="采购项目"><strong>${r.name || '-'}</strong></td>
+                    <td data-label="供应商">${r.supplier || '-'}</td>
+                    <td data-label="采购日期">${r.date || '-'}</td>
+                    <td data-label="预算" class="budget">${r.budget > 0 ? formatMoney(r.budget) : '-'}</td>
+                    <td data-label="实际金额" class="amount">${r.amount > 0 ? formatMoney(r.amount) : '-'}</td>
+                    <td data-label="状态" class="status">${getStatusBadge(r.status)}</td>
+                    <td data-label="操作" class="actions">
+                        <button onclick="reportToBookkeeping('${r.id}')">${r.reported ? '已上报' : '上报'}</button>
+                        <button onclick="openEditModal('${r.id}')">编辑</button>
+                        <button onclick="deleteRecord('${r.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteRecord(id) {
+            if (!confirm('确定删除该采购记录？')) return;
+            records = records.filter(r => r.id !== id);
+            saveData();
+            renderTable();
+            updateDashboard();
+        }
+
+        function toggleSelectAll() {
+            const checked = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.row-check').forEach(cb => cb.checked = checked);
+        }
+
+        function deleteSelected() {
+            const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(cb => cb.dataset.id);
+            if (!ids.length) {
+                alert('请先选择要删除的记录');
+                return;
+            }
+            if (!confirm(`确定删除选中的 ${ids.length} 条记录？`)) return;
+            records = records.filter(r => !ids.includes(r.id));
+            saveData();
+            renderTable();
+            updateDashboard();
+        }
+
+        function purchaseToBookkeeping(purchase) {
+            const itemsDesc = (purchase.items || [])
+                .filter(it => it.name)
+                .map(it => `${it.name}×${it.qty || 1}(¥${(it.price || 0).toFixed(2)})`)
+                .join('；');
+            const remarkParts = [];
+            if (purchase.supplier) remarkParts.push(`供应商：${purchase.supplier}`);
+            if (itemsDesc) remarkParts.push(`明细：${itemsDesc}`);
+            if (purchase.remark) remarkParts.push(purchase.remark);
+            return {
+                id: 'p_' + (purchase.id || Date.now().toString()),
+                code: purchase.code || getFullCode(),
+                orderNo: purchase.code || '',
+                title: '[采购] ' + (purchase.name || '采购支出'),
+                date: purchase.date || todayStr(),
+                tag: purchase.supplier || '采购',
+                amount: Number(purchase.amount || 0),
+                type: 'expense',
+                dining: '',
+                remark: remarkParts.join(' | '),
+                source: 'purchase',
+                sourceId: purchase.id,
+                reportedAt: new Date().toISOString()
+            };
+        }
+
+        function saveBookkeepingData(bkRecords) {
+            localStorage.setItem('bookkeeping_records', JSON.stringify(bkRecords));
+        }
+
+        function getBookkeepingRecords() {
+            return JSON.parse(localStorage.getItem('bookkeeping_records') || '[]');
+        }
+
+        function reportToBookkeeping(id) {
+            const rec = records.find(r => r.id === id);
+            if (!rec) return;
+            if (rec.reported) {
+                if (!confirm('该记录已上报过，是否再次上报（将产生新的记账记录）？')) return;
+            }
+            const amount = Number(rec.amount || 0);
+            if (amount <= 0) {
+                if (!confirm('该采购的实际金额为 0，是否仍然上报？')) return;
+            }
+            const bkRecord = purchaseToBookkeeping(rec);
+            const bkRecords = getBookkeepingRecords();
+            bkRecords.unshift(bkRecord);
+            saveBookkeepingData(bkRecords);
+            rec.reported = true;
+            rec.reportedAt = new Date().toISOString();
+            saveData();
+            renderTable();
+            alert(`已成功上报到记账本！\n项目：${rec.name}\n金额：¥${amount.toFixed(2)}`);
+        }
+
+        function reportSelectedToBookkeeping() {
+            const ids = Array.from(document.querySelectorAll('.row-check:checked')).map(cb => cb.dataset.id);
+            if (!ids.length) {
+                alert('请先勾选要上报的记录');
+                return;
+            }
+            const selected = records.filter(r => ids.includes(r.id));
+            const alreadyReported = selected.filter(r => r.reported).length;
+            let msg = `即将上报 ${selected.length} 条采购记录到记账本`;
+            if (alreadyReported > 0) msg += `（其中 ${alreadyReported} 条已上报过，将产生新的记账记录）`;
+            const totalAmt = selected.reduce((s, r) => s + Number(r.amount || 0), 0);
+            msg += `\n总金额：¥${totalAmt.toFixed(2)}\n\n确认上报？`;
+            if (!confirm(msg)) return;
+
+            const bkRecords = getBookkeepingRecords();
+            let reportedCount = 0;
+            selected.forEach(rec => {
+                const bkRecord = purchaseToBookkeeping(rec);
+                bkRecords.unshift(bkRecord);
+                rec.reported = true;
+                rec.reportedAt = new Date().toISOString();
+                reportedCount++;
+            });
+            saveBookkeepingData(bkRecords);
+            saveData();
+            renderTable();
+            alert(`上报完成！\n成功上报 ${reportedCount} 条记录到记账本服务。\n总金额：¥${totalAmt.toFixed(2)}`);
+        }
+
+        function updateDashboard() {
+            const totalBudget = records.reduce((sum, r) => sum + (r.budget || 0), 0);
+            const totalUsed = records.reduce((sum, r) => sum + (r.amount || 0), 0);
+            const totalOrders = records.length;
+            const processingOrders = records.filter(r => r.status === 'processing' || r.status === 'pending').length;
+
+            document.getElementById('totalBudget').textContent = formatMoney(totalBudget);
+            document.getElementById('totalUsed').textContent = formatMoney(totalUsed);
+
+            let remaining = totalBudget - totalUsed;
+            document.getElementById('totalRemaining').textContent = formatMoney(remaining);
+
+            const percent = totalBudget > 0 ? Math.min((totalUsed / totalBudget) * 100, 100) : 0;
+            document.getElementById('usedPercent').textContent = '占预算 ' + percent.toFixed(1) + '%';
+
+            const progressBar = document.getElementById('budgetProgress');
+            progressBar.style.width = percent + '%';
+            progressBar.classList.remove('warning', 'danger');
+            if (percent >= 90) {
+                progressBar.classList.add('danger');
+            } else if (percent >= 70) {
+                progressBar.classList.add('warning');
+            }
+
+            const remainingSub = document.getElementById('remainingSub');
+            if (totalBudget === 0) {
+                remainingSub.textContent = '尚未设置预算';
+            } else if (remaining < 0) {
+                remainingSub.textContent = '已超预算 ' + formatMoney(Math.abs(remaining));
+                remainingSub.style.color = '#f5222d';
+            } else {
+                remainingSub.textContent = '剩余预算可用';
+                remainingSub.style.color = '';
+            }
+
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('ordersSub').textContent = '进行中: ' + processingOrders;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderTable();
+            updateDashboard();
+        });
+    </script>
+</body>
+
+</html>
