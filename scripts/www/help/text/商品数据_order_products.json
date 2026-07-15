@@ -1,0 +1,86 @@
+[
+  {
+    "id": "1",
+    "name": "拿铁咖啡",
+    "desc": "精选咖啡豆，香浓醇厚",
+    "price": 28,
+    "category": "饮品"
+  },
+  {
+    "id": "2",
+    "name": "美式咖啡",
+    "desc": "经典美式，清爽提神",
+    "price": 22,
+    "category": "饮品"
+  },
+  {
+    "id": "3",
+    "name": "汉堡套餐",
+    "desc": "牛肉汉堡+薯条+可乐",
+    "price": 45,
+    "category": "主食"
+  },
+  {
+    "id": "4",
+    "name": "披萨",
+    "desc": "经典芝士披萨",
+    "price": 68,
+    "category": "主食"
+  },
+  {
+    "id": "5",
+    "name": "炸鸡",
+    "desc": "香脆炸鸡块",
+    "price": 35,
+    "category": "小吃"
+  },
+  {
+    "id": "6",
+    "name": "沙拉",
+    "desc": "新鲜蔬菜沙拉",
+    "price": 28,
+    "category": "小吃"
+  },
+  {
+    "id": "7",
+    "name": "蛋糕",
+    "desc": "奶油水果蛋糕",
+    "price": 38,
+    "category": "甜点"
+  },
+  {
+    "id": "8",
+    "name": "冰淇淋",
+    "desc": "香草冰淇淋",
+    "price": 18,
+    "category": "甜点"
+  },
+  {
+    "id": "9",
+    "name": "红茶",
+    "desc": "精选红茶",
+    "price": 15,
+    "category": "饮品"
+  },
+  {
+    "id": "10",
+    "name": "三明治",
+    "desc": "火腿蛋三明治",
+    "price": 22,
+    "category": "主食"
+  },
+  {
+    "id": "11",
+    "name": "薯条",
+    "desc": "香脆薯条",
+    "price": 15,
+    "category": "小吃"
+  },
+  {
+    "id": "12",
+    "name": "提拉米苏",
+    "desc": "意大利经典甜品",
+    "price": 32,
+    "category": "甜点"
+  }
+]
