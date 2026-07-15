@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF文本提取</title>
+    <script src="../lib/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+        }
+        body {
+            max-width: 980px;
+            margin: 30px auto;
+            padding: 0 20px;
+            background: #f5f7fa;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .upload-area {
+            border: 2px dashed #4299e1;
+            border-radius: 8px;
+            padding: 35px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 18px;
+        }
+        .upload-area:hover {
+            background: #ebf8ff;
+        }
+        #file-input {
+            display: none;
+        }
+        .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .input-sm {
+            padding: 6px 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            width: 220px;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .btn {
+            padding: 9px 14px;
+            background: #4299e1;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+        textarea {
+            width: 100%;
+            min-height: 320px;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .tip {
+            margin-top: 10px;
+            color: #718096;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="nav"></div>
+
+<div class="container">
+    <h1>PDF文本提取</h1>
+    <hr>
+    <div class="upload-area" id="upload-box">
+        <p>点击或拖拽上传PDF文件</p>
+        <input type="file" id="file-input" accept=".pdf">
+    </div>
+
+    <div class="option-group">
+        <div class="option-item">
+            <input type="checkbox" id="showPageTitle" checked>
+            <label for="showPageTitle">显示分页标题「===== 第x页 =====」</label>
+        </div>
+        <div class="option-item">
+            <input type="checkbox" id="cleanExtraSpace" checked>
+            <label for="cleanExtraSpace">压缩多余空格空行</label>
+        </div>
+        <div class="option-item">
+            <input class="input-sm" placeholder="关键词多组用|分隔" id="delKeywords">
+            <button class="btn" id="batchDelBtn">关键词批量删除</button>
+        </div>
+    </div>
+
+    <div class="control-row">
+        <button class="btn" id="extractBtn" disabled>开始提取</button>
+        <button class="btn" id="removePageTitle">一键删分页标题</button>
+        <button class="btn" id="keepOneEnter">连续换行只保留1个（删多余回车）</button>
+        <button class="btn" id="delAllEnter">删除全部回车换行</button>
+        <button class="btn" id="resetBtn">恢复原始提取</button>
+        <button class="btn" id="downloadBtn" disabled>下载TXT</button>
+    </div>
+
+    <textarea id="resultArea" placeholder="提取后自动按PDF排版分段落，下载自带UTF-8 BOM本地打开不乱码..."></textarea>
+   
+</div>
+
+<script>
+    // 配置PDF.js worker - 使用绝对路径
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    
+    // 获取当前页面路径，构建worker绝对路径
+    const currentPath = window.location.pathname;
+    const pdfToolsPath = currentPath.substring(0, currentPath.lastIndexOf('/PdfToText'));
+    const workerPath = pdfToolsPath + '/lib/pdf.worker.min.js';
+    
+    pdfjsLib.GlobalWorkerOptions.workerSrc = workerPath;
+    
+    console.log('PDF.js版本:', pdfjsLib.version);
+    console.log('Worker路径:', pdfjsLib.GlobalWorkerOptions.workerSrc);
+
+    const uploadBox = document.getElementById('upload-box');
+    const fileInput = document.getElementById('file-input');
+    const extractBtn = document.getElementById('extractBtn');
+    const removePageTitle = document.getElementById('removePageTitle');
+    const keepOneEnter = document.getElementById('keepOneEnter');
+    const delAllEnter = document.getElementById('delAllEnter');
+    const resetBtn = document.getElementById('resetBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const batchDelBtn = document.getElementById('batchDelBtn');
+    const resultArea = document.getElementById('resultArea');
+    const showPageTitle = document.getElementById('showPageTitle');
+    const cleanExtraSpace = document.getElementById('cleanExtraSpace');
+    const delKeywords = document.getElementById('delKeywords');
+
+    let selectedFile = null;
+    let originFullText = '';
+    const LINE_TOLERANCE = 3;
+
+    uploadBox.addEventListener('click', () => fileInput.click());
+    uploadBox.addEventListener('dragover', e => {e.preventDefault(); uploadBox.style.background='#ebf8ff'});
+    uploadBox.addEventListener('dragleave', () => uploadBox.style.background='');
+    uploadBox.addEventListener('drop', e => {
+        e.preventDefault(); uploadBox.style.background='';
+        if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => fileInput.files[0] && handleFile(fileInput.files[0]));
+
+    function handleFile(file) {
+        if(file.type !== 'application/pdf') {alert('仅支持PDF格式文件');return;}
+        selectedFile = file;
+        extractBtn.disabled = false;
+        downloadBtn.disabled = true;
+        resultArea.value = '';
+        originFullText = '';
+    }
+
+    // 按文字坐标原生重组段落，从根源解决PDF强制乱换行
+    function buildParagraphs(items) {
+        items.sort((a,b)=>{
+            if(Math.abs(a.transform[5]-b.transform[5])<LINE_TOLERANCE) return a.transform[4]-b.transform[4];
+            return b.transform[5]-a.transform[5];
+        });
+        const paragraphs = [];
+        let currentLine = [items[0]];
+        for(let i=1;i<items.length;i++){
+            const last = currentLine[currentLine.length-1];
+            if(Math.abs(items[i].transform[5]-last.transform[5])<LINE_TOLERANCE){
+                currentLine.push(items[i]);
+            }else{
+                paragraphs.push(currentLine.map(it=>it.str).join(' '));
+                currentLine = [items[i]];
+            }
+        }
+        paragraphs.push(currentLine.map(it=>it.str).join(' '));
+        return paragraphs.join('\n\n');
+    }
+
+    extractBtn.addEventListener('click', async () => {
+        if(!selectedFile) return;
+        extractBtn.disabled = true;
+        resultArea.value = '按PDF原生排版重组段落中...';
+        originFullText = '';
+        const fr = new FileReader();
+        fr.onload = async e => {
+            try{
+                const pdfDoc = await pdfjsLib.getDocument(new Uint8Array(e.target.result)).promise;
+                let out = '';
+                for(let p=1;p<=pdfDoc.numPages;p++){
+                    const page = await pdfDoc.getPage(p);
+                    const content = await page.getTextContent();
+                    let paraText = buildParagraphs(content.items);
+                    if(cleanExtraSpace.checked){
+                        paraText = paraText.replace(/[ \t]+/g,' ').replace(/(\n\s*){3,}/g,'\n\n').trim();
+                    }
+                    if(showPageTitle.checked){
+                        out += `===== 第${p}页 =====\n${paraText}\n\n`;
+                    }else{
+                        out += paraText + '\n\n';
+                    }
+                }
+                originFullText = out;
+                resultArea.value = out;
+                downloadBtn.disabled = false;
+            }catch(err){
+                resultArea.value = `解析失败：${err.message}\n加密/扫描图片PDF无法正常提取`;
+            }
+            extractBtn.disabled = false;
+        };
+        fr.readAsArrayBuffer(selectedFile);
+    });
+
+    removePageTitle.addEventListener('click', ()=>{
+        resultArea.value = resultArea.value.replace(/===== 第\d+页 =====\r?\n/g,'');
+    });
+
+    keepOneEnter.addEventListener('click', ()=>{
+        resultArea.value = resultArea.value.replace(/(\r?\n)+/g, '\n').trim();
+    });
+
+    delAllEnter.addEventListener('click', ()=>{
+        resultArea.value = resultArea.value.replace(/\r?\n/g,' ').replace(/\s+/g,' ').trim();
+    });
+
+    batchDelBtn.addEventListener('click',()=>{
+        const kw = delKeywords.value.trim();
+        if(!kw){alert('请填写要删除的关键词，多组用竖线 | 分隔');return;}
+        try{
+            resultArea.value = resultArea.value.replace(new RegExp(kw,'g'),'');
+        }catch{alert('正则表达式格式错误，请修改');}
+    });
+
+    resetBtn.addEventListener('click',()=>{
+        resultArea.value = originFullText;
+        delKeywords.value = '';
+    });
+
+    // 核心修改：添加UTF-8 BOM头，彻底解决本地打开乱码
+    downloadBtn.addEventListener('click',()=>{
+        const contentWithBom = '\ufeff' + resultArea.value;
+        const blob = new Blob([contentWithBom], {type:'text/plain;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = selectedFile.name.replace(/\.pdf$/i,'.txt');
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+</script>
+<script src="../../../js/nav.js"></script>
+</body>
+</html>
