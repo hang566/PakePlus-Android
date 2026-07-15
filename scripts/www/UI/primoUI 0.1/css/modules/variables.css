@@ -1,0 +1,486 @@
+/* ============================================================
+ * Variables.css - 主题变量定义
+ * 
+ * 定义primUI的所有CSS变量，支持多种主题配色方案
+ * 变量包括：背景色、文本色、边框色、主色调、卡片背景、阴影等
+ * ============================================================ */
+
+/* 引入Noto Color Emoji字体 */
+/* @font-face {
+  font-family: 'Noto Color Emoji';
+  src: url('../../Noto Color Emoji.ttf') format('truetype');
+  font-display: swap;
+} */
+
+/* ==================== 默认浅色主题 ==================== */
+:root {
+  --bg: #ffffff;                    /* 页面背景色 */
+  --trbg: rgba(255, 255, 255, 0.247); /* 透明背景（用于毛玻璃效果） */
+  --text: #111111;                  /* 主文本颜色 */
+  --border: #ddd;                   /* 边框颜色 */
+  --btn-bg: #f5f5f5;                /* 按钮背景色 */
+  --btns: #b9b2b2;                  /* 按钮状态色 */
+  --main: #007aff;                  /* 主色调（iOS蓝） */
+  --card-bg: #fff;                  /* 卡片背景色 */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+}
+
+/* ==================== 深色系主题 ==================== */
+
+/* 标准深色主题 */
+.theme-dark {
+  --bg: #121212;
+  --trbg: rgba(18, 18, 18, 0.253);
+  --text: #ffffff;
+  --border: #333;
+  --btn-bg: #1e1e1e;
+  --btn-hover: #2d2d2d;
+  --main: #007aff;
+  --card-bg: #1e1e1e;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 更深色主题 */
+.theme-darker {
+  --bg: #0a0a0a;
+  --trbg: rgba(10, 10, 10, 0.3);
+  --text: #e0e0e0;
+  --border: #222;
+  --btn-bg: #151515;
+  --btn-hover: #252525;
+  --main: #0066cc;
+  --card-bg: #151515;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* 灰色主题（类似macOS浅色模式） */
+.theme-gray {
+  --bg: #f5f5f7;
+  --trbg: rgba(245, 245, 247, 0.3);
+  --text: #1d1d1f;
+  --border: #d2d2d7;
+  --btn-bg: #e5e5ea;
+  --btn-hover: #d1d1d6;
+  --main: #86868b;
+  --card-bg: #ffffff;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ==================== 红色系主题 ==================== */
+
+/* 浅红主题 */
+.theme-red {
+  --bg: #fff5f5;
+  --trbg: rgba(255, 245, 245, 0.26);
+  --text: #5a0000;
+  --border: #f8b8b8;
+  --btn-bg: #ffd6d6;
+  --btn-hover: #ffadad;
+  --main: #ff3b30;
+  --card-bg: #ffe8e8;
+  --shadow: 0 2px 8px rgba(255, 59, 48, 0.1);
+}
+
+/* 深红主题 */
+.theme-red-dark {
+  --bg: #2d0a0a;
+  --trbg: rgba(45, 10, 10, 0.3);
+  --text: #ffcccc;
+  --border: #5a2020;
+  --btn-bg: #451515;
+  --btn-hover: #602020;
+  --main: #ff453a;
+  --card-bg: #3d1010;
+  --shadow: 0 2px 8px rgba(255, 69, 58, 0.2);
+}
+
+/* 极暗红主题 */
+.theme-red-darker {
+  --bg: #1a0505;
+  --trbg: rgba(26, 5, 5, 0.3);
+  --text: #e0b0b0;
+  --border: #3a1010;
+  --btn-bg: #2a0a0a;
+  --btn-hover: #3a1515;
+  --main: #ff3b30;
+  --card-bg: #250808;
+  --shadow: 0 2px 8px rgba(255, 59, 48, 0.4);
+}
+
+/* 玫瑰红主题 */
+.theme-rose {
+  --bg: #fff0f5;
+  --trbg: rgba(255, 240, 245, 0.3);
+  --text: #4a0020;
+  --border: #f8b8d0;
+  --btn-bg: #ffd6e8;
+  --btn-hover: #ffadcf;
+  --main: #ff2d55;
+  --card-bg: #ffe8f0;
+  --shadow: 0 2px 8px rgba(255, 45, 85, 0.1);
+}
+
+/* ==================== 橙色系主题 ==================== */
+
+/* 浅橙主题 */
+.theme-orange {
+  --bg: #fff5e6;
+  --trbg: rgba(255, 245, 230, 0.3);
+  --text: #4a2000;
+  --border: #f8d0b8;
+  --btn-bg: #ffe8cc;
+  --btn-hover: #ffd6ad;
+  --main: #ff9500;
+  --card-bg: #fff0e0;
+  --shadow: 0 2px 8px rgba(255, 149, 0, 0.1);
+}
+
+/* 深橙主题 */
+.theme-orange-dark {
+  --bg: #2d1a0a;
+  --trbg: rgba(45, 26, 10, 0.3);
+  --text: #ffe0cc;
+  --border: #5a3520;
+  --btn-bg: #452515;
+  --btn-hover: #603520;
+  --main: #ff9f0a;
+  --card-bg: #3d2010;
+  --shadow: 0 2px 8px rgba(255, 159, 10, 0.2);
+}
+
+/* 极暗橙主题 */
+.theme-orange-darker {
+  --bg: #1a0f05;
+  --trbg: rgba(26, 15, 5, 0.3);
+  --text: #e0c0a0;
+  --border: #3a2010;
+  --btn-bg: #2a1508;
+  --btn-hover: #3a2010;
+  --main: #ff9500;
+  --card-bg: #251005;
+  --shadow: 0 2px 8px rgba(255, 149, 0, 0.4);
+}
+
+/* ==================== 黄色系主题 ==================== */
+
+/* 浅黄主题 */
+.theme-yellow {
+  --bg: #fffbe6;
+  --trbg: rgba(255, 251, 230, 0.3);
+  --text: #4a3a00;
+  --border: #f8e8b8;
+  --btn-bg: #fff6cc;
+  --btn-hover: #fff0ad;
+  --main: #ffcc00;
+  --card-bg: #fff8e0;
+  --shadow: 0 2px 8px rgba(255, 204, 0, 0.1);
+}
+
+/* 深黄主题 */
+.theme-yellow-dark {
+  --bg: #2d2a0a;
+  --trbg: rgba(45, 42, 10, 0.3);
+  --text: #fff0cc;
+  --border: #5a5020;
+  --btn-bg: #454015;
+  --btn-hover: #605520;
+  --main: #ffd60a;
+  --card-bg: #3d3510;
+  --shadow: 0 2px 8px rgba(255, 214, 10, 0.2);
+}
+
+/* 极暗黄主题 */
+.theme-yellow-darker {
+  --bg: #1a1805;
+  --trbg: rgba(26, 24, 5, 0.3);
+  --text: #e0d0a0;
+  --border: #3a3510;
+  --btn-bg: #2a2508;
+  --btn-hover: #3a3510;
+  --main: #ffcc00;
+  --card-bg: #252005;
+  --shadow: 0 2px 8px rgba(255, 204, 0, 0.4);
+}
+
+/* ==================== 绿色系主题 ==================== */
+
+/* 浅绿主题 */
+.theme-green {
+  --bg: #f2fff5;
+  --trbg: rgba(242, 255, 245, 0.26);
+  --text: #003a00;
+  --border: #b8f8c8;
+  --btn-bg: #d6ffde;
+  --btn-hover: #adffc1;
+  --main: #34c759;
+  --card-bg: #e8ffe8;
+  --shadow: 0 2px 8px rgba(52, 199, 89, 0.1);
+}
+
+/* 深绿主题 */
+.theme-green-dark {
+  --bg: #0a2d0a;
+  --trbg: rgba(10, 45, 10, 0.3);
+  --text: #ccffcc;
+  --border: #205a20;
+  --btn-bg: #154515;
+  --btn-hover: #206020;
+  --main: #30d158;
+  --card-bg: #103d10;
+  --shadow: 0 2px 8px rgba(48, 209, 88, 0.2);
+}
+
+/* 极暗绿主题 */
+.theme-green-darker {
+  --bg: #051a05;
+  --trbg: rgba(5, 26, 5, 0.3);
+  --text: #a0e0a0;
+  --border: #103a10;
+  --btn-bg: #0a2a0a;
+  --btn-hover: #153a15;
+  --main: #34c759;
+  --card-bg: #082508;
+  --shadow: 0 2px 8px rgba(52, 199, 89, 0.4);
+}
+
+/* 青绿主题 */
+.theme-teal {
+  --bg: #f0fff7;
+  --trbg: rgba(240, 255, 247, 0.3);
+  --text: #004a30;
+  --border: #b8f8e0;
+  --btn-bg: #d6ffee;
+  --btn-hover: #adffdf;
+  --main: #00c7be;
+  --card-bg: #e8fff8;
+  --shadow: 0 2px 8px rgba(0, 199, 190, 0.1);
+}
+
+/* ==================== 青色系主题 ==================== */
+
+/* 浅青主题 */
+.theme-cyan {
+  --bg: #f0fffc;
+  --trbg: rgba(240, 255, 252, 0.3);
+  --text: #004a4a;
+  --border: #b8f0f0;
+  --btn-bg: #d6ffff;
+  --btn-hover: #adffff;
+  --main: #00bcd4;
+  --card-bg: #e8ffff;
+  --shadow: 0 2px 8px rgba(0, 188, 212, 0.1);
+}
+
+/* 深青主题 */
+.theme-cyan-dark {
+  --bg: #0a2d2d;
+  --trbg: rgba(10, 45, 45, 0.3);
+  --text: #ccffff;
+  --border: #205a5a;
+  --btn-bg: #154545;
+  --btn-hover: #206060;
+  --main: #00bcd4;
+  --card-bg: #103d3d;
+  --shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
+}
+
+/* 极暗青主题 */
+.theme-cyan-darker {
+  --bg: #051a1a;
+  --trbg: rgba(5, 26, 26, 0.3);
+  --text: #a0e0e0;
+  --border: #103a3a;
+  --btn-bg: #0a2a2a;
+  --btn-hover: #153a3a;
+  --main: #00c7be;
+  --card-bg: #082525;
+  --shadow: 0 2px 8px rgba(0, 199, 190, 0.4);
+}
+
+/* ==================== 蓝色系主题 ==================== */
+
+/* 浅蓝主题 */
+.theme-blue {
+  --bg: #f0f7ff;
+  --trbg: rgba(240, 247, 255, 0.253);
+  --text: #002a5a;
+  --border: #b8d8f8;
+  --btn-bg: #d6e8ff;
+  --btn-hover: #adcfff;
+  --main: #007aff;
+  --card-bg: #e8f3ff;
+  --shadow: 0 2px 8px rgba(0, 122, 255, 0.1);
+}
+
+/* 深蓝主题 */
+.theme-blue-dark {
+  --bg: #0a1a2d;
+  --trbg: rgba(10, 26, 45, 0.3);
+  --text: #cce0ff;
+  --border: #203a5a;
+  --btn-bg: #152545;
+  --btn-hover: #203560;
+  --main: #0a84ff;
+  --card-bg: #10203d;
+  --shadow: 0 2px 8px rgba(10, 132, 255, 0.2);
+}
+
+/* 极暗蓝主题 */
+.theme-blue-darker {
+  --bg: #050f1a;
+  --trbg: rgba(5, 15, 26, 0.3);
+  --text: #a0c0e0;
+  --border: #10203a;
+  --btn-bg: #0a152a;
+  --btn-hover: #15203a;
+  --main: #007aff;
+  --card-bg: #081525;
+  --shadow: 0 2px 8px rgba(0, 122, 255, 0.4);
+}
+
+/* 靛蓝主题 */
+.theme-indigo {
+  --bg: #f0f0ff;
+  --trbg: rgba(240, 240, 255, 0.3);
+  --text: #20205a;
+  --border: #c8c8f8;
+  --btn-bg: #e0e0ff;
+  --btn-hover: #c8c8ff;
+  --main: #5856d6;
+  --card-bg: #e8e8ff;
+  --shadow: 0 2px 8px rgba(88, 86, 214, 0.1);
+}
+
+/* ==================== 紫色系主题 ==================== */
+
+/* 浅紫主题 */
+.theme-purple {
+  --bg: #f5f0ff;
+  --trbg: rgba(245, 240, 255, 0.3);
+  --text: #30205a;
+  --border: #d0b8f8;
+  --btn-bg: #e8d6ff;
+  --btn-hover: #d8adff;
+  --main: #af52de;
+  --card-bg: #f0e8ff;
+  --shadow: 0 2px 8px rgba(175, 82, 222, 0.1);
+}
+
+/* 深紫主题 */
+.theme-purple-dark {
+  --bg: #1a0a2d;
+  --trbg: rgba(26, 10, 45, 0.3);
+  --text: #e0ccff;
+  --border: #3a205a;
+  --btn-bg: #251545;
+  --btn-hover: #352060;
+  --main: #bf5af2;
+  --card-bg: #20103d;
+  --shadow: 0 2px 8px rgba(191, 90, 242, 0.2);
+}
+
+/* 极暗紫主题 */
+.theme-purple-darker {
+  --bg: #0f051a;
+  --trbg: rgba(15, 5, 26, 0.3);
+  --text: #c0a0e0;
+  --border: #20103a;
+  --btn-bg: #15082a;
+  --btn-hover: #20103a;
+  --main: #af52de;
+  --card-bg: #180825;
+  --shadow: 0 2px 8px rgba(175, 82, 222, 0.4);
+}
+
+/* 紫罗兰主题 */
+.theme-violet {
+  --bg: #fff0ff;
+  --trbg: rgba(255, 240, 255, 0.3);
+  --text: #4a004a;
+  --border: #f0b8f0;
+  --btn-bg: #ffd6ff;
+  --btn-hover: #ffadff;
+  --main: #ff375f;
+  --card-bg: #ffe8ff;
+  --shadow: 0 2px 8px rgba(255, 55, 95, 0.1);
+}
+
+/* ==================== 特殊主题 ==================== */
+
+/* 高对比度主题（适合视觉障碍用户） */
+.theme-high-contrast {
+  --bg: #000000;
+  --trbg: rgba(0, 0, 0, 0.5);
+  --text: #ffffff;
+  --border: #ffffff;
+  --btn-bg: #333333;
+  --btn-hover: #444444;
+  --main: #ffff00;
+  --card-bg: #111111;
+  --shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+}
+
+/* 护眼主题（减少蓝光） */
+.theme-eye-care {
+  --bg: #c7edcc;
+  --trbg: rgba(199, 237, 204, 0.3);
+  --text: #333333;
+  --border: #a0d8a8;
+  --btn-bg: #b8e4c0;
+  --btn-hover: #a8d8b0;
+  --main: #4a9f6a;
+  --card-bg: #d8f0dc;
+  --shadow: 0 2px 8px rgba(74, 159, 106, 0.1);
+}
+
+/* 日落主题 */
+.theme-sunset {
+  --bg: #fff0e8;
+  --trbg: rgba(255, 240, 232, 0.3);
+  --text: #5a3030;
+  --border: #f0c0b0;
+  --btn-bg: #ffe0d0;
+  --btn-hover: #ffd0c0;
+  --main: #ff6b6b;
+  --card-bg: #ffe8e0;
+  --shadow: 0 2px 8px rgba(255, 107, 107, 0.1);
+}
+
+/* 海洋主题 */
+.theme-ocean {
+  --bg: #e0f0ff;
+  --trbg: rgba(224, 240, 255, 0.3);
+  --text: #1a3a5a;
+  --border: #a0c8e8;
+  --btn-bg: #c8e0f8;
+  --btn-hover: #b0d0f0;
+  --main: #00a8cc;
+  --card-bg: #d0e8ff;
+  --shadow: 0 2px 8px rgba(0, 168, 204, 0.1);
+}
+
+/* 森林主题 */
+.theme-forest {
+  --bg: #e0f0e0;
+  --trbg: rgba(224, 240, 224, 0.3);
+  --text: #1a3a1a;
+  --border: #a0c8a0;
+  --btn-bg: #c8e0c8;
+  --btn-hover: #b0d0b0;
+  --main: #5ab07a;
+  --card-bg: #d0e8d0;
+  --shadow: 0 2px 8px rgba(90, 176, 122, 0.1);
+}
+
+/* 彩虹主题（渐变色背景） */
+.theme-rainbow {
+  --bg: linear-gradient(135deg, #ffe0e0, #fff0e0, #ffffe0, #e0ffe0, #e0ffff, #e0e0ff, #ffe0ff);
+  --trbg: rgba(255, 255, 255, 0.3);
+  --text: #333333;
+  --border: #d0d0d0;
+  --btn-bg: rgba(255, 255, 255, 0.5);
+  --btn-hover: rgba(255, 255, 255, 0.7);
+  --main: #ff6b6b;
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
