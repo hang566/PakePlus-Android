@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/base.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/display.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/feedback.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/forms.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/layout.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/navigation.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/tabs-browser.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/variables.css">
+</head>
+
+<body>
+    <div class="card" style="max-width: 400px; margin: 0 auto;">
+        <h1 style="text-align: center; margin-top: 0;">注册</h1>
+        <form action="/register" method="post">
+            <div class="form-item">
+                <label class="form-label" for="username">用户名</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-item">
+                <label class="form-label" for="emailOrPhone">邮箱或电话</label>
+                <input type="text" id="emailOrPhone" name="emailOrPhone" required>
+            </div>
+            <div class="form-item" style="margin-top: 20px;">
+                <input type="submit" value="注册" class="btn" style="width: 100%;">
+            </div>
+        </form>
+        <p style="font-size: 12px; color: #666; text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">提示：目前我们没有在线服务器，你的信息将会存放在本地浏览器，请不要删除或清空浏览器数据。</p>
+    </div>
+    <script src="../../UI/primoUI 0.1/js/modules/feedback.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/modal.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/tabs.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script>
+        function getRandomStr(len = 10) {
+            const pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let res = '';
+            for (let i = 0; i < len; i++) {
+                let r = Math.floor(Math.random() * pool.length);
+                res += pool[r];
+            }
+            return res;
+        }
+
+        function generateCode() {
+            return Date.now() + getRandomStr(10);
+        }
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const emailOrPhone = document.getElementById('emailOrPhone').value;
+            const userData = {
+                username: username,
+                emailOrPhone: emailOrPhone,
+                code: generateCode(),
+                createdAt: new Date().toLocaleString()
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+            window.location.href = '../user/user.html';
+        });
+    </script>
+</body>
+
+</html>
