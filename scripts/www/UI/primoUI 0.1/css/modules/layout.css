@@ -1,0 +1,37 @@
+/* ============================================================
+ * Layout.css - 布局类组件样式
+ * 
+ * 定义页面布局相关的UI组件样式
+ * 包括：栅格系统（行、列）、卡片、面板等
+ * ============================================================ */
+
+/* 行容器 */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+/* 列容器 */
+.col {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* 卡片组件 */
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin: 12px 0;
+}
+
+/* 面板组件 */
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 12px 0;
+}
