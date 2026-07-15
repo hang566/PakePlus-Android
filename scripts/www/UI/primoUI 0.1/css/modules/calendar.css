@@ -1,0 +1,110 @@
+/* ============================================================
+ * Calendar.css - 日历组件样式
+ * 
+ * 定义日历组件的样式
+ * ============================================================ */
+
+/* 日历容器 */
+.calendar {
+  width: 100%;
+  font-size: 14px;
+}
+
+/* 日历头部 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.calendar-nav button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.calendar-nav button:hover {
+  background: var(--btn-hover, #e0e0e0);
+}
+
+/* 星期标题行 */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  padding: 8px 4px;
+  font-weight: bold;
+  color: var(--text);
+  font-size: 12px;
+}
+
+/* 日期格子 */
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.calendar-day:hover {
+  background: var(--btn-bg);
+}
+
+.calendar-day.other-month {
+  color: var(--border);
+}
+
+.calendar-day.today {
+  background: var(--main);
+  color: white;
+}
+
+.calendar-day.selected {
+  background: var(--main);
+  color: white;
+}
+
+.calendar-day.today.selected {
+  box-shadow: 0 0 0 2px var(--main);
+}
+
+.calendar-day.weekend {
+  color: var(--main);
+}
