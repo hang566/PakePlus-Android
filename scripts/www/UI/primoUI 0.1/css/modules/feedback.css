@@ -1,0 +1,86 @@
+/* ============================================================
+ * Feedback.css - 反馈类组件样式
+ * 
+ * 定义用户交互反馈相关的UI组件样式
+ * 包括：模态框、提示框、加载动画、Toast通知等
+ * ============================================================ */
+
+/* 模态框遮罩层 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 模态框内容区域 */
+.modal-content {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+}
+
+/* 提示框容器 */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* 提示框文本内容 */
+.tooltip-text {
+  visibility: hidden;
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+/* 鼠标悬停显示提示框 */
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+}
+
+/* 加载动画（旋转圆环） */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--main);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* 旋转动画关键帧 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Toast通知 */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  z-index: 1001;
+}
