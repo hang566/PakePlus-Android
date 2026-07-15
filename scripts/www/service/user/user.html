@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户服务</title>
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/base.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/display.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/feedback.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/forms.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/layout.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/navigation.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/tabs-browser.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/variables.css">
+</head>
+
+<body>
+
+    <div id="nav"></div>
+
+
+    <div class="card" style="max-width: 400px; margin: 0 auto;margin-top: 60px;">
+        <h1 style="text-align: center; margin-top: 0;">用户信息</h1>
+        <div id="userInfo">
+            <p>加载中...</p>
+        </div>
+        <div style="margin-top: 20px;">
+            <button class="btn" onclick="clearUserData()" style="width: 100%;">清除用户数据</button>
+        </div>
+        <div style="margin-top: 10px;">
+            <button class="btn" onclick="goToRegister()" style="width: 100%;">返回注册</button>
+        </div>
+    </div>
+
+    <!-- <div class="card" style="max-width: 400px; margin: 0 auto;margin-top: 30px;">
+        <h3>身份</h3>
+        <hr>
+        <div>
+
+        </div>
+    </div> -->
+
+
+
+    <script>
+        function loadUserData() {
+            const userData = localStorage.getItem('user');
+            const userInfo = document.getElementById('userInfo');
+            if (userData) {
+                const user = JSON.parse(userData);
+                userInfo.innerHTML = `
+                    <div class="avatar" style="margin: 0 auto 16px;">${user.username.charAt(0).toUpperCase()}</div>
+                    <div style="margin-bottom: 12px;">
+                        <p style="margin: 4px 0;"><strong>用户名：</strong>${user.username}</p>
+                        <p style="margin: 4px 0;"><strong>邮箱/电话：</strong>${user.emailOrPhone}</p>
+                        <p style="margin: 4px 0;"><strong>专属编码：</strong><span style="color: var(--main); font-weight: bold;">${user.code || '未生成'}</span></p>
+                        <p style="margin: 4px 0; font-size: 12px; color: #666;">注册时间：${user.createdAt}</p>
+                    </div>
+                `;
+            } else {
+                userInfo.innerHTML = '<p style="text-align: center; color: #666;">暂无用户信息</p>';
+            }
+        }
+
+        function clearUserData() {
+            localStorage.removeItem('user');
+            loadUserData();
+        }
+
+        function goToRegister() {
+            window.location.href = '../register/register.html';
+        }
+
+        window.onload = loadUserData;
+    </script>
+    <script src="../../UI/primoUI 0.1/js/modules/feedback.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/modal.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/tabs.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/nav.js"></script>
+    <script src="../../js/nav.js"></script>
+</body>
+
+</html>
