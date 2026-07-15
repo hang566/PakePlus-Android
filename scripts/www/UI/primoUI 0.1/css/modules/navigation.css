@@ -1,0 +1,170 @@
+/* ============================================================
+ * Navigation.css - 导航类组件样式
+ * 
+ * 定义页面导航相关的UI组件样式
+ * 包括：导航栏、侧边栏、标签页、面包屑、分页、下拉菜单等
+ * ============================================================ */
+
+/* 导航栏 */
+.navbar {
+  background: var(--card-bg);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  margin: 0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  list-style: none;
+}
+
+/* 导航栏品牌/Logo */
+.navbar-brand {
+  font-weight: bold;
+}
+
+/* 导航栏链接容器 */
+.navbar-nav {
+  display: flex;
+  gap: 16px;
+}
+
+/* 侧边栏 */
+.sidebar {
+  background: var(--card-bg);
+  border-radius: 0 8px 8px 0;
+  width: 200px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin: 0;
+  padding: 16px;
+  overflow: hidden;
+  position: fixed;
+  height: 100%;
+  left: 0;
+  top: 0;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 100;
+}
+
+.sidebar.active {
+  transform: translateX(0);
+}
+
+/* 侧边栏遮罩层 */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 99;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 侧边栏菜单 */
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-menu li {
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.sidebar-menu li:hover {
+  color: var(--main);
+}
+
+/* 标签页容器 */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin: 12px 0;
+}
+
+/* 单个标签 */
+.tab {
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+/* 激活状态的标签 */
+.tab.active {
+  border-color: var(--main);
+  color: var(--main);
+}
+
+/* 面包屑导航 */
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+/* 面包屑项目分隔符 */
+.breadcrumb-item::after {
+  content: "/";
+  margin-left: 8px;
+  color: var(--border);
+}
+
+/* 最后一个面包屑不显示分隔符 */
+.breadcrumb-item:last-child::after {
+  content: "";
+}
+
+/* 分页容器 */
+.pagination {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+/* 分页项目 */
+.page-item {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* 激活状态的分页项目 */
+.page-item.active {
+  background: var(--main);
+  color: #fff;
+  border-color: var(--main);
+}
+
+/* 下拉菜单 */
+.menu {
+  list-style: none;
+  background: var(--card-bg);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  padding: 8px 0;
+  width: 160px;
+  margin: 12px 0;
+}
+
+/* 菜单项 */
+.menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: var(--bg);
+}
