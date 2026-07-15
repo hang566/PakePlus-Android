@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云枢-本地版 - P2P 聊天室</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-size: 18px;
+            font-weight: bold;
+            color: #07c160;
+            text-decoration: none;
+        }
+
+        .navbar-center {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .room-selector {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .navbar-btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            background: #07c160;
+            color: white;
+        }
+
+        .navbar-btn:hover {
+            background: #06ad56;
+        }
+
+        .navbar-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* 房间列表侧边栏 */
+        .sidebar {
+            width: 700px;
+
+            max-width: 45%;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sidebar-add-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 50%;
+            background: #07c160;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .room-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .room-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .room-item:hover {
+            background: #f5f5f5;
+        }
+
+        .room-item.active {
+            background: #e8f5e9;
+        }
+
+        .room-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .room-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .room-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .room-meta {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .online-badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #07c160;
+        }
+
+        .online-badge.offline {
+            background: #999;
+        }
+
+        /* 聊天区域 */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        /* 聊天头部 */
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .chat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .chat-status {
+            font-size: 12px;
+            color: #07c160;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chat-status .online-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #07c160;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            background: #f0f0f0;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chat-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .chat-btn.primary {
+            background: #07c160;
+            color: white;
+        }
+
+        .chat-btn.primary:hover {
+            background: #06ad56;
+        }
+
+        /* 消息列表 */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #e5e5e5;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+            gap: 10px;
+            max-width: 75%;
+        }
+
+        .message.local {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .message.remote {
+            margin-right: auto;
+        }
+
+        .message-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .message-sender {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .message-time {
+            color: #999;
+        }
+
+        .message-bubble {
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .message.local .message-bubble {
+            background: #95ec69;
+            border-top-right-radius: 4px;
+        }
+
+        .message.remote .message-bubble {
+            background: white;
+            border-top-left-radius: 4px;
+        }
+
+        .message-status {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 4px;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .message-status.sent {
+            color: #999;
+        }
+
+        .message-status.delivered {
+            color: #07c160;
+        }
+
+        /* 语音消息 */
+        .voice-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .voice-play-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: #07c160;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-wave {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 20px;
+        }
+
+        .voice-bar {
+            width: 3px;
+            background: #666;
+            border-radius: 2px;
+            animation: wave 0.5s infinite ease-in-out;
+            animation-play-state: paused;
+        }
+
+        .voice-message.playing .voice-bar {
+            animation-play-state: running;
+        }
+
+        .voice-bar:nth-child(1) { animation-delay: 0s; height: 6px; }
+        .voice-bar:nth-child(2) { animation-delay: 0.1s; height: 12px; }
+        .voice-bar:nth-child(3) { animation-delay: 0.2s; height: 20px; }
+        .voice-bar:nth-child(4) { animation-delay: 0.3s; height: 12px; }
+        .voice-bar:nth-child(5) { animation-delay: 0.4s; height: 6px; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+
+        .voice-duration {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 图片消息 */
+        .message-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* 文件消息 */
+        .file-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            min-width: 150px;
+        }
+
+        .file-icon {
+            font-size: 24px;
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .file-size {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* 输入区域 */
+        .input-area {
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .input-tools {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tool-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: white;
+            color: #666;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .tool-btn.active {
+            background: #07c160;
+            color: white;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .input-field:focus {
+            border-color: #07c160;
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 50%;
+            background: #07c160;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: #06ad56;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 成员列表侧边栏 */
+        .members-sidebar {
+            width: 260px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .members-header {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .members-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .members-count {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .members-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .member-item:hover {
+            background: #f5f5f5;
+        }
+
+        .member-item.owner {
+            background: #e8f5e9;
+        }
+
+        .member-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .member-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #07c160;
+            border: 2px solid #fff;
+        }
+
+        .member-status.offline {
+            background: #999;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .member-role {
+            font-size: 11px;
+            color: #07c160;
+            margin-top: 2px;
+        }
+
+        /* 创建房间弹窗 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #07c160;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .form-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .form-btn.primary {
+            background: #07c160;
+            color: white;
+        }
+
+        .form-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        /* 视频通话弹窗 */
+        .video-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .video-modal.show {
+            display: flex;
+        }
+
+        .video-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .video-box {
+            width: 320px;
+            max-width: 100%;
+            height: 240px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+
+        .video-box.small {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 160px;
+            height: 120px;
+            z-index: 10;
+        }
+
+        .video-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 6px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .video-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+
+        .video-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .video-btn.hangup {
+            background: #dc3545;
+            color: white;
+        }
+
+        .video-btn.action {
+            background: #07c160;
+            color: white;
+        }
+
+        .video-btn.disabled {
+            background: #666;
+        }
+
+        /* 图片预览 */
+        .image-preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            cursor: pointer;
+        }
+
+        .preview-image {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .members-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .sidebar {
+                width: 70px;
+            }
+
+            .room-info {
+                display: none;
+            }
+
+            .room-avatar {
+                margin-right: 0;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .navbar-center {
+                display: none;
+            }
+
+            .chat-header {
+                padding: 12px 16px;
+            }
+
+            .chat-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            .chat-name {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                display: none;
+            }
+
+            .navbar-actions .navbar-btn:not(:last-child) {
+                display: none;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .message-bubble {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">云枢-本地版</a>
+        <div class="navbar-center">
+            <select class="room-selector" id="roomSelector" onchange="switchRoom()">
+                <option value="">选择房间</option>
+            </select>
+            <span id="connectionStatus" style="font-size: 12px; color: #999;">连接中...</span>
+        </div>
+        <div class="navbar-actions">
+            <button class="navbar-btn secondary" onclick="showCreateRoomModal()">+ 创建房间</button>
+            <button class="navbar-btn" onclick="showVideoCall()">📹 视频通话</button>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 房间列表侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">聊天室</span>
+                <button class="sidebar-add-btn" onclick="showCreateRoomModal()">+</button>
+            </div>
+            <div class="room-list" id="roomList">
+                <div class="empty-state">
+                    <span class="empty-icon">💬</span>
+                    <span class="empty-text">暂无房间</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天区域 -->
+        <div class="chat-area">
+            <!-- 聊天头部 -->
+            <div class="chat-header">
+                <div class="chat-title">
+                    <div class="chat-avatar" id="currentRoomAvatar">?</div>
+                    <div class="chat-info">
+                        <span class="chat-name" id="currentRoomName">选择一个房间开始聊天</span>
+                        <span class="chat-status" id="currentRoomStatus">
+                            <span class="online-dot"></span>
+                            <span>离线</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="chat-btn" onclick="showMemberList()">👥 成员</button>
+                    <button class="chat-btn primary" onclick="showVideoCall()">📹 视频</button>
+                </div>
+            </div>
+
+            <!-- 消息列表 -->
+            <div class="messages-container" id="messagesContainer">
+                <div class="empty-state">
+                    <span class="empty-icon">💬</span>
+                    <span class="empty-text">选择房间开始聊天</span>
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="input-area">
+                <div class="input-tools">
+                    <button class="tool-btn" onclick="toggleEmojiPicker()">😊</button>
+                    <button class="tool-btn" onclick="toggleRecording()">🎤</button>
+                    <button class="tool-btn" onclick="selectImage()">📷</button>
+                    <button class="tool-btn" onclick="selectFile()">📁</button>
+                </div>
+                <div class="input-row">
+                    <textarea class="input-field" id="messageInput" placeholder="输入消息..." rows="1" onkeydown="handleInputKeydown(event)"></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+                </div>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="sendImage()">
+                <input type="file" id="fileInput" accept="*" style="display: none;" onchange="sendFile()">
+            </div>
+        </div>
+
+        <!-- 成员列表侧边栏 -->
+        <div class="members-sidebar" id="membersSidebar" style="display: none;">
+            <div class="members-header">
+                <div class="members-title" id="membersTitle">房间成员</div>
+                <div class="members-count" id="membersCount">0 人在线</div>
+            </div>
+            <div class="members-list" id="membersList"></div>
+        </div>
+    </div>
+
+    <!-- 创建房间弹窗 -->
+    <div class="modal" id="createRoomModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCreateRoomModal()">×</button>
+            <h3 class="modal-title">创建新房间</h3>
+            <div class="form-group">
+                <label class="form-label">房间名称</label>
+                <input type="text" class="form-input" id="roomNameInput" placeholder="请输入房间名称">
+            </div>
+            <div class="form-group">
+                <label class="form-label">房间描述（可选）</label>
+                <input type="text" class="form-input" id="roomDescInput" placeholder="简单描述一下这个房间">
+            </div>
+            <div class="form-actions">
+                <button class="form-btn secondary" onclick="closeCreateRoomModal()">取消</button>
+                <button class="form-btn primary" onclick="createRoom()">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 视频通话弹窗 -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-container">
+            <div class="video-box">
+                <div class="video-label">远程视频</div>
+                <video id="remoteVideo" autoplay playsinline></video>
+            </div>
+            <div class="video-box small">
+                <div class="video-label">本地视频</div>
+                <video id="localVideo" autoplay muted playsinline></video>
+            </div>
+        </div>
+        <div class="video-controls">
+            <button class="video-btn action" id="audioBtn" onclick="toggleAudio()">🔊</button>
+            <button class="video-btn action" id="videoBtn" onclick="toggleVideo()">📹</button>
+            <button class="video-btn hangup" onclick="closeVideoCall()">🔴</button>
+        </div>
+    </div>
+
+    <!-- 表情选择器 -->
+    <div class="modal" id="emojiModal">
+        <div class="modal-content" style="max-width: 480px;">
+            <button class="modal-close" onclick="closeEmojiModal()">×</button>
+            <h3 class="modal-title">选择表情</h3>
+            <div id="emojiGrid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-top: 16px;"></div>
+        </div>
+    </div>
+
+    <!-- 成员列表弹窗（移动端） -->
+    <div class="modal" id="membersModal">
+        <div class="modal-content" style="max-width: 320px;">
+            <button class="modal-close" onclick="closeMembersModal()">×</button>
+            <h3 class="modal-title" id="modalMembersTitle">房间成员</h3>
+            <div class="members-list" id="modalMembersList" style="max-height: 400px;"></div>
+        </div>
+    </div>
+
+    <!-- 第三方库 -->
+    <script src="js/qrcode.min.js"></script>
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>
