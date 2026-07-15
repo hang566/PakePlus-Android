@@ -1,0 +1,69 @@
+/* ============================================================
+ * Base.css - 基础样式
+ * 
+ * 定义页面的全局重置样式和基础元素样式
+ * 包括：全局盒子模型、body样式、字体继承、容器、标题、分隔线、链接等
+ * ============================================================ */
+
+/* 全局重置：统一盒子模型，移除默认边距 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body基础样式 */
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Color Emoji", sans-serif;
+  line-height: 1.6;
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+/* 字体继承：确保所有元素继承body字体 */
+*,
+*::before,
+*::after {
+  font-family: inherit;
+}
+
+/* Emoji文本样式：确保emoji正确显示 */
+.emoji-text {
+  font-family: "Noto Color Emoji", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 容器：居中内容，限制最大宽度 */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 标题样式 */
+h1,
+h3 {
+  margin: 24px 0 12px;
+}
+
+/* 水平分隔线 */
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+/* 链接样式 */
+a {
+  color: var(--main);
+  margin-right: 14px;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
