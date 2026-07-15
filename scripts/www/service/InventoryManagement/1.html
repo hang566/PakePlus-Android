@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>库存管理系统</title>
+    <!-- PrimoUI 样式引入 -->
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/variables.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/base.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/layout.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/display.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/forms.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/navigation.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/feedback.css">
+    <link rel="stylesheet" href="../../UI/primoUI 0.1/css/modules/tabs-browser.css">
+    <style>
+        /* 页面自定义间距，适配PrimoUI规范 */
+        .page-wrap {
+            padding: 0 var(--p-md);
+            margin-top: var(--space-lg);
+        }
+        .filter-row {
+            display: flex;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-top: var(--space-md);
+        }
+        .filter-item {
+            min-width: 180px;
+        }
+        .table-card {
+            margin-top: var(--space-lg);
+        }
+        .btn-group-top {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        .search-row {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+        .search-row input {
+            flex: 1;
+            max-width: 360px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏容器 -->
+    <div id="nav"></div>
+
+    <div class="page-wrap">
+        <!-- 页面头部操作区 -->
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">库存管理</h2>
+            <div class="btn-group-top">
+                <button class="btn primary" id="btnAdd">新增库存</button>
+                <button class="btn danger" id="btnBatchDel">批量删除</button>
+                <button class="btn outline" id="btnResetFilter">重置筛选</button>
+            </div>
+        </div>
+        <hr class="my-md">
+
+        <!-- 搜索卡片 -->
+        <div class="card p-md">
+            <div class="search-row">
+                <input type="text" class="input" id="searchName" placeholder="请输入库存商品名称">
+                <button class="btn primary" id="btnSearch">搜索</button>
+            </div>
+
+            <!-- 多条件筛选区域（修复原代码select嵌套div语法错误） -->
+            <div class="filter-row mt-md">
+                <div class="filter-item">
+                    <label class="label">入库日期</label>
+                    <input type="date" class="input" id="filterDate">
+                </div>
+                <div class="filter-item">
+                    <label class="label">库存数量（最低）</label>
+                    <input type="number" class="input" min="0" id="filterNum" placeholder="输入最低库存">
+                </div>
+                <div class="filter-item">
+                    <label class="label">库存状态</label>
+                    <select class="select" id="filterStatus">
+                        <option value="">全部状态</option>
+                        <option value="1">正常</option>
+                        <option value="2">异常</option>
+                        <option value="3">缺货</option>
+                        <option value="4">超量</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 库存数据表格卡片 -->
+        <div class="card table-card p-md">
+            <table class="table bordered full-width">
+                <thead>
+                    <tr>
+                        <th width="60">
+                            <input type="checkbox" id="checkAll">
+                        </th>
+                        <th>商品名称</th>
+                        <th>库存数量</th>
+                        <th>入库日期</th>
+                        <th>库存状态</th>
+                        <th width="160">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody">
+                    <!-- 动态渲染库存数据 -->
+                </tbody>
+            </table>
+            <!-- 分页区域 -->
+            <div class="flex justify-between items-center mt-md">
+                <span class="text-sm text-gray">共 <span id="totalCount">0</span> 条数据</span>
+                <div class="pagination" id="pageWrap"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/编辑库存弹窗 Modal -->
+    <div class="modal" id="stockModal">
+        <div class="modal-box w-full max-w-lg">
+            <div class="modal-header">
+                <h3 id="modalTitle">新增库存</h3>
+                <button class="modal-close" data-modal-close="stockModal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="stockForm">
+                    <input type="hidden" id="stockId">
+                    <div class="form-group">
+                        <label class="label required">商品名称</label>
+                        <input type="text" class="input" id="stockName" placeholder="请输入商品名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label required">库存数量</label>
+                        <input type="number" class="input" min="0" id="stockNum" placeholder="请输入库存数量" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label required">入库日期</label>
+                        <input type="date" class="input" id="stockDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label required">库存状态</label>
+                        <select class="select" id="stockStatus" required>
+                            <option value="">请选择状态</option>
+                            <option value="1">正常</option>
+                            <option value="2">异常</option>
+                            <option value="3">缺货</option>
+                            <option value="4">超量</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">备注</label>
+                        <textarea class="textarea" rows="3" id="stockRemark" placeholder="可选，填写商品备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn outline" data-modal-close="stockModal">取消</button>
+                <button class="btn primary" id="btnSaveStock">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PrimoUI JS 脚本 -->
+    <script src="../../UI/primoUI 0.1/js/modules/theme.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/nav.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/feedback.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/modal.js"></script>
+    <script src="../../UI/primoUI 0.1/js/modules/tabs.js"></script>
+    <script src="../../js/nav.js"></script>
+
+    <script>
+        // 模拟库存数据源
+        let stockList = [
+            { id:1, name:"机械键盘", num:120, date:"2026-01-10", status:1, remark:"外设专区" },
+            { id:2, name:"无线鼠标", num:5, date:"2026-02-15", status:3, remark:"库存不足" },
+            { id:3, name:"27寸显示器", num:300, date:"2026-03-08", status:4, remark:"批量囤货" },
+            { id:4, name:"笔记本支架", num:45, date:"2026-04-22", status:2, remark:"部分配件损坏" },
+            { id:5, name:"Type-C数据线", num:88, date:"2026-05-01", status:1, remark:"热销商品" },
+        ];
+        let currentPage = 1;
+        const pageSize = 3;
+        let selectedIds = [];
+
+        // DOM元素缓存
+        const tableBody = document.getElementById('stockTableBody');
+        const totalCountEl = document.getElementById('totalCount');
+        const pageWrap = document.getElementById('pageWrap');
+        const stockModal = document.getElementById('stockModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const stockForm = document.getElementById('stockForm');
+
+        // 初始化页面
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            bindEvent();
+            // 默认日期赋值为今日
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('stockDate').value = today;
+        })
+
+        // 渲染库存表格
+        function renderTable() {
+            // 筛选逻辑
+            const keyword = document.getElementById('searchName').value.trim().toLowerCase();
+            const filterDate = document.getElementById('filterDate').value;
+            const filterNum = Number(document.getElementById('filterNum').value) || 0;
+            const filterStatus = document.getElementById('filterStatus').value;
+
+            let filterData = stockList.filter(item => {
+                let flag = true;
+                if(keyword) flag = flag && item.name.toLowerCase().includes(keyword);
+                if(filterDate) flag = flag && item.date >= filterDate;
+                if(filterNum > 0) flag = flag && item.num >= filterNum;
+                if(filterStatus) flag = flag && item.status == filterStatus;
+                return flag;
+            })
+
+            // 分页计算
+            const total = filterData.length;
+            totalCountEl.innerText = total;
+            const totalPage = Math.ceil(total / pageSize) || 1;
+            if(currentPage > totalPage) currentPage = totalPage;
+            const start = (currentPage - 1) * pageSize;
+            const pageData = filterData.slice(start, start + pageSize);
+
+            // 清空表格
+            tableBody.innerHTML = '';
+            if(pageData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-lg text-gray">暂无匹配库存数据</td></tr>`;
+            } else {
+                pageData.forEach(item => {
+                    // 状态标签渲染（PrimoUI 标签样式）
+                    let statusTag = '';
+                    switch(item.status) {
+                        case '1': statusTag = '<span class="tag success">正常</span>'; break;
+                        case '2': statusTag = '<span class="tag warning">异常</span>'; break;
+                        case '3': statusTag = '<span class="tag danger">缺货</span>'; break;
+                        case '4': statusTag = '<span class="tag primary">超量</span>'; break;
+                    }
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="checkbox" class="row-check" data-id="${item.id}"></td>
+                        <td>${item.name}</td>
+                        <td>${item.num}</td>
+                        <td>${item.date}</td>
+                        <td>${statusTag}</td>
+                        <td>
+                            <button class="btn sm outline btn-edit" data-id="${item.id}">编辑</button>
+                            <button class="btn sm danger btn-del" data-id="${item.id}">删除</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                })
+            }
+            renderPage(totalPage);
+            resetCheckStatus();
+        }
+
+        // 渲染分页控件
+        function renderPage(totalPage) {
+            pageWrap.innerHTML = '';
+            for(let i = 1; i <= totalPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                pageBtn.innerText = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    renderTable();
+                }
+                pageWrap.appendChild(pageBtn);
+            }
+        }
+
+        // 绑定全部事件
+        function bindEvent() {
+            // 新增按钮
+            document.getElementById('btnAdd').addEventListener('click', () => {
+                modalTitle.innerText = '新增库存';
+                stockForm.reset();
+                document.getElementById('stockId').value = '';
+                document.getElementById('stockDate').value = new Date().toISOString().split('T')[0];
+                window.primo.modal.open('stockModal');
+            })
+
+            // 保存库存
+            document.getElementById('btnSaveStock').addEventListener('click', saveStock);
+
+            // 搜索按钮
+            document.getElementById('btnSearch').addEventListener('click', () => {
+                currentPage = 1;
+                renderTable();
+            })
+            // 回车搜索
+            document.getElementById('searchName').addEventListener('keydown', e => {
+                if(e.key === 'Enter') {
+                    currentPage = 1;
+                    renderTable();
+                }
+            })
+
+            // 重置筛选
+            document.getElementById('btnResetFilter').addEventListener('click', () => {
+                document.getElementById('searchName').value = '';
+                document.getElementById('filterDate').value = '';
+                document.getElementById('filterNum').value = '';
+                document.getElementById('filterStatus').value = '';
+                currentPage = 1;
+                renderTable();
+            })
+
+            // 表格行操作（编辑/单行删除）
+            tableBody.addEventListener('click', e => {
+                const target = e.target;
+                const id = Number(target.dataset.id);
+                if(target.classList.contains('btn-edit')) {
+                    editStock(id);
+                } else if(target.classList.contains('btn-del')) {
+                    window.primo.confirm('确认删除这条库存记录？', () => {
+                        stockList = stockList.filter(s => s.id !== id);
+                        renderTable();
+                        window.primo.toast.success('删除成功');
+                    })
+                }
+            })
+
+            // 全选复选框
+            const checkAll = document.getElementById('checkAll');
+            checkAll.addEventListener('change', () => {
+                const rowChecks = document.querySelectorAll('.row-check');
+                rowChecks.forEach(cb => cb.checked = checkAll.checked);
+                syncSelectedIds();
+            })
+
+            // 单行复选框同步选中
+            tableBody.addEventListener('change', e => {
+                if(e.target.classList.contains('row-check')) syncSelectedIds();
+            })
+
+            // 批量删除
+            document.getElementById('btnBatchDel').addEventListener('click', () => {
+                syncSelectedIds();
+                if(selectedIds.length === 0) {
+                    window.primo.toast.warning('请先勾选要删除的数据');
+                    return;
+                }
+                window.primo.confirm(`确认删除选中 ${selectedIds.length} 条库存？`, () => {
+                    stockList = stockList.filter(s => !selectedIds.includes(s.id));
+                    renderTable();
+                    window.primo.toast.success('批量删除完成');
+                })
+            })
+        }
+
+        // 同步选中ID列表
+        function syncSelectedIds() {
+            selectedIds = [];
+            document.querySelectorAll('.row-check:checked').forEach(cb => {
+                selectedIds.push(Number(cb.dataset.id));
+            })
+            // 更新全选框状态
+            const allCheck = document.querySelectorAll('.row-check');
+            const checkedAll = allCheck.length > 0 && selectedIds.length === allCheck.length;
+            document.getElementById('checkAll').checked = checkedAll;
+        }
+
+        // 清空勾选
+        function resetCheckStatus() {
+            selectedIds = [];
+            document.getElementById('checkAll').checked = false;
+        }
+
+        // 保存库存（新增/编辑共用）
+        function saveStock() {
+            const id = document.getElementById('stockId').value;
+            const name = document.getElementById('stockName').value.trim();
+            const num = Number(document.getElementById('stockNum').value);
+            const date = document.getElementById('stockDate').value;
+            const status = document.getElementById('stockStatus').value;
+            const remark = document.getElementById('stockRemark').value.trim();
+
+            // 基础校验
+            if(!name) return window.primo.toast.error('请输入商品名称');
+            if(isNaN(num) || num < 0) return window.primo.toast.error('库存数量不能为负数');
+            if(!date) return window.primo.toast.error('请选择入库日期');
+            if(!status) return window.primo.toast.error('请选择库存状态');
+
+            if(id) {
+                // 编辑逻辑
+                const idx = stockList.findIndex(s => s.id == id);
+                stockList[idx] = { id:Number(id), name, num, date, status, remark };
+                window.primo.toast.success('编辑成功');
+            } else {
+                // 新增逻辑，自增ID
+                const newId = stockList.length > 0 ? Math.max(...stockList.map(s => s.id)) + 1 : 1;
+                stockList.push({ id:newId, name, num, date, status, remark });
+                window.primo.toast.success('新增库存成功');
+            }
+            window.primo.modal.close('stockModal');
+            renderTable();
+        }
+
+        // 编辑回显数据
+        function editStock(id) {
+            const item = stockList.find(s => s.id === id);
+            if(!item) return;
+            modalTitle.innerText = '编辑库存';
+            document.getElementById('stockId').value = item.id;
+            document.getElementById('stockName').value = item.name;
+            document.getElementById('stockNum').value = item.num;
+            document.getElementById('stockDate').value = item.date;
+            document.getElementById('stockStatus').value = item.status;
+            document.getElementById('stockRemark').value = item.remark || '';
+            window.primo.modal.open('stockModal');
+        }
+    </script>
+</body>
+</html>
