@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrimoUI 开发文档</title>
+  <link rel="stylesheet" href="css/modules/variables.css">
+  <link rel="stylesheet" href="css/modules/base.css">
+  <link rel="stylesheet" href="css/modules/layout.css">
+  <link rel="stylesheet" href="css/modules/forms.css">
+  <link rel="stylesheet" href="css/modules/navigation.css">
+  <link rel="stylesheet" href="css/modules/display.css">
+  <link rel="stylesheet" href="css/modules/feedback.css">
+  <link rel="stylesheet" href="css/modules/tabs-browser.css">
+  <style>
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px 0;
+    }
+
+    .sidebar h3 {
+      padding: 0 20px;
+      margin: 0 0 10px 0;
+    }
+
+    .nav-item {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--bg);
+      color: var(--main);
+    }
+
+    .main-content {
+      margin-left: 280px;
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 50px;
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--main);
+    }
+
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre;
+      position: relative;
+    }
+
+    .code-block::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 20px;
+      width: 12px;
+      height: 12px;
+      background: #ff5f56;
+      border-radius: 50%;
+      box-shadow: 18px 0 0 #ffbd2e, 36px 0 0 #27ca40;
+    }
+
+    .code-block {
+      padding-top: 40px;
+    }
+
+    .api-table {
+      width: 100%;
+      margin: 15px 0;
+    }
+
+    .api-table th,
+    .api-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .api-table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+
+    .selector-tag {
+      display: inline-block;
+      background: var(--main);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+
+    .demo-box {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      margin: 15px 0;
+      background: var(--bg);
+    }
+
+    .principle-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .principle-box h4 {
+      margin-top: 0;
+      color: #856404;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <h3>📚 PrimoUI 文档</h3>
+    <div class="nav-item active" onclick="showSection('quickstart')">快速开始</div>
+    <div class="nav-item" onclick="showSection('theme')">主题系统</div>
+    <div class="nav-item" onclick="showSection('button')">按钮</div>
+    <div class="nav-item" onclick="showSection('form')">表单组件</div>
+    <div class="nav-item" onclick="showSection('layout')">布局</div>
+    <div class="nav-item" onclick="showSection('tabs')">标签页</div>
+    <div class="nav-item" onclick="showSection('feedback')">反馈组件</div>
+    <div class="nav-item" onclick="showSection('display')">数据展示</div>
+  </div>
+
+  <div class="main-content">
+    <div class="section" id="quickstart">
+      <h2>🚀 快速开始</h2>
+      <p>直接引入所需的模块文件即可使用 PrimoUI：</p>
+      <div class="code-block">&lt;!-- CSS 模块 --&gt;
+&lt;link rel="stylesheet" href="css/modules/variables.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/base.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/layout.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/forms.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/navigation.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/display.css"&gt;
+&lt;link rel="stylesheet" href="css/modules/feedback.css"&gt;
+
+&lt;!-- JS 模块 --&gt;
+&lt;script src="js/modules/theme.js"&gt;&lt;/script&gt;
+&lt;script src="js/modules/tabs.js"&gt;&lt;/script&gt;
+&lt;script src="js/modules/modal.js"&gt;&lt;/script&gt;
+&lt;script src="js/modules/toast.js"&gt;&lt;/script&gt;
+&lt;script src="js/modules/progress.js"&gt;&lt;/script&gt;
+</div>
+
+      <h3>目录结构</h3>
+      <div class="code-block">primoUI/
+├── css/
+│   └── modules/      # CSS 模块
+│       ├── variables.css
+│       ├── base.css
+│       ├── layout.css
+│       ├── forms.css
+│       ├── navigation.css
+│       ├── display.css
+│       ├── feedback.css
+│       └── tabs-browser.css
+├── js/
+│   └── modules/      # JS 模块
+│       ├── theme.js
+│       ├── tabs.js
+│       ├── modal.js
+│       ├── toast.js
+│       └── progress.js
+├── index.html       # 演示页
+└── docs.html        # 本文档
+</div>
+    </div>
+
+    <div class="section" id="theme" style="display:none;">
+      <h2>🎭 主题系统</h2>
+
+      <h3>主题分类表格</h3>
+
+      <h4>深色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('')">默认浅色</button>
+          <button onclick="setTheme('dark')">深色</button>
+          <button onclick="setTheme('darker')">更深色</button>
+          <button onclick="setTheme('gray')">灰色</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">:root</span></td>
+            <td>默认浅色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#007aff;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-dark</span></td>
+            <td>深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#121212;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-darker</span></td>
+            <td>更深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#0a0a0a;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-gray</span></td>
+            <td>灰色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#86868b;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>红色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('red')">红色</button>
+          <button onclick="setTheme('red-dark')">红色深色</button>
+          <button onclick="setTheme('rose')">玫瑰色</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-red</span></td>
+            <td>红色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#ff3b30;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-red-dark</span></td>
+            <td>红色深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#2d0a0a;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-rose</span></td>
+            <td>玫瑰色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#ff2d55;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>橙色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('orange')">橙色</button>
+          <button onclick="setTheme('orange-dark')">橙色深色</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-orange</span></td>
+            <td>橙色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#ff9500;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-orange-dark</span></td>
+            <td>橙色深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#2d1a0a;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>黄色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('yellow')">黄色</button>
+          <button onclick="setTheme('yellow-dark')">黄色深色</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-yellow</span></td>
+            <td>黄色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#ffcc00;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-yellow-dark</span></td>
+            <td>黄色深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#2d2a0a;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>绿色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('green')">绿色</button>
+          <button onclick="setTheme('green-dark')">绿色深色</button>
+          <button onclick="setTheme('teal')">青色绿</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-green</span></td>
+            <td>绿色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#34c759;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-green-dark</span></td>
+            <td>绿色深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#0a2d0a;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-teal</span></td>
+            <td>青色绿</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#00c7be;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>青色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('cyan')">青色</button>
+          <button onclick="setTheme('cyan-dark')">青色深色</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-cyan</span></td>
+            <td>青色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#00bcd4;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-cyan-dark</span></td>
+            <td>青色深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#0a2d2d;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>蓝色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('blue')">蓝色</button>
+          <button onclick="setTheme('blue-dark')">蓝色深色</button>
+          <button onclick="setTheme('indigo')">靛蓝</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-blue</span></td>
+            <td>蓝色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#007aff;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-blue-dark</span></td>
+            <td>蓝色深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#0a1a2d;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-indigo</span></td>
+            <td>靛蓝</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#5856d6;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>紫色系</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('purple')">紫色</button>
+          <button onclick="setTheme('purple-dark')">紫色深色</button>
+          <button onclick="setTheme('violet')">紫罗兰</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>主色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-purple</span></td>
+            <td>紫色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#af52de;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-purple-dark</span></td>
+            <td>紫色深色</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#1a0a2d;border-radius:3px;"></span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-violet</span></td>
+            <td>紫罗兰</td>
+            <td><span style="display:inline-block;width:20px;height:20px;background:#ff375f;border-radius:3px;"></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>🎨 特殊主题</h4>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button onclick="setTheme('high-contrast')">高对比度</button>
+          <button onclick="setTheme('eye-care')">护眼</button>
+          <button onclick="setTheme('sunset')">日落</button>
+          <button onclick="setTheme('ocean')">海洋</button>
+          <button onclick="setTheme('forest')">森林</button>
+          <button onclick="setTheme('rainbow')">彩虹</button>
+        </div>
+      </div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>选择器</th>
+            <th>名称</th>
+            <th>特色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="selector-tag">.theme-high-contrast</span></td>
+            <td>高对比度</td>
+            <td>黑白对比，提升可读性</td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-eye-care</span></td>
+            <td>护眼</td>
+            <td>绿色柔和，保护眼睛</td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-sunset</span></td>
+            <td>日落</td>
+            <td>暖色调，温暖舒适</td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-ocean</span></td>
+            <td>海洋</td>
+            <td>蓝色系，清凉舒适</td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-forest</span></td>
+            <td>森林</td>
+            <td>绿色系，自然清新</td>
+          </tr>
+          <tr>
+            <td><span class="selector-tag">.theme-rainbow</span></td>
+            <td>彩虹</td>
+            <td>渐变背景，缤纷多彩</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>API 函数</h3>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>函数</th>
+            <th>参数</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>setTheme(theme)</td>
+            <td>theme: 主题名称</td>
+            <td>设置主题</td>
+          </tr>
+          <tr>
+            <td>resetTheme()</td>
+            <td>-</td>
+            <td>重置为默认主题</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="principle-box">
+        <h4>💡 原理说明</h4>
+        <p>主题系统使用 CSS 自定义属性（CSS Variables）实现。通过给 &lt;body&gt; 元素添加不同的类名来切换变量值，实现主题切换。主题选择后会保存到 localStorage 中，刷新页面后自动加载。
+        </p>
+        <p>主题按色阶从深色到浅色、从红色到紫色的顺序排列，每个色系包含浅色和深色版本，方便在不同场景下使用。</p>
+      </div>
+    </div>
+
+    <div class="section" id="button" style="display:none;">
+      <h2>🔘 按钮</h2>
+
+      <h3>CSS 选择器</h3>
+      <p><span class="selector-tag">button</span> 普通按钮</p>
+      <p><span class="selector-tag">.btn</span> 按钮类</p>
+      <p><span class="selector-tag">.btn-group</span> 按钮组容器</p>
+
+      <h3>使用示例</h3>
+      <div class="demo-box">
+        <div class="btn-group">
+          <button>普通按钮</button>
+          <button class="btn">主要按钮</button>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="btn-group"&gt;
+        &lt;button&gt;普通按钮&lt;/button&gt;
+        &lt;button class="btn"&gt;主要按钮&lt;/button&gt;
+        &lt;/div&gt;</div>
+    </div>
+
+    <div class="section" id="form" style="display:none;">
+      <h2>📝 表单组件</h2>
+
+      <h3>CSS 选择器</h3>
+      <p><span class="selector-tag">input</span> 输入框</p>
+      <p><span class="selector-tag">select</span> 下拉框</p>
+      <p><span class="selector-tag">textarea</span> 文本域</p>
+      <p><span class="selector-tag">.switch</span> 开关容器</p>
+      <p><span class="selector-tag">.slider</span> 开关滑块</p>
+      <p><span class="selector-tag">.slider-input</span> 滑块输入框</p>
+      <p><span class="selector-tag">.radio-item</span> 单选框容器</p>
+      <p><span class="selector-tag">.checkbox-item</span> 复选框容器</p>
+      <p><span class="selector-tag">.form-item</span> 表单项容器</p>
+      <p><span class="selector-tag">.form-label</span> 表单标签</p>
+      <p><span class="selector-tag">.rate</span> 评分组件</p>
+
+      <h3>使用示例</h3>
+      <div class="demo-box">
+        <div class="form-item">
+          <label class="form-label">输入框：</label>
+          <input type="text" placeholder="请输入">
+        </div>
+        <div class="form-item">
+          <label class="form-label">开关：</label>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="form-item"&gt;
+        &lt;label class="form-label"&gt;输入框：&lt;/label&gt;
+        &lt;input type="text" placeholder="请输入"&gt;
+        &lt;/div&gt;
+
+        &lt;div class="form-item"&gt;
+        &lt;label class="switch"&gt;
+        &lt;input type="checkbox"&gt;
+        &lt;span class="slider"&gt;&lt;/span&gt;
+        &lt;/label&gt;
+        &lt;/div&gt;</div>
+    </div>
+
+    <div class="section" id="layout" style="display:none;">
+      <h2>📦 布局</h2>
+
+      <h3>CSS 选择器</h3>
+      <p><span class="selector-tag">.container</span> 容器</p>
+      <p><span class="selector-tag">.row</span> 行容器</p>
+      <p><span class="selector-tag">.col</span> 列</p>
+      <p><span class="selector-tag">.card</span> 卡片</p>
+      <p><span class="selector-tag">.panel</span> 面板</p>
+
+      <h3>使用示例</h3>
+      <div class="demo-box">
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <strong>卡片 1</strong>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <strong>卡片 2</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="row"&gt;
+        &lt;div class="col"&gt;
+        &lt;div class="card"&gt;卡片内容&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="col"&gt;
+        &lt;div class="card"&gt;卡片内容&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;/div&gt;</div>
+    </div>
+
+    <div class="section" id="tabs" style="display:none;">
+      <h2>📑 标签页</h2>
+
+      <h3>CSS 选择器</h3>
+      <p><span class="selector-tag">.tabs</span> 标签页容器</p>
+      <p><span class="selector-tag">.tab</span> 标签</p>
+      <p><span class="selector-tag">.tab.active</span> 激活的标签</p>
+      <p><span class="selector-tag">.tabs-browser</span> 浏览器风格标签容器</p>
+      <p><span class="selector-tag">.tab-browser</span> 浏览器风格标签</p>
+      <p><span class="selector-tag">.tabs-content</span> 标签内容容器</p>
+      <p><span class="selector-tag">.tab-pane</span> 标签页内容</p>
+
+      <h3>API 函数</h3>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>函数</th>
+            <th>参数</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>switchTab(tabId)</td>
+            <td>tabId: 内容 ID</td>
+            <td>切换标签页</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>使用示例</h3>
+      <div class="demo-box">
+        <div class="tabs-browser">
+          <button class="tab-browser active" onclick="switchTab('demo1')">标签 1</button>
+          <button class="tab-browser" onclick="switchTab('demo2')">标签 2</button>
+        </div>
+        <div class="tabs-content">
+          <div class="tab-pane active" id="demo1">内容 1</div>
+          <div class="tab-pane" id="demo2">内容 2</div>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="tabs-browser"&gt;
+        &lt;button class="tab-browser active" onclick="switchTab('tab1')"&gt;标签 1&lt;/button&gt;
+        &lt;button class="tab-browser" onclick="switchTab('tab2')"&gt;标签 2&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class="tabs-content"&gt;
+        &lt;div class="tab-pane active" id="tab1"&gt;内容 1&lt;/div&gt;
+        &lt;div class="tab-pane" id="tab2"&gt;内容 2&lt;/div&gt;
+        &lt;/div&gt;</div>
+    </div>
+
+    <div class="section" id="feedback" style="display:none;">
+      <h2>💬 反馈组件</h2>
+
+      <h3>CSS 选择器</h3>
+      <p><span class="selector-tag">.modal</span> 模态框容器</p>
+      <p><span class="selector-tag">.modal-content</span> 模态框内容</p>
+      <p><span class="selector-tag">.toast</span> Toast 提示</p>
+      <p><span class="selector-tag">.tooltip</span> 提示容器</p>
+      <p><span class="selector-tag">.tooltip-text</span> 提示内容</p>
+      <p><span class="selector-tag">.loading</span> 加载动画</p>
+
+      <h3>API 函数</h3>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>函数</th>
+            <th>参数</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>openModal()</td>
+            <td>-</td>
+            <td>打开模态框</td>
+          </tr>
+          <tr>
+            <td>closeModal()</td>
+            <td>-</td>
+            <td>关闭模态框</td>
+          </tr>
+          <tr>
+            <td>showToast()</td>
+            <td>-</td>
+            <td>显示 Toast</td>
+          </tr>
+          <tr>
+            <td>showPopconfirm()</td>
+            <td>-</td>
+            <td>显示确认框</td>
+          </tr>
+          <tr>
+            <td>showNotification()</td>
+            <td>-</td>
+            <td>显示系统通知</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>使用示例</h3>
+      <div class="demo-box">
+        <button onclick="openModal()">打开模态框</button>
+        <button onclick="showToast()">显示 Toast</button>
+        <span class="tooltip">
+          悬停我
+          <span class="tooltip-text">提示内容</span>
+        </span>
+        <span class="loading"></span>
+      </div>
+      <div class="code-block">&lt;button onclick="openModal()"&gt;打开模态框&lt;/button&gt;
+        &lt;button onclick="showToast()"&gt;显示 Toast&lt;/button&gt;
+
+        &lt;div class="modal" id="modal"&gt;
+        &lt;div class="modal-content"&gt;
+        &lt;h3&gt;标题&lt;/h3&gt;
+        &lt;p&gt;内容&lt;/p&gt;
+        &lt;button onclick="closeModal()"&gt;关闭&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;/div&gt;</div>
+    </div>
+
+    <div class="section" id="display" style="display:none;">
+      <h2>📊 数据展示</h2>
+
+      <h3>CSS 选择器</h3>
+      <p><span class="selector-tag">table</span> 表格</p>
+      <p><span class="selector-tag">.list</span> 列表容器</p>
+      <p><span class="selector-tag">.list-item</span> 列表项</p>
+      <p><span class="selector-tag">.avatar</span> 头像</p>
+      <p><span class="selector-tag">.tag</span> 标签</p>
+      <p><span class="selector-tag">.badge</span> 徽章</p>
+      <p><span class="selector-tag">.progress</span> 进度条容器</p>
+      <p><span class="selector-tag">.progress-bar</span> 进度条</p>
+      <p><span class="selector-tag">.tree</span> 树形控件容器</p>
+      <p><span class="selector-tag">.tree-item</span> 树节点</p>
+      <p><span class="selector-tag">.tree-children</span> 子节点容器</p>
+      <p><span class="selector-tag">.breadcrumb</span> 面包屑容器</p>
+      <p><span class="selector-tag">.breadcrumb-item</span> 面包屑项</p>
+      <p><span class="selector-tag">.pagination</span> 分页容器</p>
+      <p><span class="selector-tag">.page-item</span> 分页项</p>
+      <p><span class="selector-tag">.menu</span> 菜单容器</p>
+      <p><span class="selector-tag">.menu-item</span> 菜单项</p>
+
+      <h3>使用示例</h3>
+      <div class="demo-box">
+        <div class="avatar">U</div>
+        <span class="tag">标签</span>
+        <span>徽章<span class="badge">5</span></span>
+        <div class="progress" style="margin-top:15px;">
+          <div class="progress-bar" style="width:60%;"></div>
+        </div>
+      </div>
+      <div class="code-block">&lt;div class="avatar"&gt;U&lt;/div&gt;
+        &lt;span class="tag"&gt;标签&lt;/span&gt;
+        &lt;span&gt;徽章&lt;span class="badge"&gt;5&lt;/span&gt;&lt;/span&gt;
+
+        &lt;div class="progress"&gt;
+        &lt;div class="progress-bar" style="width: 60%;"&gt;&lt;/div&gt;
+        &lt;/div&gt;</div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>模态框演示</h3>
+      <p>这是一个模态框示例</p>
+      <div class="btn-group">
+        <button onclick="closeModal()">确定</button>
+        <button onclick="closeModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/modules/theme.js"></script>
+  <script src="js/modules/tabs.js"></script>
+  <script src="js/modules/modal.js"></script>
+  <script src="js/modules/feedback.js"></script>
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+
+</html>
