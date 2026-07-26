@@ -1,0 +1,109 @@
+.SearchBox {
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    padding: 8px;
+    margin: 8px;
+    width: 670px;
+    max-width: 100%;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    transform: translateZ(0);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.SearchBox:hover {
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px) scale(1.005);
+    border-color: rgba(255, 140, 0, 0.5);
+}
+
+.searchInputBox {
+    border: 0px solid #333;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchInput {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.searchInput:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 140, 0, 0.4);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.searchInput:hover svg {
+    fill: rgba(255, 140, 0, 0.95);
+    transform: scale(1.1);
+}
+
+.searchInput svg {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    /* 图标描边：保证任意背景下清晰 */
+    filter: var(--searchIconShadow);
+}
+
+/* 输入框文字：白字 + 多层描边阴影，任意背景可读 */
+.searchQuery {
+    color: var(--searchText);
+    text-shadow: var(--searchTextShadow);
+    caret-color: #fff;
+    background: transparent;
+}
+
+.searchInput {
+    background: transparent;
+}
+
+.searchQuery::placeholder {
+    color: rgba(255, 255, 255, 0.82);
+    text-shadow: var(--searchTextShadow);
+}
+
+/* 输入框选中文本的颜色 */
+.searchQuery::selection {
+    background: rgba(255, 140, 0, 0.45);
+    color: #fff;
+    text-shadow: none;
+}
+
+/* 指令芯片（/go、/s 等）——主题自适应 */
+.cmd-chip {
+    display: inline-block;
+    padding: 4px 12px;
+    margin: 2px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--gs-accent-bg);
+    color: var(--gs-text);
+    border: 1px solid var(--gs-border);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.cmd-chip:hover {
+    background: var(--gs-accent);
+    color: #fff;
+    border-color: var(--gs-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cmd-chip b {
+    font-weight: 600;
+}
+
+.chip-desc {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
