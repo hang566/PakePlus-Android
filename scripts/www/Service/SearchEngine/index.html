@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索引擎</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 10px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            padding: 15px;
+        }
+
+        .search-box button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-box button:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .result-item {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: #f8f9fa;
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            color: #1a0dab;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+        }
+
+        .result-url {
+            font-size: 0.9rem;
+            color: #006621;
+            margin-bottom: 8px;
+            word-break: break-all;
+        }
+
+        .result-snippet {
+            font-size: 0.95rem;
+            color: #545454;
+            line-height: 1.5;
+        }
+
+        .result-source {
+            display: inline-block;
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #d32f2f;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .stats {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .history-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-top: 20px;
+            display: none;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .history-header h3 {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .history-header button {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .history-header button:hover {
+            background: #f5f5f5;
+            border-color: #ccc;
+        }
+
+        .history-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:hover {
+            background: #f8f9fa;
+        }
+
+        .history-query {
+            font-size: 0.95rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .history-results-count {
+            font-size: 0.75rem;
+            color: #667eea;
+            background: #f0f0ff;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .view-history-btn {
+            display: block;
+            margin: 20px auto;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-history-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .pagination button {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #667eea;
+            transition: all 0.2s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .page-info {
+            font-size: 0.85rem;
+            color: #666;
+            padding: 0 10px;
+        }
+
+        .result-score {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+
+        .engine-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-right: 5px;
+            font-weight: 500;
+        }
+
+        .engine-google { background: #fce8e6; color: #d93025; }
+        .engine-bing { background: #e6f4ea; color: #188038; }
+        .engine-baidu { background: #fef7e0; color: #f9ab00; }
+        .engine-duckduckgo { background: #e8f0fe; color: #1967d2; }
+        .engine-sogou { background: #fce8e6; color: #d93025; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>搜索引擎 <small style="font-size:0.4em;opacity:0.6">v2.1</small></h1>
+            <p>搜索网络，发现更多</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="query" placeholder="输入搜索关键词..." autocomplete="off">
+            <button id="searchBtn">搜索</button>
+        </div>
+
+        <div id="results" class="results" style="display: none;"></div>
+
+        <button id="viewHistoryBtn" class="view-history-btn">查看搜索历史</button>
+
+        <div id="historySection" class="history-section">
+            <div class="history-header">
+                <h3>搜索历史</h3>
+                <button id="clearHistoryBtn">清空历史</button>
+            </div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const queryInput = document.getElementById('query');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsDiv = document.getElementById('results');
+        const viewHistoryBtn = document.getElementById('viewHistoryBtn');
+        const historySection = document.getElementById('historySection');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let lastQuery = '';
+
+        function showLoading() {
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>正在搜索中...</p></div>';
+        }
+
+        function showError(message) {
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<div class="error"><p>搜索失败：' + escapeHtml(message) + '</p></div>';
+        }
+
+        function showEmpty(rawData) {
+            resultsDiv.style.display = 'block';
+            var debug = rawData ? '<br><small style="color:#aaa">调试: ' + escapeHtml(JSON.stringify(rawData).substring(0, 200)) + '</small>' : '';
+            resultsDiv.innerHTML = '<div class="empty"><p>未找到相关结果</p>' + debug + '</div>';
+        }
+
+        function getEngineBadgeClass(source) {
+            return 'engine-' + (source || '').toLowerCase().replace(/\s+/g, '');
+        }
+
+        function renderResults(response) {
+            console.log('renderResults received:', response);
+            var results = response.results || response.Results || [];
+            if (results.length === 0) {
+                showEmpty(response);
+                return;
+            }
+
+            currentPage = response.page || response.Page || 1;
+            totalPages = Math.ceil((response.total || response.Total || 0) / (response.per_page || response.PerPage || 10));
+
+            var html = '<div class="stats">找到 ' + (response.total || response.Total || 0) + ' 条结果（第 ' + currentPage + '/' + totalPages + ' 页）</div>';
+
+            results.forEach(function(result) {
+                html += '<div class="result-item">' +
+                    '<a href="' + escapeHtml(result.URL || result.url || '') + '" target="_blank" class="result-title">' + escapeHtml(result.Title || result.title || '') + '</a>' +
+                    '<div class="result-url">' + escapeHtml(result.URL || result.url || '') + '</div>' +
+                    '<div class="result-snippet">' + escapeHtml(result.Snippet || result.snippet || '') + '</div>' +
+                    '<div style="margin-top:8px">' +
+                    '<span class="engine-badge ' + getEngineBadgeClass(result.Source || result.source || '') + '">' + escapeHtml(result.Source || result.source || '') + '</span>' +
+                    '</div>' +
+                    '</div>';
+            });
+
+            if (totalPages > 1) {
+                html += '<div class="pagination">' +
+                    '<button onclick="goToPage(1)" ' + (currentPage <= 1 ? 'disabled' : '') + '>首页</button>' +
+                    '<button onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage <= 1 ? 'disabled' : '') + '>上一页</button>' +
+                    '<span class="page-info">' + currentPage + ' / ' + totalPages + '</span>' +
+                    '<button onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage >= totalPages ? 'disabled' : '') + '>下一页</button>' +
+                    '<button onclick="goToPage(' + totalPages + ')" ' + (currentPage >= totalPages ? 'disabled' : '') + '>末页</button>' +
+                    '</div>';
+            }
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function search(page) {
+            var query = queryInput.value.trim();
+            if (!query) {
+                alert('请输入搜索关键词');
+                return;
+            }
+
+            if (page === undefined) {
+                page = 1;
+            }
+
+            lastQuery = query;
+            currentPage = page;
+
+            showLoading();
+            window.scrollTo(0, 0);
+
+            try {
+                var baseURL = window.location.hostname === 'localhost' && window.location.port === '8081' 
+                    ? '/api/search' 
+                    : 'http://localhost:8081/api/search';
+                var url = baseURL + '?q=' + encodeURIComponent(query) + '&limit=10&page=' + page + '&_t=' + Date.now();
+                console.log('Fetching:', url);
+                var response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    var errText = await response.text();
+                    throw new Error(errText || ('HTTP错误: ' + response.status));
+                }
+
+                var data = await response.json();
+                console.log('Response data:', data);
+                renderResults(data);
+            } catch (error) {
+                console.error('搜索错误:', error);
+                showError(error.message || '未知错误');
+            }
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > totalPages || !lastQuery) return;
+            search(page);
+        }
+
+        searchBtn.addEventListener('click', function() { search(1); });
+
+        queryInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                search(1);
+            }
+        });
+
+        viewHistoryBtn.addEventListener('click', function() {
+            if (historySection.style.display === 'none') {
+                historySection.style.display = 'block';
+                viewHistoryBtn.textContent = '隐藏搜索历史';
+                loadHistory();
+            } else {
+                historySection.style.display = 'none';
+                viewHistoryBtn.textContent = '查看搜索历史';
+            }
+        });
+
+        clearHistoryBtn.addEventListener('click', async function() {
+            if (!confirm('确定要清空所有搜索历史吗？')) {
+                return;
+            }
+            try {
+                const baseURL = window.location.hostname === 'localhost' && window.location.port === '8081' 
+                    ? '/api/history/clear' 
+                    : 'http://localhost:8081/api/history/clear';
+                const response = await fetch(baseURL, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    historyList.innerHTML = '<div class="history-empty">暂无搜索历史</div>';
+                }
+            } catch (error) {
+                console.error('清空历史失败:', error);
+            }
+        });
+
+        async function loadHistory() {
+            try {
+                const baseURL = window.location.hostname === 'localhost' && window.location.port === '8081' 
+                    ? '/api/history' 
+                    : 'http://localhost:8081/api/history';
+                const response = await fetch(baseURL + '?limit=20');
+                if (!response.ok) {
+                    throw new Error('加载历史失败');
+                }
+                const history = await response.json();
+                renderHistory(history);
+            } catch (error) {
+                console.error('加载历史错误:', error);
+                historyList.innerHTML = '<div class="history-empty">加载历史失败</div>';
+            }
+        }
+
+        function renderHistory(history) {
+            if (!history || history.length === 0) {
+                historyList.innerHTML = '<div class="history-empty">暂无搜索历史</div>';
+                return;
+            }
+
+            let html = '';
+            history.forEach(function(item) {
+                const resultCount = (item.results || []).length;
+                html += '<div class="history-item" onclick="searchFromHistory(' + JSON.stringify(item.query) + ')">' +
+                    '<div>' +
+                    '<span class="history-query">' + escapeHtml(item.query) + '</span>' +
+                    '<span class="history-results-count">' + resultCount + '条结果</span>' +
+                    '</div>' +
+                    '<span class="history-time">' + escapeHtml(item.created_at) + '</span>' +
+                    '</div>';
+            });
+
+            historyList.innerHTML = html;
+        }
+
+        function searchFromHistory(query) {
+            queryInput.value = query;
+            search(1);
+            historySection.style.display = 'none';
+            viewHistoryBtn.textContent = '查看搜索历史';
+        }
+    </script>
+</body>
+</html>
